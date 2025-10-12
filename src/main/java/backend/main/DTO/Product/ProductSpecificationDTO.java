@@ -1,24 +1,31 @@
 package backend.main.DTO.Product;
 
 public class ProductSpecificationDTO {
-    private int id;
+    // private int id;
     private int productId;
     private int specId;
     private String value;
     private String label;
     private String unitName;
 
-    @Override
-    public String toString() {
-        return "ProductSpecificationDTO [id=" + id + ", productId=" + productId + ", specId=" + specId + ", value="
-                + value + ", label=" + label + ", unitName=" + unitName + "]";
-    }
+    // @Override
+    // public String toString() {
+    // return "ProductSpecificationDTO [id=" + id + ", productId=" + productId + ",
+    // specId=" + specId + ", value="
+    // + value + ", label=" + label + ", unitName=" + unitName + "]";
+    // }
 
     public ProductSpecificationDTO() {
     }
 
-    public ProductSpecificationDTO(int id, int productId, int specId, String value, String label, String unitName) {
-        this.id = id;
+    @Override
+    public String toString() {
+        return "ProductSpecificationDTO [productId=" + productId + ", specId=" + specId + ", value=" + value
+                + ", label=" + label + ", unitName=" + unitName + "]";
+    }
+
+    public ProductSpecificationDTO(int productId, int specId, String value, String label, String unitName) {
+        // this.id = id;
         this.productId = productId;
         this.specId = specId;
         this.value = value;
@@ -26,13 +33,13 @@ public class ProductSpecificationDTO {
         this.unitName = unitName;
     }
 
-    public int getId() {
-        return id;
-    }
+    // public int getId() {
+    // return id;
+    // }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    // public void setId(int id) {
+    // this.id = id;
+    // }
 
     public int getProductId() {
         return productId;

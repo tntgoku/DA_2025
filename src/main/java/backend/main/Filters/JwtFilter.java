@@ -8,6 +8,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,7 +36,8 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/api/auth")
+        return path.startsWith("/api/authz/login")
+                || path.startsWith("/api/authz/register")
                 || path.startsWith("/api/users")
                 || path.startsWith("/api/products")
                 || path.startsWith("/api/categories")
@@ -51,36 +54,36 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-
+            logger.info("Token dc lay la:" + token);
             try {
                 String email = jwtUtil.extractUsername(token);
-
+                logger.info("🟢 Email trong token: " + email);
                 if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                    // Lấy user projection trực tiếp qua email
-                    Optional<AuthzProjection> userOpt = userRepository.findByEmailProjection(email);
-                    if (userOpt.isPresent() && jwtUtil.validateToken(token, userOpt.get().getEmail())) {
+                    Optional<AuthzProjection> userOpt = userRepository.findByEmailWithAccountAndRole(email);
+
+                    if (userOpt.isPresent() && jwtUtil.validateToken(token, email)) {
+
                         AuthzProjection user = userOpt.get();
-
-                        // Lấy roleName từ projection, default USER nếu null
                         String roleName = (user.getRoleName() != null) ? user.getRoleName() : "USER";
-
+                        logger.info("Role: " + roleName);
                         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                                 user.getEmail(),
                                 null,
                                 List.of(new SimpleGrantedAuthority("ROLE_" + roleName)));
 
                         SecurityContextHolder.getContext().setAuthentication(authToken);
-                    } else {
-                        logger.warning("❌ User not found or invalid token");
+
+                        request.setAttribute("email", email);
                     }
                 }
 
             } catch (Exception e) {
-                logger.warning("❌ Invalid JWT: " + e.getMessage());
+                logger.info("Token không hợp lệ: " + e.getMessage());
             }
         }
 
         filterChain.doFilter(request, response);
     }
+
 }

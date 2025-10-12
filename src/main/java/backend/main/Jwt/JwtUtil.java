@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import backend.main.Config.JwtConfig;
 import backend.main.Model.Account;
 import backend.main.Model.User.*;
 import backend.main.Repository.AccountRepository;
@@ -21,11 +22,11 @@ public class JwtUtil {
 
     @Autowired
     private AccountRepository accountRepository;
-    @Value("${jwt.secret}")
-    private String secretKey;
+    private final JwtConfig jwtConfig;
 
-    @Value("${jwt.expiration}")
-    private long jwtExpiration; // milliseconds
+    public JwtUtil(JwtConfig jwtConfig2) {
+        this.jwtConfig = jwtConfig2;
+    }
 
     // Tạo token từ User
     public String generateToken(User user) {
@@ -41,8 +42,6 @@ public class JwtUtil {
                 claims.put("role", "test");
             }
         }
-
-        // subject = email của user
         return createToken(claims, user.getEmail());
     }
 
@@ -51,8 +50,8 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setSubject(subject) // subject = email/username
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getExpiration()))
+                .signWith(SignatureAlgorithm.HS256, jwtConfig.getSecret())
                 .compact();
     }
 
@@ -88,7 +87,7 @@ public class JwtUtil {
 
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(secretKey)
+                .setSigningKey(jwtConfig.getSecret())
                 .parseClaimsJws(token)
                 .getBody();
     }

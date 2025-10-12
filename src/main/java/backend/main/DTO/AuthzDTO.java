@@ -1,6 +1,8 @@
 package backend.main.DTO;
 
 import lombok.Data;
+import java.util.*;
+import backend.main.Model.Order.*;;
 
 @Data
 public class AuthzDTO {
@@ -12,6 +14,7 @@ public class AuthzDTO {
     private boolean phoneVerified;
     private String passwordHash;
     private String roleName;
+    private List<OrderDTO> listorder;
 
     public AuthzDTO() {
 
@@ -87,6 +90,14 @@ public class AuthzDTO {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    public List<OrderDTO> getListorder() {
+        return this.listorder;
+    }
+
+    public void setListorder(List<OrderDTO> listorder) {
+        this.listorder = listorder;
     }
 
     public AuthzDTO(Integer idUser, String fullName, boolean emailVerified, String email, String phone,

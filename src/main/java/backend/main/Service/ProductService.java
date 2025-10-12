@@ -26,16 +26,11 @@ import java.util.stream.Collectors;
 @Service
 public class ProductService implements BaseService<Products, Integer> {
 
-    private final CategoryService categoryService;
     @Autowired
     private ProductRepository repository;
     @Autowired
     private VariantService variantService;
     private final Logger logger = LoggerE.logger;
-
-    ProductService(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
 
     public ResponseEntity<ResponseObject> findAll() {
         List<Products> products = repository.findAll();
@@ -296,10 +291,9 @@ public class ProductService implements BaseService<Products, Integer> {
     public List<ProductSpecificationDTO> getSpecsByProduct(int productId) {
         List<Object[]> results = repository.getProductSpecifications(productId);
         List<ProductSpecificationDTO> list = new ArrayList<>();
-
         for (Object[] row : results) {
             ProductSpecificationDTO dto = new ProductSpecificationDTO();
-            dto.setId((Integer) row[0]);
+            // dto.setId((Integer) row[0]);
             dto.setProductId((Integer) row[1]);
             dto.setSpecId((Integer) row[2]);
             dto.setValue((String) row[3]);

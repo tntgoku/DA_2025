@@ -26,8 +26,6 @@ import java.util.stream.Collectors;;
 @Service
 public class VariantService implements BaseService<ProductVariant, Integer> {
 
-    private final CategoryService categoryService;
-
     @Autowired
     public VariantReponsitory reponsitory;
     @Autowired
@@ -35,10 +33,6 @@ public class VariantService implements BaseService<ProductVariant, Integer> {
     private final Logger logger = LoggerE.logger;
     @Autowired
     private InventoryReponsitory inventoryReponsitory;
-
-    VariantService(CategoryService categoryService, CategoryService cate) {
-        this.categoryService = cate;
-    }
 
     public ResponseEntity<ResponseObject> findAllVariant() {
         List<ProductVariant> variants = reponsitory.findAll();
