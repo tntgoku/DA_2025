@@ -10,7 +10,7 @@ public class CategoryDTO {
     private String name;
     private Integer displayOrder;
     private boolean isActive;
+    private String slug;
     private Integer parentId;
     private List<CategoryDTO> Parents = new ArrayList<>();
-
 }

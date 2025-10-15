@@ -6,7 +6,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import backend.main.Model.Order.Order;
-import backend.main.Model.Product.Products;
 
 import java.util.List;
 import backend.main.Model.User.User;

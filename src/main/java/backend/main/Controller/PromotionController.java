@@ -16,8 +16,12 @@ public class PromotionController {
     private PromotionService service;
 
     @GetMapping
+    public ResponseEntity<ResponseObject> getAllPromotion() {
+        return service.findAllPromotion();
+    }
+
+    @GetMapping("/product")
     public ResponseEntity<ResponseObject> getproductall() {
         return service.findDiscountForProduct();
     }
-
 }

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import backend.main.DTO.ImageDTO;
+import backend.main.DTO.ProductSpecificationDTO;
 import lombok.Data;
 
 @Data

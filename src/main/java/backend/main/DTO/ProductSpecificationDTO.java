@@ -1,7 +1,6 @@
-package backend.main.Model;
+package backend.main.DTO;
 
-public class ProductSpecfication {
-    private Integer id;
+public class ProductSpecificationDTO {
     private Integer productId;
     private Integer specId;
     private String unitName;
@@ -11,7 +10,6 @@ public class ProductSpecfication {
     @Override
     public String toString() {
         return "ProductSpecification [" +
-                "id=" + (id != null ? id : "null") +
                 ", productId=" + (productId != null ? productId : "null") +
                 ", specId=" + (specId != null ? specId : "null") +
                 ", unitName=" + (unitName != null ? unitName : "") +
@@ -20,12 +18,11 @@ public class ProductSpecfication {
                 "]";
     }
 
-    public ProductSpecfication() {
+    public ProductSpecificationDTO() {
     }
 
-    public ProductSpecfication(Integer id, Integer productId, Integer specId, String unitName, String label,
+    public ProductSpecificationDTO(Integer productId, Integer specId, String unitName, String label,
             String value) {
-        this.id = id;
         this.productId = productId;
         this.specId = specId;
         this.unitName = unitName;
@@ -47,14 +44,6 @@ public class ProductSpecfication {
 
     public void setLabel(String label) {
         this.label = label;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Integer getProductId() {

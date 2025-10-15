@@ -2,7 +2,7 @@ package backend.main.Request;
 
 import java.util.*;
 
-import backend.main.Model.ProductSpecfication;
+import backend.main.DTO.ProductSpecificationDTO;
 
 public class ProductRequest {
     private Integer id;
@@ -13,7 +13,7 @@ public class ProductRequest {
     private String description;
     private String brand;
     private String model;
-    private List<ProductSpecfication> specifications;
+    private List<ProductSpecificationDTO> specifications;
     private Boolean isActive;
     private Boolean isFeatured;
     private Boolean isHot;
@@ -69,11 +69,11 @@ public class ProductRequest {
         this.model = model;
     }
 
-    public List<ProductSpecfication> getSpecifications() {
+    public List<ProductSpecificationDTO> getSpecifications() {
         return specifications;
     }
 
-    public void setSpecifications(List<ProductSpecfication> specifications) {
+    public void setSpecifications(List<ProductSpecificationDTO> specifications) {
         this.specifications = specifications;
     }
 

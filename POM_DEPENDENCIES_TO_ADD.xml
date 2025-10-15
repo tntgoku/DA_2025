@@ -1,0 +1,64 @@
+<!-- 
+    Thêm các dependencies sau vào file pom.xml của bạn
+    Vị trí: trong thẻ <dependencies>...</dependencies>
+-->
+
+<!-- Hypersistence Utils for JSONB support with Hibernate -->
+<dependency>
+    <groupId>io.hypersistence</groupId>
+    <artifactId>hypersistence-utils-hibernate-63</artifactId>
+    <version>3.6.0</version>
+</dependency>
+
+<!-- Jackson for JSON processing (usually already included with Spring Boot) -->
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>com.fasterxml.jackson.datatype</groupId>
+    <artifactId>jackson-datatype-jsr310</artifactId>
+</dependency>
+
+<!-- PostgreSQL Driver (nếu chưa có) -->
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <scope>runtime</scope>
+</dependency>
+
+<!-- Flyway for database migrations (Optional but recommended) -->
+<dependency>
+    <groupId>org.flywaydb</groupId>
+    <artifactId>flyway-core</artifactId>
+</dependency>
+
+<!-- Lombok (nếu chưa có) -->
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <optional>true</optional>
+</dependency>
+
+<!-- 
+    HOẶC nếu đang dùng SQL Server thay vì PostgreSQL,
+    thay PostgreSQL driver bằng:
+-->
+<!-- 
+<dependency>
+    <groupId>com.microsoft.sqlserver</groupId>
+    <artifactId>mssql-jdbc</artifactId>
+    <scope>runtime</scope>
+</dependency>
+-->
+
+<!-- 
+    Lưu ý: 
+    - Sau khi thêm dependencies, chạy: mvn clean install
+    - Nếu dùng SQL Server, cần thay đổi:
+      + Type JSONB thành NVARCHAR(MAX) trong Entity
+      + Dialect thành SQLServerDialect
+      + Loại bỏ @Type(JsonType.class) annotation
+-->
+

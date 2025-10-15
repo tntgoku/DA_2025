@@ -13,10 +13,10 @@ import backend.main.Model.Product.*;
 @Entity
 @Table(name = "categories")
 @Data
-public class Categories {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Categories extends BaseEntity {
+    // @Id
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // private Integer id;
 
     @Column(nullable = false, length = 255)
     private String name;
@@ -51,13 +51,13 @@ public class Categories {
     private List<Products> products;
 
     // Getters & Setters
-    public Integer getId() {
-        return id;
-    }
+    // public Integer getId() {
+    // return id;
+    // }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    // public void setId(Integer id) {
+    // this.id = id;
+    // }
 
     public String getName() {
         return name;

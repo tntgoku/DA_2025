@@ -4,22 +4,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import backend.main.Config.Engine;
 import backend.main.Config.LoggerE;
+import backend.main.DTO.CategoryDTO;
+import backend.main.DTO.ProductSpecificationDTO;
+import backend.main.DTO.Product.ProductDTO;
 import backend.main.Model.Categories;
-import backend.main.Model.ProductSpecfication;
 import backend.main.Model.ResponseObject;
 import backend.main.Model.Specification;
 import backend.main.Model.Unit;
 import backend.main.Model.Product.ProductVariant;
 import backend.main.Model.Product.Products;
-import backend.main.Repository.CategoryRepository;
+import backend.main.Repository.SpecificationRepository;
 import backend.main.Request.ProductRequest;
 import backend.main.Request.VariantRequest;
+import backend.main.Service.CategoryService;
 import backend.main.Request.Json.ProductJson;
-import backend.main.Service.ProductService;
+import backend.main.Service.SpecificationService;
 import backend.main.Service.VariantService;
+import backend.main.Service.ServiceImp.Product.ProductService;
 
 import java.util.logging.Logger;
 
@@ -37,40 +43,52 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/product")
 public class ProductController {
+
+    private final CategoryService categoryService;
     @Autowired
     private ProductService service;
     @Autowired
     private VariantService variantService;
     @Autowired
-    private ProductSpecificationController specificationController;
+    private SpecificationRepository specicifcationRepository;
     @Autowired
     private UnitController unitController;
+    private final SpecificationService specificationService;
     private final Logger logger = LoggerE.logger;
+
+    // @Autowired
+    // private CategoryRepository categoryRepository;
+    ProductController(CategoryService categoryService, SpecificationService specificationService) {
+        this.categoryService = categoryService;
+        this.specificationService = specificationService;
+    }
 
     @GetMapping
     public ResponseEntity<ResponseObject> getproductall() {
         return service.findAll();
     }
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    @GetMapping("/category/{id}")
+    public ResponseEntity<ResponseObject> getproductallByCateID(@PathVariable String id) {
+
+        return service.findAllByCateId(Engine.convertString(id));
+    }
 
     @PostMapping
     public ResponseEntity<ResponseObject> SaveProduct(@RequestBody ProductJson data) {
         ProductRequest pr = ConvertJsonProduct(data);
-        Products a = convertRequest(ConvertJsonProduct(data));
-        Optional<Categories> test = categoryRepository.findById(pr.getCategoryId().intValue());
-
+        Products a = convertRequest(pr);
+        a.setId(null);
         // ResponseEntity<ResponseObject> response =
         // categoryService.getById(data.getCategoryId());
         logger.info("------------CREATE PRODUCT------------");
         logger.info("Post Client: " + pr.toString());
         if (pr.getVariants() == null || pr.getVariants().isEmpty())
             logger.info("Nulll");
-        // return service.createNew(a);
-        return new ResponseEntity<>(
-                new ResponseObject(200, "data ProductRequest Object", 0, a.getCategory()),
-                HttpStatus.OK);
+        return service.createNew(a);
+        // return new ResponseEntity<>(
+        // new ResponseObject(200, "data ProductRequest Object", 0, a.getCategory()),
+        // HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -82,17 +100,21 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<ResponseObject> updateProducts(@PathVariable Integer id,
             @RequestBody ProductJson data) {
-        ProductRequest pr = ConvertJsonProduct(data);
         Products a = convertRequest(ConvertJsonProduct(data));
         a.setId(id);
-        // a.setId(Engine.convertString(id));
-        return service.update(a);
-        // logger.info("product" + a.getId() + ", " + a.getName() + "," +
-        // a.getDescription() + ", " + a.getSlug()
-        // + "," + a.getSpecifications());
-        // return new ResponseEntity<>(new ResponseObject(200, "Product Request Object",
-        // 0, pr),
-        // HttpStatus.OK);
+        logger.info("Dulieu ve Speciificatoin," + a.getSpecifications());
+        List<ProductSpecificationDTO> listnew = new Gson().fromJson(a.getSpecifications(),
+                new TypeToken<List<ProductSpecificationDTO>>() {
+                }.getType());
+        logger.info("Dulieu ve Speciificatoin," + listnew.size());
+        Map<String, Object> map = new HashMap<>();
+        if (a.getSpecifications() != null && !a.getSpecifications().isBlank()) {
+            map = (Map<String, Object>) service.update(a).getBody().getData();
+            map.put("Listnew", listnew);
+            ProductDTO result = (ProductDTO) map.get("Object");
+            result.setSpecifications(listnew);
+        }
+        return new ResponseEntity<>(new ResponseObject(200, "Oke", 1, map), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -139,6 +161,7 @@ public class ProductController {
         tes.setIsActive(data.getIsActive());
         tes.setIsFeatured(data.getIsFeatured());
         tes.setIsHot(data.getIsHot());
+        tes.setProductType(data.getProductType());
         String makeslug = data.getSlug();
 
         if (makeslug == null || makeslug.trim().isEmpty()) { // Kiểm tra null HOẶC rỗng (sau khi loại bỏ khoảng trắng)
@@ -169,14 +192,15 @@ public class ProductController {
                     test.setColor(items.getColor());
                     test.setVariantId(storage.getVariantId());
                     test.setPrice(storage.getPrice());
+                    test.setSale_price(storage.getSale_price());
                     test.setList_price(storage.getList_price());
                     test.setStorage(storage.getStorage());
+                    test.setStock(storage.getStock());
                     logger.info("Color: " + items.getColor() + "\\sStorage: " + storage.getStorage() + "\\sPrice: "
                             + storage.getPrice() + "\\sList_Price: " + storage.getList_price() + "\\sStock:"
                             + (storage.getStock() == null ? 0 : storage.getStock()));
                     variantRequests.add(test);
                     logger.info("Da them Storage vao voi Id la " + storage.getVariantId());
-
                 });
             } else {
                 VariantRequest test = new VariantRequest();
@@ -191,18 +215,53 @@ public class ProductController {
         logger.info(
                 "Length List Specfications this: "
                         + (data.getSpecifications() != null ? data.getSpecifications().size() : -1));
+        logger.info("Size List Specfications this:" + tes.getSpecifications().size());
         return tes;
     }
 
     private Products convertRequest(ProductRequest request) {
         Products a = new Products();
         a.setSlug(request.getSlug());
-        a.setCategory(categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found")));
+
+        ResponseEntity<ResponseObject> cateResp = categoryService.getById(request.getCategoryId());
+
+        if (cateResp != null && cateResp.getBody() != null && cateResp.getBody().getData() instanceof Categories) {
+            Categories cate = (Categories) cateResp.getBody().getData();
+
+            if (cate != null) {
+                // Nếu category có parent (tức là là danh mục con)
+                if (cate.getParent() != null) {
+                    // Lấy danh mục cha
+                    ResponseEntity<ResponseObject> parentResp = categoryService.getById(cate.getParent());
+                    if (parentResp != null && parentResp.getBody() != null
+                            && parentResp.getBody().getData() instanceof Categories) {
+                        Categories parentCate = (Categories) parentResp.getBody().getData();
+                        a.setCategory(parentCate); // gán ID danh mục cha
+                        logger.info("Category con => gán về cha có ID = " + parentCate.getId());
+                    } else {
+                        logger.warning("Không tìm thấy danh mục cha cho categoryId=" + cate.getId());
+                        a.setCategory(cate); // fallback
+                    }
+                } else {
+                    // Là danh mục cha
+                    a.setCategory(cate);
+                    logger.info("Danh mục cha => gán chính nó (ID=" + cate.getId() + ")");
+                }
+            }
+        } else {
+            logger.warning("Không tìm thấy category với id=" + request.getCategoryId());
+        }
 
         a.setName(request.getName());
         a.setBrand(request.getBrand());
         a.setDescription(request.getDescription());
+        Gson gson = new Gson();
+        if (request.getSpecifications() == null && request.getSpecifications().isEmpty()) {
+            a.setSpecifications(null);
+        } else {
+            String jsonspec = gson.toJson(request.getSpecifications());
+            a.setSpecifications(jsonspec);
+        }
         a.setIsActive(request.getIsActive());
         a.setIsFeatured(request.getIsFeatured());
         a.setProductType(request.getProductType());
@@ -222,62 +281,18 @@ public class ProductController {
         return a;
     }
 
-    private List<ProductSpecfication> ConvertListSpecification(
-            List<ProductSpecfication> requestList, ProductJson p) {
-
-        List<ProductSpecfication> listNew = new ArrayList<>();
-
+    private List<ProductSpecificationDTO> ConvertListSpecification(
+            List<ProductSpecificationDTO> requestList, ProductJson p) {
+        List<ProductSpecificationDTO> listNew = new ArrayList<>();
         if (requestList == null || requestList.isEmpty())
             return listNew;
-
-        // Lấy danh sách specification trong DB
-        @SuppressWarnings("unchecked")
-        List<Specification> dbSpecs = (List<Specification>) specificationController
-                .getproductall()
-                .getBody()
-                .getData();
-
-        // Duyệt qua từng item
-        for (ProductSpecfication item : requestList) {
-            logger.info("Request Spec: " + item.toString());
-            // Tìm spec tương ứng trong DB theo tên (value = name)
-            Specification matchedSpec = dbSpecs.stream()
-                    .filter(s -> s.getName() != null && s.getName().equalsIgnoreCase(item.getValue()))
-                    .findFirst()
-                    .orElse(null);
-            // Tạo object mới
-            ProductSpecfication newSpec = new ProductSpecfication();
-            newSpec.setId(null); // luôn null khi thêm mới
-            newSpec.setProductId(p.getId()); // gán id sản phẩm
-            newSpec.setValue(item.getValue());
-            newSpec.setLabel(item.getLabel());
-
-            // Nếu tìm thấy spec tương ứng trong DB thì gán specId + unitName
-            if (matchedSpec != null) {
-                newSpec.setSpecId(matchedSpec.getId());
-                newSpec.setUnitName(getUnitNameById(matchedSpec.getUnitId())); // lấy tên đơn vị
-            } else {
-                newSpec.setSpecId(null);
-                newSpec.setUnitName(item.getUnitName());
-            }
-            logger.info(("NewSpecfication :" + newSpec.toString()));
-            listNew.add(newSpec);
+        // Lấy danh sách category
+        ResponseEntity<ResponseObject> cateResp = categoryService.findAll();
+        // Duyệt từng specification
+        for (ProductSpecificationDTO item : requestList) {
+            listNew.add(specificationService.createorupdatespe(item));
         }
 
         return listNew;
     }
-
-    private String getUnitNameById(Integer unitId) {
-        if (unitId == null)
-            return null;
-        @SuppressWarnings("unchecked")
-        List<Unit> units = (List<Unit>) unitController.getAll().getBody().getData();
-        Unit unit = units.stream()
-                .filter(u -> u.getKey().equals(unitId))
-                .findFirst()
-                .orElse(null);
-
-        return unit != null ? unit.getValue() : null;
-    }
-
 }

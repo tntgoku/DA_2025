@@ -35,7 +35,7 @@ public interface VariantReponsitory extends BaseRepository<ProductVariant, Integ
 
             FROM ProductVariant pv
             JOIN pv.product p
-            JOIN InventoryItem ii ON pv.id = ii.productVariant
+            JOIN pv.inventoryItem ii  /* 👈 Dùng pv.inventoryItems để JOIN qua mối quan hệ */
             """)
     List<InventoryProjection> getItemInventory();
 

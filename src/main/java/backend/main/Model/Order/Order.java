@@ -11,17 +11,18 @@ import java.util.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import backend.main.Model.BaseEntity;
 import backend.main.Model.Promotion.Voucher;
 
 @Entity
 @Table(name = "orders")
 @Getter
 @Setter
-public class Order {
+public class Order extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    // @Id
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // private Integer id;
 
     @Column(name = "order_code", nullable = false, unique = true, length = 50)
     private String orderCode;

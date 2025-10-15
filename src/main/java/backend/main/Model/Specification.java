@@ -2,7 +2,6 @@ package backend.main.Model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -10,41 +9,19 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Specification", schema = "dbo")
-public class Specification {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    @Column(name = "category_id")
-    private Integer categoryId;
+public class Specification extends BaseEntity {
     @Column(name = "name")
     private String name;
-    @Column(name = "unit_id")
+    @Column(name = "unit_id", nullable = true)
     private Integer unitId;
 
     public Specification() {
     }
 
-    public Specification(Integer id, Integer categoryId, String name, Integer unit) {
-        this.id = id;
-        this.categoryId = categoryId;
+    public Specification(Integer id, String name, Integer unit) {
+        this.setId(id);
         this.name = name;
         this.unitId = unit;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
     }
 
     public String getName() {
@@ -57,7 +34,7 @@ public class Specification {
 
     @Override
     public String toString() {
-        return "Specification [id=" + (id == null ? -1 : 0) + ", categoryId=" + (categoryId == null ? -1 : 0)
+        return "Specification [id=" + (getId() == null ? -1 : 0)
                 + ", name=" + name + ", unitId=" + (unitId == null ? -1 : unitId) + "]";
     }
 

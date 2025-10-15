@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import backend.main.Model.BaseEntity;
 import backend.main.Model.Categories;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -13,10 +14,10 @@ import java.util.*;
 @Entity
 @Table(name = "products", schema = "dbo")
 @Data
-public class Products {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Products extends BaseEntity {
+    // @Id
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
@@ -32,7 +33,7 @@ public class Products {
     @Column(nullable = false)
     private String slug;
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
     private String description;
 
     @Column(nullable = false, length = 100)
@@ -63,13 +64,13 @@ public class Products {
     @JsonManagedReference
     private List<ProductVariant> variants = new ArrayList<>();
 
-    public Integer getId() {
-        return id;
-    }
+    // public Integer getId() {
+    // return id;
+    // }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    // public void setId(Integer id) {
+    // this.id = id;
+    // }
 
     public Categories getCategory() {
         return category;

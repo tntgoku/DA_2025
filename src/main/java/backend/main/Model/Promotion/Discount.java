@@ -6,14 +6,16 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import backend.main.Model.BaseEntity;
+
 @Entity
 @Table(name = "discounts")
 @Data
-public class Discount {
+public class Discount extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    // @Id
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // private Integer id;
 
     // @ManyToOne
     // @JoinColumn(name = "campaign_id")
@@ -46,13 +48,13 @@ public class Discount {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     // Getters và Setters
-    public Integer getId() {
-        return id;
-    }
+    // public Integer getId() {
+    // return id;
+    // }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    // public void setId(Integer id) {
+    // this.id = id;
+    // }
 
     public Integer getCampaign() {
         return campaign;

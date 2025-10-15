@@ -17,6 +17,10 @@ public interface ProductRepository extends JpaRepository<Products, Integer> {
     @EntityGraph(attributePaths = { "variants" })
     Optional<Products> findById(Integer id);
 
+    @EntityGraph(attributePaths = "variants")
+    @Query("SELECT p FROM Products p WHERE p.category.id = :id OR p.category.parent = :id")
+    List<Products> findAllByCateIdOrChild(@Param("id") Integer id);
+
     @Query("SELECT pi.id as id, p.name as name, p.productType as productType, pi.isPrimary as isPrimary, pi.productId as productId,pi.variantId as variantId, pi.imageUrl as imageUrl,pi.altImg as altImg, pi.displayOrder as displayOrder  FROM Products p LEFT JOIN  ProductImage pi on p.id = pi.productId  ")
     List<ImageProjection> listNativeImg();
 

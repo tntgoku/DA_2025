@@ -12,7 +12,6 @@ public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
     private String phone;
     private String email;
@@ -23,7 +22,6 @@ public class Supplier {
     private String paymentTerms;
     private Boolean isActive;
     private LocalDateTime createdAt;
-
     @OneToMany(mappedBy = "supplier")
     private List<ProductSource> productSources;
 }

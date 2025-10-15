@@ -24,6 +24,11 @@ public class PromotionService implements BaseService<Discount, Integer> {
                 null, 0, discountRepository.getDiscountInventoryNative()), HttpStatus.OK);
     }
 
+    public ResponseEntity<ResponseObject> findAllPromotion() {
+        return new ResponseEntity<>(new ResponseObject(200,
+                null, 0, discountRepository.findAll()), HttpStatus.OK);
+    }
+
     @Override
     public ResponseEntity<ResponseObject> createNew(Discount entity) {
         // TODO Auto-generated method stub

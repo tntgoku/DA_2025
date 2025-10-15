@@ -3,7 +3,6 @@ package backend.main.Controller;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import backend.main.Config.LoggerE;
-import backend.main.DTO.AuthzProjection;
 import backend.main.Model.ResponseObject;
 import backend.main.Request.LoginRequest;
 import backend.main.Request.RegisterRequest;
@@ -43,6 +41,7 @@ public class AuthenticationController {
     public ResponseEntity<ResponseObject> checkprofile(HttpServletRequest data) {
         String email = (String) data.getAttribute("email");
         logger.info("Email lấy từ token: " + email);
+        
         return authzService.checkProfile(email);
     }
 

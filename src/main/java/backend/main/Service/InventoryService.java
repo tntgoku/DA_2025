@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import backend.main.Config.LoggerE;
 import backend.main.Model.InventoryItem;
@@ -53,19 +54,22 @@ public class InventoryService implements BaseService<InventoryItem, Integer> {
                 HttpStatus.OK);
     }
 
+    public Optional<InventoryItem> findItembyVariant(Integer id) {
+        return reponsitory.findByProductVariant_Id(id);
+    }
+
     @Override
     public ResponseEntity<ResponseObject> createNew(InventoryItem entity) {
         entity.setCreatedAt(LocalDateTime.now());
         entity.setUpdatedAt(LocalDateTime.now());
         InventoryItem saved = reponsitory.save(entity);
         if (saved != null && saved.getId() != null) {
-
-            logger.info("Save Successfully : Id: " + saved.getId() + "Name: " + saved.getProductVariant());
+            logger.info("Save Successfully : Id: " + saved.getId() + "Name: " + saved.getProductVariant().getId());
             return new ResponseEntity<>(
                     new ResponseObject(201, "Tạo mới thành công", 0, saved),
                     HttpStatus.CREATED);
         } else {
-            logger.info("Lưu vào kho thất bại : " + "Name: " + saved.getProductVariant());
+            logger.info("Lưu vào kho thất bại : " + "Name: " + saved.getProductVariant().getId());
             return new ResponseEntity<>(
                     new ResponseObject(500, "Tạo mới thất bại", 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
@@ -84,6 +88,29 @@ public class InventoryService implements BaseService<InventoryItem, Integer> {
 
         try {
             reponsitory.deleteById(id);
+            logger.info("Delete Successfully ID: " + id);
+            return new ResponseEntity<>(
+                    new ResponseObject(200, "Xóa thành công", 0, null),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            logger.warning("Delete Exception: " + e.getMessage());
+            return new ResponseEntity<>(
+                    new ResponseObject(500, "Xóa thất bại: " + e.getMessage(), 1, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    public ResponseEntity<ResponseObject> deleteByProductVariantId(Integer id) {
+        Optional<InventoryItem> optional = reponsitory.findById(id);
+        if (!optional.isPresent()) {
+            return new ResponseEntity<>(
+                    new ResponseObject(404, "Không tìm thấy Item với ID: " + id, 1, null),
+                    HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            reponsitory.deleteByProductVariantId(id);
             logger.info("Delete Successfully ID: " + id);
             return new ResponseEntity<>(
                     new ResponseObject(200, "Xóa thành công", 0, null),
@@ -122,7 +149,7 @@ public class InventoryService implements BaseService<InventoryItem, Integer> {
     public InventoryItem convertRequestInventory(InventoryRequest request) {
         InventoryItem item = new InventoryItem();
         item.setId(request.getId());
-        item.setProductVariant(request.getProductVariant());
+        // item.setProductVariant(request.getProductVariant().parseInt(null));
         item.setCondition(request.getCondition());
         item.setSource(request.getSource());
         item.setImei(request.getImei());

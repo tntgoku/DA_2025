@@ -2,7 +2,7 @@ package backend.main.Request.Json;
 
 import java.util.List;
 
-import backend.main.Model.ProductSpecfication;
+import backend.main.DTO.ProductSpecificationDTO;
 
 public class ProductJson {
     private Integer id;
@@ -17,7 +17,7 @@ public class ProductJson {
     private Boolean isFeatured;
     private Boolean isHot;
     private String featuredImageIndex;
-    private List<ProductSpecfication> specifications;
+    private List<ProductSpecificationDTO> specifications;
     private List<ImageJson> images;
     private List<VariantColorJson> variants;
 
@@ -143,11 +143,11 @@ public class ProductJson {
                 + ", variants=" + variants + "]";
     }
 
-    public List<ProductSpecfication> getSpecifications() {
+    public List<ProductSpecificationDTO> getSpecifications() {
         return specifications;
     }
 
-    public void setSpecifications(List<ProductSpecfication> specifications) {
+    public void setSpecifications(List<ProductSpecificationDTO> specifications) {
         this.specifications = specifications;
     }
 

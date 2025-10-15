@@ -14,6 +14,9 @@ public interface UserRepository extends BaseRepository<User, Integer> {
         @EntityGraph(attributePaths = { "orders", "orders.orderItems" })
         List<User> findAll();
 
+        Optional<User> findByEmail(String email);
+        Optional<User> findByPhone(String phone);
+
         @Query("SELECT u.id as idUser, u.fullName as fullName, u.emailVerified as emailVerified, u.email as email, u.phone as phone, u.phoneVerified as phoneVerified, ac.passwordHash as passwordHash, r.roleName as roleName "
                         + "FROM User u JOIN Account ac ON u.account = ac.id "
                         + "JOIN Role r ON ac.role = r.id "

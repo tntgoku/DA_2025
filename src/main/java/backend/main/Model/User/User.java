@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import backend.main.Model.BaseEntity;
 import backend.main.Model.Order.*;
 import java.util.*;
 
@@ -22,11 +23,11 @@ import java.util.*;
 @Table(name = "users")
 @Getter
 @Setter
-public class User {
+public class User extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    // @Id
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // private Integer id;
 
     @Column(name = "account_id")
     private Integer account;

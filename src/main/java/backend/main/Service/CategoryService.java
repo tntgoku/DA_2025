@@ -30,6 +30,7 @@ public class CategoryService implements BaseService<Categories, Integer> {
             dto.setId(item.getId());
             dto.setName(item.getName());
             dto.setDisplayOrder(item.getDisplayOrder());
+            dto.setSlug(item.getSlug());
             if (item.getParent() == null) {
                 listroots.add(dto);
             }
@@ -42,6 +43,7 @@ public class CategoryService implements BaseService<Categories, Integer> {
                 dto.setName(item.getName());
                 dto.setDisplayOrder(item.getDisplayOrder());
                 dto.setParentId(item.getParent());
+                dto.setSlug(item.getSlug());
                 listroots.forEach(rootParent -> {
                     if (rootParent.getId() == dto.getParentId()) {
                         rootParent.getParents().add(dto);
@@ -82,12 +84,13 @@ public class CategoryService implements BaseService<Categories, Integer> {
         Categories saved = repository.save(entity);
         if (saved != null && saved.getId() != null) {
 
-            logger.info("Save Successfully : Id: " + saved.getId() + "Name: " + saved.getName());
+            logger.info("Save Successfully : Id: " + saved.getId() + "Name: " +
+                    saved.getName());
             return new ResponseEntity<>(
                     new ResponseObject(201, "Tạo mới thành công", 0, saved),
                     HttpStatus.CREATED);
         } else {
-            logger.info("Save Failed  : " + "Name: " + saved.getName());
+            logger.info("Save Failed : " + "Name: " + saved.getName());
             return new ResponseEntity<>(
                     new ResponseObject(500, "Tạo mới thất bại", 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
@@ -128,7 +131,8 @@ public class CategoryService implements BaseService<Categories, Integer> {
         Optional<Categories> optional = repository.findById(entity.getId());
         if (!optional.isPresent()) {
             return new ResponseEntity<>(
-                    new ResponseObject(404, "Không tìm thấy danh mục với ID: " + entity.getId(), 1, null),
+                    new ResponseObject(404, "Không tìm thấy danh mục với ID: " + entity.getId(),
+                            1, null),
                     HttpStatus.NOT_FOUND);
         }
         try {
@@ -166,4 +170,15 @@ public class CategoryService implements BaseService<Categories, Integer> {
         }
     }
 
+    public ResponseEntity<ResponseObject> getBySlug(String slug) {
+        Optional<Categories> optional = repository.findBySlug(slug);
+        if (!optional.isPresent()) {
+            return new ResponseEntity<>(
+                    new ResponseObject(404, "Không tìm thấy danh mục với slug: " + slug, 0, null),
+                    HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(
+                new ResponseObject(200, "Thành công", 0, optional.get()),
+                HttpStatus.OK);
+    }
 }

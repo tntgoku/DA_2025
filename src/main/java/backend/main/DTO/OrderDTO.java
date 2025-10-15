@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import backend.main.Model.Promotion.Voucher;
-import backend.main.DTO.*;
 import java.util.Objects;
 
 public class OrderDTO {

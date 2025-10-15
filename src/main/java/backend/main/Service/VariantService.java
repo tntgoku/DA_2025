@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import backend.main.Model.Categories;
+import backend.main.Model.InventoryItem;
 import backend.main.Model.ResponseObject;
 import backend.main.Model.Product.ProductVariant;
 import backend.main.Model.Product.Products;
@@ -13,6 +13,7 @@ import backend.main.Repository.DiscountRepository;
 import backend.main.Repository.InventoryReponsitory;
 import backend.main.Repository.VariantReponsitory;
 import backend.main.Request.VariantRequest;
+import jakarta.transaction.Transactional;
 import backend.main.Config.Engine;
 import backend.main.Config.LoggerE;
 import backend.main.DTO.*;
@@ -51,14 +52,19 @@ public class VariantService implements BaseService<ProductVariant, Integer> {
     public ResponseEntity<ResponseObject> findVariantById(Integer id) {
         Optional<ProductVariant> variants = reponsitory.findById(id);
         if (variants.isPresent()) {
+            // return new ResponseEntity<>(
+            // new ResponseObject(200, "Lấy Data thành công", 0,
+            // convertObject(variants.get())),
+            // HttpStatus.OK);
+            logger.info(("Lay thanh  cong Object nay"));
             return new ResponseEntity<>(
-                    new ResponseObject(200, "Lấy Data thành công", 0, convertObject(variants.get())),
+                    new ResponseObject(200, "Lấy Data thành công", 0, variants.get()),
                     HttpStatus.OK);
         }
+        logger.info(("Lay khong thanh cong Object nay"));
         return new ResponseEntity<>(
                 new ResponseObject(404, "Không tìm thấy Product với ID: " + id, 1, null),
                 HttpStatus.NOT_FOUND);
-
     }
 
     public ResponseEntity<ResponseObject> findVariantByProductId(Integer id) {
@@ -111,9 +117,13 @@ public class VariantService implements BaseService<ProductVariant, Integer> {
 
     }
 
+    @Transactional
     @Override
     public ResponseEntity<ResponseObject> delete(Integer id) {
-        return null;
+        reponsitory.deleteById(id);
+        return new ResponseEntity<>(
+                new ResponseObject(200, "Lấy Data thành công", 0, 1),
+                HttpStatus.OK);
     }
 
     @Override
@@ -143,30 +153,29 @@ public class VariantService implements BaseService<ProductVariant, Integer> {
         }
     }
 
+    // Trong VariantService.java
+
     public ProductVariant convertVariantRequest(VariantRequest request, Products p) {
-        ProductVariant a = new ProductVariant();
+        ProductVariant a;
+        // ----------------------------------------------------
+        // PHẦN 1 & 2: XÁC ĐỊNH & CẬP NHẬT ProductVariant (Giữ nguyên)
+        // ----------------------------------------------------
         logger.info("IdvariantId: " + request.getVariantId());
-        a.setId(request.getVariantId());
-        String namevariants = "";
-        // Lấy đối tượng Category
-        Categories category = p.getCategory();
 
-        // Lấy Parent ID, xử lý an toàn vì nó là Integer (Wrapper) có thể NULL
-        Integer parentId = category.getParent(); // Lưu ý: parent là kiểu Integer
-
-        boolean isAccessory = category.getId() == 3;
-        boolean isService = category.getId() == 5;
-        boolean isTopLevel = parentId == null; // Kiểm tra Parent ID là null
-
-        if ((isAccessory && isTopLevel) || (isService && isTopLevel)) {
-            namevariants = p.getName();
+        if (request.getVariantId() != null && request.getVariantId() > 0) {
+            // UPDATE: Tìm ProductVariant hiện tại
+            a = reponsitory.findById(request.getVariantId())
+                    .orElseThrow(() -> new RuntimeException("ProductVariant not found"));
         } else {
-            namevariants = (p.getName() == null ? "" : p.getName()) + " " +
-                    (request.getStorage() == null ? "" : request.getStorage()) + " " +
-                    (request.getRegionCode() == null ? "" : request.getRegionCode());
-
+            // CREATE: Tạo mới ProductVariant
+            a = new ProductVariant();
         }
+        String namevariants = "";
+        namevariants = (p.getName() == null ? "" : p.getName()) + " " +
+                (request.getStorage() == null ? "" : request.getStorage()) + " " +
+                (request.getRegionCode() == null ? "" : request.getRegionCode());
         a.setNameVariants(namevariants);
+
         if (request.getSku() == null || request.getSku().isEmpty()) {
             a.setSku(Engine.makeSKU(Engine.generateShortName(p.getName())));
         }
@@ -175,6 +184,25 @@ public class VariantService implements BaseService<ProductVariant, Integer> {
         a.setIsActive(request.getIsActive());
         a.setProduct(p);
         a.setColor(request.getColor());
+        // Attach inventory data from request regardless of existing/new variant.
+        if (request.getStock() != null || request.getPrice() != null || request.getList_price() != null
+                || request.getSale_price() != null || 
+                request.getStatus() != null || request.getWarrantly() != null) {
+            InventoryItem inventoryItem;
+            if (a.getId() != null) {
+                inventoryItem = inventoryReponsitory.findByProductVariant_Id(a.getId()).orElse(new InventoryItem());
+            } else {
+                inventoryItem = new InventoryItem();
+            }
+            inventoryItem.setProductVariant(a);
+            inventoryItem.setStock(request.getStock());
+            inventoryItem.setCostPrice(request.getPrice());
+            inventoryItem.setSalePrice(request.getSale_price());
+            inventoryItem.setListPrice(request.getList_price());
+            inventoryItem.setStatus(request.getStatus());
+            inventoryItem.setWarrantyMonths(request.getWarrantly());
+            a.setInventoryItem(inventoryItem);
+        }
         return a;
     }
 
@@ -206,14 +234,15 @@ public class VariantService implements BaseService<ProductVariant, Integer> {
                 vd.setDiscount(BigDecimal.valueOf(item.getValue()));
             }
         });
-        inventoryReponsitory.findByProductVariant(v.getId()).forEach(itemv -> {
-            vd.setStock(itemv.getStock());
-            vd.setPrice(itemv.getCostPrice());
-            vd.setList_price(itemv.getListPrice());
-            vd.setSale_price(itemv.getSalePrice());
-            vd.setWarrantly(itemv.getWarrantyMonths());
-            vd.setStatus(itemv.getStatus());
-        });
+        inventoryReponsitory.findByProductVariant_Id(v.getId())
+                .ifPresent(itemv -> { 
+                    vd.setStock(itemv.getStock());
+                    vd.setPrice(itemv.getCostPrice());
+                    vd.setList_price(itemv.getListPrice());
+                    vd.setSale_price(itemv.getSalePrice());
+                    vd.setWarrantly(itemv.getWarrantyMonths());
+                    vd.setStatus(itemv.getStatus());
+                });
 
         return vd;
     }

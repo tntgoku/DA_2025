@@ -2,16 +2,21 @@ package backend.main.Model.Product;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import backend.main.Model.BaseEntity;
+import backend.main.Model.InventoryItem;
+
 @Entity
 @Table(name = "product_variants")
-public class ProductVariant {
+public class ProductVariant extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    // @Id
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
@@ -46,15 +51,27 @@ public class ProductVariant {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
+    @OneToOne(mappedBy = "productVariant", cascade = CascadeType.ALL, // Hoặc CascadeType.REMOVE
+            orphanRemoval = true // Rất tốt để giữ cho DB sạch
+    )
+    private InventoryItem inventoryItem;
+
+    public InventoryItem getInventoryItem() {
+        return inventoryItem;
+    }
+
+    public void setInventoryItem(InventoryItem inventoryItem) {
+        this.inventoryItem = inventoryItem;
+    }
 
     // Getters và Setters
-    public Integer getId() {
-        return id;
-    }
+    // public Integer getId() {
+    // return id;
+    // }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    // public void setId(Integer id) {
+    // this.id = id;
+    // }
 
     public Products getProduct() {
         return product;

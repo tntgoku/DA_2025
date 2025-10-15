@@ -4,12 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import backend.main.Model.Promotion.DiscountCampaign;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import java.util.Objects;
 
 public class VoucherDTO {
