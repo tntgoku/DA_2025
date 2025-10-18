@@ -27,12 +27,6 @@ public class OrderItem {
     @JoinColumn(name = "order_id", nullable = false)
     @JsonBackReference
     private Order order;
-
-    // Liên kết tới InventoryItem (có thể null)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "inventory_item_id")
-    @JsonIgnore
-    private InventoryItem inventoryItem;
     // Liên kết tới ProductVariant (có thể null)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "variant_id")
@@ -44,7 +38,7 @@ public class OrderItem {
     private String variantAttributes;
     @Column(name = "sku", nullable = false, length = 100)
     private String sku;
-    @Column(name = "condition_type", nullable = false, length = 50)
+    @Column(name = "condition_type", nullable = true, length = 50)
     private String conditionType;
     @Column(name = "imei", length = 50)
     private String imei;

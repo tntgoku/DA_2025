@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.logging.Logger;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ import backend.main.DTO.CategoryDTO;
 
 @Service
 public class CategoryService implements BaseService<Categories, Integer> {
-    private final Logger logger = LoggerE.logger;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CategoryService.class);
     @Autowired
     private CategoryRepository repository;
 
@@ -84,13 +85,12 @@ public class CategoryService implements BaseService<Categories, Integer> {
         Categories saved = repository.save(entity);
         if (saved != null && saved.getId() != null) {
 
-            logger.info("Save Successfully : Id: " + saved.getId() + "Name: " +
-                    saved.getName());
+            logger.info("Save Successfully : Id: {}, Name: {}" , saved.getId(), saved.getName());
             return new ResponseEntity<>(
                     new ResponseObject(201, "Tạo mới thành công", 0, saved),
                     HttpStatus.CREATED);
         } else {
-            logger.info("Save Failed : " + "Name: " + saved.getName());
+            logger.info("Save Failed : Name: {}" , saved.getName());
             return new ResponseEntity<>(
                     new ResponseObject(500, "Tạo mới thất bại", 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
@@ -109,12 +109,12 @@ public class CategoryService implements BaseService<Categories, Integer> {
 
         try {
             repository.deleteById(id);
-            logger.info("Delete Successfully ID: " + id);
+            logger.info("Delete Successfully ID: {}" , id);
             return new ResponseEntity<>(
                     new ResponseObject(200, "Xóa thành công", 0, null),
                     HttpStatus.OK);
         } catch (Exception e) {
-            logger.warning("Delete Exception: " + e.getMessage());
+            logger.warn("Delete Exception: {}" , e.getMessage());
             return new ResponseEntity<>(
                     new ResponseObject(500, "Xóa thất bại: " + e.getMessage(), 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
@@ -137,12 +137,12 @@ public class CategoryService implements BaseService<Categories, Integer> {
         }
         try {
             Categories updated = repository.save(entity);
-            logger.info("Update Successfully: " + updated.toString());
+            logger.info("Update Successfully: {}" , updated.toString());
             return new ResponseEntity<>(
                     new ResponseObject(200, "Cập nhật thành công", 0, updated),
                     HttpStatus.OK);
         } catch (Exception e) {
-            logger.warning("Update Exception: " + e.getMessage());
+            logger.warn("Update Exception: {}" , e.getMessage());
             return new ResponseEntity<>(
                     new ResponseObject(500, "Cập nhật thất bại: " + e.getMessage(), 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
@@ -154,16 +154,16 @@ public class CategoryService implements BaseService<Categories, Integer> {
             for (Integer id : ids) {
                 if (repository.existsById(id)) { // kiểm tra tồn tại trước khi xóa
                     repository.deleteById(id);
-                    logger.info("Delete Successfully ID: " + id);
+                    logger.info("Delete Successfully ID: {}" , id);
                 } else {
-                    logger.warning("ID not found: " + id);
+                    logger.warn("ID not found: {}" , id);
                 }
             }
             return new ResponseEntity<>(
                     new ResponseObject(200, "Xóa thành công", 0, null),
                     HttpStatus.OK);
         } catch (Exception e) {
-            logger.warning("Delete Exception: " + e.getMessage());
+            logger.warn("Delete Exception: {}" , e.getMessage());
             return new ResponseEntity<>(
                     new ResponseObject(500, "Xóa thất bại: " + e.getMessage(), 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);

@@ -12,12 +12,6 @@ import backend.main.Model.Product.ProductVariant;
 @Table(name = "inventory_items")
 @Data
 public class InventoryItem extends BaseEntity {
-    // @Id
-    // @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // private Integer id;
-
-    // @Column(name = "product_variant_id")
-    // private Integer productVariant;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_variant_id")
     private ProductVariant productVariant;
@@ -27,9 +21,6 @@ public class InventoryItem extends BaseEntity {
     private Integer source;
     private String imei;
     private String serialNumber;
-    private BigDecimal costPrice;
-    private BigDecimal salePrice;
-    private BigDecimal listPrice;
     private String status;
     private String position;
     private Integer stock;

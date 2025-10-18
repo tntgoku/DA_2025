@@ -19,8 +19,8 @@ public class ProductImage {
     // @JoinColumn(name = "product_variant_id", foreignKey = @ForeignKey(name =
     // "FK_productimage_variant"))
     // private ProductVariant productVariant;
-    @Column(name = "product_variant_id")
-    private Integer variantId = 0;
+    @Column(name = "product_variant_id", nullable = true)
+    private Integer variantId = null;
     // @ManyToOne(fetch = FetchType.LAZY)
     // @JoinColumn(name = "product_id", foreignKey = @ForeignKey(name =
     // "FK_productimage_product"))

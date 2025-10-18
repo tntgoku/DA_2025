@@ -17,16 +17,31 @@ public class CheckoutRequest {
     private String note;
     private String paymentMethod;
     private String voucher;
+    private BigDecimal shippingFee;
+    private BigDecimal taxAmount;
+    private BigDecimal discountAmount;
+    private BigDecimal voucherDiscount;
+    private BigDecimal subtotalAmount;
+    private BigDecimal totalAmount;
     private BigDecimal totalPrice;
 
     private List<ItemProductJson> items;
-
-    public CheckoutRequest() {
+    public CheckoutRequest(){
+        
     }
-
+    @Override
+    public String toString() {
+        return "CheckoutRequest [id=" + id + ", email=" + email + ", fullname=" + fullname + ", phone=" + phone
+                + ", province=" + province + ", district=" + district + ", address=" + address + ", note=" + note
+                + ", paymentMethod=" + paymentMethod + ", voucher=" + voucher + ", shippingFee=" + shippingFee
+                + ", taxAmount=" + taxAmount + ", discountAmount=" + discountAmount + ", voucherDiscount="
+                + voucherDiscount + ", subtotalAmount=" + subtotalAmount + ", totalAmount=" + totalAmount
+                + ", totalPrice=" + totalPrice + ", items=" + items + "]";
+    }
     public CheckoutRequest(Integer id, String email, String fullname, String phone, String province, String district,
-            String address, String note, String paymentMethod, String voucher, BigDecimal totalPrice,
-            List<ItemProductJson> items) {
+            String address, String note, String paymentMethod, String voucher, BigDecimal shippingFee,
+            BigDecimal taxAmount, BigDecimal discountAmount, BigDecimal voucherDiscount, BigDecimal subtotalAmount,
+            BigDecimal totalAmount, BigDecimal totalPrice, List<ItemProductJson> items) {
         this.id = id;
         this.email = email;
         this.fullname = fullname;
@@ -37,12 +52,18 @@ public class CheckoutRequest {
         this.note = note;
         this.paymentMethod = paymentMethod;
         this.voucher = voucher;
+        this.shippingFee = shippingFee;
+        this.taxAmount = taxAmount;
+        this.discountAmount = discountAmount;
+        this.voucherDiscount = voucherDiscount;
+        this.subtotalAmount = subtotalAmount;
+        this.totalAmount = totalAmount;
         this.totalPrice = totalPrice;
         this.items = items;
     }
 
     public Integer getId() {
-        return this.id;
+        return id;
     }
 
     public void setId(Integer id) {
@@ -50,7 +71,7 @@ public class CheckoutRequest {
     }
 
     public String getEmail() {
-        return this.email;
+        return email;
     }
 
     public void setEmail(String email) {
@@ -58,7 +79,7 @@ public class CheckoutRequest {
     }
 
     public String getFullname() {
-        return this.fullname;
+        return fullname;
     }
 
     public void setFullname(String fullname) {
@@ -66,7 +87,7 @@ public class CheckoutRequest {
     }
 
     public String getPhone() {
-        return this.phone;
+        return phone;
     }
 
     public void setPhone(String phone) {
@@ -74,7 +95,7 @@ public class CheckoutRequest {
     }
 
     public String getProvince() {
-        return this.province;
+        return province;
     }
 
     public void setProvince(String province) {
@@ -82,7 +103,7 @@ public class CheckoutRequest {
     }
 
     public String getDistrict() {
-        return this.district;
+        return district;
     }
 
     public void setDistrict(String district) {
@@ -90,7 +111,7 @@ public class CheckoutRequest {
     }
 
     public String getAddress() {
-        return this.address;
+        return address;
     }
 
     public void setAddress(String address) {
@@ -98,7 +119,7 @@ public class CheckoutRequest {
     }
 
     public String getNote() {
-        return this.note;
+        return note;
     }
 
     public void setNote(String note) {
@@ -106,7 +127,7 @@ public class CheckoutRequest {
     }
 
     public String getPaymentMethod() {
-        return this.paymentMethod;
+        return paymentMethod;
     }
 
     public void setPaymentMethod(String paymentMethod) {
@@ -114,15 +135,63 @@ public class CheckoutRequest {
     }
 
     public String getVoucher() {
-        return this.voucher;
+        return voucher;
     }
 
     public void setVoucher(String voucher) {
         this.voucher = voucher;
     }
 
+    public BigDecimal getShippingFee() {
+        return shippingFee;
+    }
+
+    public void setShippingFee(BigDecimal shippingFee) {
+        this.shippingFee = shippingFee;
+    }
+
+    public BigDecimal getTaxAmount() {
+        return taxAmount;
+    }
+
+    public void setTaxAmount(BigDecimal taxAmount) {
+        this.taxAmount = taxAmount;
+    }
+
+    public BigDecimal getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(BigDecimal discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public BigDecimal getVoucherDiscount() {
+        return voucherDiscount;
+    }
+
+    public void setVoucherDiscount(BigDecimal voucherDiscount) {
+        this.voucherDiscount = voucherDiscount;
+    }
+
+    public BigDecimal getSubtotalAmount() {
+        return subtotalAmount;
+    }
+
+    public void setSubtotalAmount(BigDecimal subtotalAmount) {
+        this.subtotalAmount = subtotalAmount;
+    }
+
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
     public BigDecimal getTotalPrice() {
-        return this.totalPrice;
+        return totalPrice;
     }
 
     public void setTotalPrice(BigDecimal totalPrice) {
@@ -130,114 +199,11 @@ public class CheckoutRequest {
     }
 
     public List<ItemProductJson> getItems() {
-        return this.items;
+        return items;
     }
 
     public void setItems(List<ItemProductJson> items) {
         this.items = items;
-    }
-
-    public CheckoutRequest id(Integer id) {
-        setId(id);
-        return this;
-    }
-
-    public CheckoutRequest email(String email) {
-        setEmail(email);
-        return this;
-    }
-
-    public CheckoutRequest fullname(String fullname) {
-        setFullname(fullname);
-        return this;
-    }
-
-    public CheckoutRequest phone(String phone) {
-        setPhone(phone);
-        return this;
-    }
-
-    public CheckoutRequest province(String province) {
-        setProvince(province);
-        return this;
-    }
-
-    public CheckoutRequest district(String district) {
-        setDistrict(district);
-        return this;
-    }
-
-    public CheckoutRequest address(String address) {
-        setAddress(address);
-        return this;
-    }
-
-    public CheckoutRequest note(String note) {
-        setNote(note);
-        return this;
-    }
-
-    public CheckoutRequest paymentMethod(String paymentMethod) {
-        setPaymentMethod(paymentMethod);
-        return this;
-    }
-
-    public CheckoutRequest voucher(String voucher) {
-        setVoucher(voucher);
-        return this;
-    }
-
-    public CheckoutRequest totalPrice(BigDecimal totalPrice) {
-        setTotalPrice(totalPrice);
-        return this;
-    }
-
-    public CheckoutRequest items(List<ItemProductJson> items) {
-        setItems(items);
-        return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == this)
-            return true;
-        if (!(o instanceof CheckoutRequest)) {
-            return false;
-        }
-        CheckoutRequest checkoutRequest = (CheckoutRequest) o;
-        return Objects.equals(id, checkoutRequest.id) && Objects.equals(email, checkoutRequest.email)
-                && Objects.equals(fullname, checkoutRequest.fullname) && Objects.equals(phone, checkoutRequest.phone)
-                && Objects.equals(province, checkoutRequest.province)
-                && Objects.equals(district, checkoutRequest.district)
-                && Objects.equals(address, checkoutRequest.address) && Objects.equals(note, checkoutRequest.note)
-                && Objects.equals(paymentMethod, checkoutRequest.paymentMethod)
-                && Objects.equals(voucher, checkoutRequest.voucher)
-                && Objects.equals(totalPrice, checkoutRequest.totalPrice)
-                && Objects.equals(items, checkoutRequest.items);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, email, fullname, phone, province, district, address, note, paymentMethod, voucher,
-                totalPrice, items);
-    }
-
-    @Override
-    public String toString() {
-        return "{" +
-                " id='" + getId() + "'" +
-                ", email='" + getEmail() + "'" +
-                ", fullname='" + getFullname() + "'" +
-                ", phone='" + getPhone() + "'" +
-                ", province='" + getProvince() + "'" +
-                ", district='" + getDistrict() + "'" +
-                ", address='" + getAddress() + "'" +
-                ", note='" + getNote() + "'" +
-                ", paymentMethod='" + getPaymentMethod() + "'" +
-                ", voucher='" + getVoucher() + "'" +
-                ", totalPrice='" + getTotalPrice() + "'" +
-                ", items='" + getItems() + "'" +
-                "}";
     }
 
 }

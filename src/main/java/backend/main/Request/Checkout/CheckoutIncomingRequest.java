@@ -15,10 +15,16 @@ public class CheckoutIncomingRequest {
     private String address;
     private String note;
     private String paymentMethod;
-    private Integer voucher; // incoming may be number
+    private String shippingAddress;
+    public String getShippingAddress() { return shippingAddress; }
+    public void setShippingAddress(String shippingAddress) { this.shippingAddress = shippingAddress; }
+    private Integer voucher; 
     private BigDecimal totalPrice;
+    private BigDecimal shippingFee;
+    private BigDecimal taxAmount;
+    private BigDecimal discountAmount;
+    private BigDecimal voucherDiscount;
     private List<ItemProductJson> items;
-
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getEmail() { return email; }
@@ -43,6 +49,42 @@ public class CheckoutIncomingRequest {
     public void setTotalPrice(BigDecimal totalPrice) { this.totalPrice = totalPrice; }
     public List<ItemProductJson> getItems() { return items; }
     public void setItems(List<ItemProductJson> items) { this.items = items; }
+
+
+    
+    @Override
+    public String toString() {
+        return "CheckoutIncomingRequest [id=" + id + ", email=" + email + ", fullname=" + fullname + ", phone=" + phone
+                + ", province=" + province + ", district=" + district + ", address=" + address + ", note=" + note
+                + ", paymentMethod=" + paymentMethod + ", voucher=" + voucher + ", totalPrice=" + totalPrice
+                + ", shippingFee=" + shippingFee + ", taxAmount=" + taxAmount + ", discountAmount=" + discountAmount
+                + ", voucherDiscount=" + voucherDiscount + ", items=" + items + "]";
+    }
+    public BigDecimal getShippingFee() {
+        return shippingFee;
+    }
+    public void setShippingFee(BigDecimal shippingFee) {
+        this.shippingFee = shippingFee;
+    }
+    public BigDecimal getTaxAmount() {
+        return taxAmount;
+    }
+    public void setTaxAmount(BigDecimal taxAmount) {
+        this.taxAmount = taxAmount;
+    }
+    public BigDecimal getDiscountAmount() {
+        return discountAmount;
+    }
+    public void setDiscountAmount(BigDecimal discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+    public BigDecimal getVoucherDiscount() {
+        return voucherDiscount;
+    }
+    public void setVoucherDiscount(BigDecimal voucherDiscount) {
+        this.voucherDiscount = voucherDiscount;
+    }
+    
 }
 
 

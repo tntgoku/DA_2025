@@ -52,7 +52,7 @@ public class OrderDTO {
     private Integer createdBy;
     private LocalDateTime createdAt;
 
-    List<OrderItemDTO> listiem = new ArrayList<>();
+    List<OrderItemDTO> items = new ArrayList<>();
 
     public OrderDTO() {
     }
@@ -94,7 +94,7 @@ public class OrderDTO {
         this.trackingNumber = trackingNumber;
         this.notes = notes;
         this.createdBy = createdBy;
-        this.listiem = listiem;
+        this.items = items;
     }
 
     public Integer getId() {
@@ -282,11 +282,11 @@ public class OrderDTO {
     }
 
     public List<OrderItemDTO> getListiem() {
-        return this.listiem;
+        return this.items;
     }
 
-    public void setListiem(List<OrderItemDTO> listiem) {
-        this.listiem = listiem;
+    public void setListiem(List<OrderItemDTO> items) {
+        this.items = items;
     }
 
     public OrderDTO id(Integer id) {
@@ -434,7 +434,7 @@ public class OrderDTO {
                 && Objects.equals(shippingAddress, orderDTO.shippingAddress)
                 && Objects.equals(shippingMethod, orderDTO.shippingMethod)
                 && Objects.equals(trackingNumber, orderDTO.trackingNumber) && Objects.equals(notes, orderDTO.notes)
-                && Objects.equals(createdBy, orderDTO.createdBy) && Objects.equals(listiem, orderDTO.listiem);
+                && Objects.equals(createdBy, orderDTO.createdBy) && Objects.equals(items, orderDTO.items);
     }
 
     @Override
@@ -442,7 +442,7 @@ public class OrderDTO {
         return Objects.hash(id, orderCode, customer, customerName, customerPhone, customerEmail, customerAddress,
                 orderStatus, paymentStatus, paymentMethod, subtotalAmount, discountAmount, shippingFee, taxAmount,
                 totalAmount, amountPaid, voucherId, voucherDiscount, shippingAddress, shippingMethod, trackingNumber,
-                notes, createdBy, listiem);
+                notes, createdBy, items);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package backend.main.Controller;
 
-import java.util.logging.Logger;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,7 +25,7 @@ import java.util.*;
 public class CategoryController {
     @Autowired
     private CategoryService service;
-    private final Logger logger = LoggerE.logger;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CategoryController.class);
 
     @GetMapping
     public ResponseEntity<ResponseObject> getproductall() {
@@ -50,7 +50,7 @@ public class CategoryController {
         a.setIsActive(data.getActive());
         a.setParent(data.getParentId());
         a.setDisplayOrder(data.getDisplayOrder());
-        logger.info("Convenrt Object Client Post: " + a);
+        logger.info("Convenrt Object Client Post: {}" , a);
         return service.createNew(a);
         // return new ResponseEntity<>(new ResponseObject(200, "data", 0, data),
         // HttpStatus.OK);
@@ -61,7 +61,7 @@ public class CategoryController {
             @RequestBody CateRequest data) {
 
         Categories a = new Categories();
-        logger.info("Post Client: " + data);
+        logger.info("Post Client: {}" , data);
         a.setName(data.getName());
         a.setIsActive(data.getActive());
         a.setParent(data.getParentId());

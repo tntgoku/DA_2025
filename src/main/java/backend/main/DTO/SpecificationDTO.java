@@ -1,6 +1,5 @@
 package backend.main.DTO;
 
-import jakarta.persistence.Column;
 import java.util.Objects;
 
 public class SpecificationDTO {

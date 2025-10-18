@@ -2,6 +2,7 @@ package backend.main.Service.VNPAY;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.JsonObject;
@@ -22,7 +23,7 @@ import java.net.URL;
 
 @Service
 public class VNPayService {
-
+private static final org.slf4j.Logger logger = LoggerFactory.getLogger(VNPayService.class);
     public String createOrder(HttpServletRequest request, Long amount, String orderInfo, String urlReturn) {
         String vnp_Version = "2.1.0";
         String vnp_Command = "querydr";
@@ -30,7 +31,7 @@ public class VNPayService {
         String vnp_IpAddr = VNPayConfig.getIpAddress(request);
         String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
         String orderType = "order-type";
-
+        logger.info("Create order: amount: {}" , amount);
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);

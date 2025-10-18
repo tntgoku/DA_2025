@@ -13,12 +13,6 @@ import backend.main.Model.BaseEntity;
 @Data
 public class Discount extends BaseEntity {
 
-    // @Id
-    // @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // private Integer id;
-
-    // @ManyToOne
-    // @JoinColumn(name = "campaign_id")
     @Column(name = "campaign_id")
     private Integer campaign;
 
@@ -47,15 +41,8 @@ public class Discount extends BaseEntity {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    // Getters và Setters
-    // public Integer getId() {
-    // return id;
-    // }
-
-    // public void setId(Integer id) {
-    // this.id = id;
-    // }
-
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt = LocalDateTime.now();
     public Integer getCampaign() {
         return campaign;
     }

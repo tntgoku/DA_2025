@@ -1,5 +1,6 @@
 package backend.main.Service;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class VariantService implements BaseService<ProductVariant, Integer> {
     public VariantReponsitory reponsitory;
     @Autowired
     private DiscountRepository discountRepository;
-    private final Logger logger = LoggerE.logger;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(VariantService.class);
     @Autowired
     private InventoryReponsitory inventoryReponsitory;
 
@@ -48,32 +49,52 @@ public class VariantService implements BaseService<ProductVariant, Integer> {
                 new ResponseObject(200, "Lấy Data thành công", variants.size(), variants),
                 HttpStatus.OK);
     }
-
+    //Lay theo Entity
     public ResponseEntity<ResponseObject> findVariantById(Integer id) {
         Optional<ProductVariant> variants = reponsitory.findById(id);
         if (variants.isPresent()) {
-            // return new ResponseEntity<>(
-            // new ResponseObject(200, "Lấy Data thành công", 0,
-            // convertObject(variants.get())),
-            // HttpStatus.OK);
-            logger.info(("Lay thanh  cong Object nay"));
+            logger.info(("Lay thanh  cong Object nay ID:{}"), id    );
             return new ResponseEntity<>(
                     new ResponseObject(200, "Lấy Data thành công", 0, variants.get()),
                     HttpStatus.OK);
+        } else {
+            logger.info("Lay khong thanh cong Object nay ID:{}", id);
+            return new ResponseEntity<>(
+                    new ResponseObject(404, "Không tìm thấy Product với ID: " + id, 1, null),
+                    HttpStatus.NOT_FOUND);
         }
-        logger.info(("Lay khong thanh cong Object nay"));
-        return new ResponseEntity<>(
-                new ResponseObject(404, "Không tìm thấy Product với ID: " + id, 1, null),
-                HttpStatus.NOT_FOUND);
     }
 
     public ResponseEntity<ResponseObject> findVariantByProductId(Integer id) {
         List<ProductVariant> listVariants = reponsitory.findByProduct(id);
+        Map<String, String> colorKeyToIdMap = new HashMap<>();
+        List<ProductVariant> listVariantnotidColor = new ArrayList<>();
+        List<ProductVariant> listVariantidColor = new ArrayList<>();
+        listVariants.forEach(item -> {
+          if(item.getColorCode() == null || item.getColorCode().isEmpty()){
+            listVariantnotidColor.add(item);
+          }else{
+            listVariantidColor.add(item);
+          }
+        });
+        listVariantnotidColor.forEach(item -> {
+            listVariantidColor.forEach(item2 -> {
+                if(item.getColor().equals(item2.getColor())){
+                    item.setColorCode(item2.getColorCode());
+                    if(item.getColorCode().isEmpty() || item.getColorCode() == null){
+                        item.setColorCode(item2.getColorCode());
+                        reponsitory.save(item);
+                    }
+                }
+            });
+        });
         if (listVariants != null && !listVariants.isEmpty()) {
             List<VariantDTO> var = new ArrayList<>();
             listVariants.forEach(item -> {
                 var.add(convertObject(item));
             });
+          
+
             return new ResponseEntity<>(
                     new ResponseObject(200, "Lấy Data thành công", 0, var),
                     HttpStatus.OK);
@@ -104,12 +125,12 @@ public class VariantService implements BaseService<ProductVariant, Integer> {
         ProductVariant saved = reponsitory.save(entity);
         if (saved != null && saved.getId() != null) {
 
-            logger.info("Save Successfully : Id: " + saved.getId() + "Name: " + saved.getNameVariants());
+            logger.info("Save Successfully : Id:{}, Name: {}", saved.getId(), saved.getNameVariants());
             return new ResponseEntity<>(
                     new ResponseObject(201, "Tạo mới thành công", 0, saved),
                     HttpStatus.CREATED);
         } else {
-            logger.info("Save Failed  : " + "Name: " + saved.getNameVariants());
+            logger.info("Save Failed  : Name: {}", saved.getNameVariants());
             return new ResponseEntity<>(
                     new ResponseObject(500, "Tạo mới thất bại", 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
@@ -146,7 +167,7 @@ public class VariantService implements BaseService<ProductVariant, Integer> {
                     new ResponseObject(200, "Cập nhật thành công", 0, entity),
                     HttpStatus.OK);
         } catch (Exception e) {
-            logger.warning("Update Exception: " + e.getMessage());
+            logger.warn("Update Exception: {}" , e.getMessage());
             return new ResponseEntity<>(
                     new ResponseObject(500, "Cập nhật thất bại: " + e.getMessage(), 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
@@ -160,7 +181,7 @@ public class VariantService implements BaseService<ProductVariant, Integer> {
         // ----------------------------------------------------
         // PHẦN 1 & 2: XÁC ĐỊNH & CẬP NHẬT ProductVariant (Giữ nguyên)
         // ----------------------------------------------------
-        logger.info("IdvariantId: " + request.getVariantId());
+        logger.info("IdvariantId: {}" , request.getVariantId());
 
         if (request.getVariantId() != null && request.getVariantId() > 0) {
             // UPDATE: Tìm ProductVariant hiện tại
@@ -184,9 +205,11 @@ public class VariantService implements BaseService<ProductVariant, Integer> {
         a.setIsActive(request.getIsActive());
         a.setProduct(p);
         a.setColor(request.getColor());
+        a.setColorCode(request.getColorCode());
+        logger.info("No o day ne ::{}" , a.getColorCode());
         // Attach inventory data from request regardless of existing/new variant.
         if (request.getStock() != null || request.getPrice() != null || request.getList_price() != null
-                || request.getSale_price() != null || 
+                || request.getSale_price() != null ||
                 request.getStatus() != null || request.getWarrantly() != null) {
             InventoryItem inventoryItem;
             if (a.getId() != null) {
@@ -196,9 +219,9 @@ public class VariantService implements BaseService<ProductVariant, Integer> {
             }
             inventoryItem.setProductVariant(a);
             inventoryItem.setStock(request.getStock());
-            inventoryItem.setCostPrice(request.getPrice());
-            inventoryItem.setSalePrice(request.getSale_price());
-            inventoryItem.setListPrice(request.getList_price());
+            a.setCostPrice(request.getPrice());
+            a.setSalePrice(request.getSale_price());
+            a.setListPrice(request.getList_price());
             inventoryItem.setStatus(request.getStatus());
             inventoryItem.setWarrantyMonths(request.getWarrantly());
             a.setInventoryItem(inventoryItem);
@@ -235,13 +258,13 @@ public class VariantService implements BaseService<ProductVariant, Integer> {
             }
         });
         inventoryReponsitory.findByProductVariant_Id(v.getId())
-                .ifPresent(itemv -> { 
+                .ifPresent(itemv -> {
                     vd.setStock(itemv.getStock());
-                    vd.setPrice(itemv.getCostPrice());
-                    vd.setList_price(itemv.getListPrice());
-                    vd.setSale_price(itemv.getSalePrice());
-                    vd.setWarrantly(itemv.getWarrantyMonths());
-                    vd.setStatus(itemv.getStatus());
+                    vd.setPrice(v.getCostPrice());
+                    vd.setList_price(v.getListPrice());
+                    vd.setSale_price(v.getSalePrice());
+                    vd.setWarrantly(v.getInventoryItem().getWarrantyMonths());
+                    vd.setStatus(v.getInventoryItem().getStatus());
                 });
 
         return vd;

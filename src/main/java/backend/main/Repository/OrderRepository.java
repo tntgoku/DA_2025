@@ -12,7 +12,7 @@ import backend.main.Model.User.User;
 
 @Repository
 public interface OrderRepository extends BaseRepository<Order, Integer> {
-    @EntityGraph(attributePaths = { "customer", "orderItems" })
+    @EntityGraph(attributePaths = { "customer", "orderItems", "orderItems.variant", "orderItems.variant.product" })
     List<Order> findAll();
 
     List<Order> findByCustomer(User customer);

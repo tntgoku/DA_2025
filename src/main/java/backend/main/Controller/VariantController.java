@@ -22,6 +22,9 @@ public class VariantController {
     @GetMapping()
     public ResponseEntity<ResponseObject> getproductallVariant() {
         return variantService.findAllVariant();
+    }   @GetMapping("/updatecolorcode/{variantId}")
+    public ResponseEntity<ResponseObject> updatecolorcode(@PathVariable String variantId) {
+        return variantService.findVariantByProductId(Engine.convertString(variantId));
     }
 
     @GetMapping("/{variantId}")

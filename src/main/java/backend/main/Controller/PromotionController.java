@@ -24,4 +24,10 @@ public class PromotionController {
     public ResponseEntity<ResponseObject> getproductall() {
         return service.findDiscountForProduct();
     }
+    @GetMapping("/voucher")
+    public ResponseEntity<ResponseObject> getvoucherall() {
+        return service.findDiscountForVoucher();
+    }
+
+    
 }

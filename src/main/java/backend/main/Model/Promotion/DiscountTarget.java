@@ -49,23 +49,6 @@ public class DiscountTarget {
     @Column(name = "is_included")
     private Boolean isIncluded = true;
     
-    /**
-     * Giá trị giảm cố định (nếu không dùng %)
-     */
-    @Column(name = "fixed_discount_value")
-    private Integer fixedDiscountValue;
-    
-    /**
-     * Số lượng tối thiểu để được giảm giá
-     */
-    @Column(name = "min_quantity")
-    private Integer minQuantity = 1;
-    
-    /**
-     * Số lượng tối đa được giảm giá
-     */
-    @Column(name = "max_quantity")
-    private Integer maxQuantity;
     
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();

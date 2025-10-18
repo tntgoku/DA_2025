@@ -2,6 +2,8 @@
 package backend.main.Model.User;
 
 import jakarta.persistence.*;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.PrePersist;
 import lombok.Getter;
 import lombok.Setter;
 import java.math.BigDecimal;
@@ -9,6 +11,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import backend.main.Model.BaseEntity;
 import backend.main.Model.Order.*;
@@ -23,6 +27,7 @@ import java.util.*;
 @Table(name = "users")
 @Getter
 @Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User extends BaseEntity {
 
     // @Id
@@ -47,6 +52,7 @@ public class User extends BaseEntity {
     private Boolean phoneVerified = false;
 
     @Column(name = "date_of_birth")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
 
     @Column(length = 10)
@@ -65,10 +71,25 @@ public class User extends BaseEntity {
     private String notes;
 
     @Column(name = "created_at")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "updated_at")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt = LocalDateTime.now();
+
+    // Method để cập nhật updatedAt khi save
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PrePersist
+    public void prePersist() {
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     @JsonManagedReference

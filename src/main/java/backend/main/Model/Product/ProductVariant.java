@@ -1,6 +1,8 @@
 package backend.main.Model.Product;
 
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +50,12 @@ public class ProductVariant extends BaseEntity {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
-
+    @Column(name = "cost_price", precision = 18, scale = 2)
+    private BigDecimal costPrice;
+    @Column(name = "sale_price", precision = 18, scale = 2)
+    private BigDecimal salePrice;
+    @Column(name = "list_price", precision = 18, scale = 2)
+    private BigDecimal listPrice;
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
     @OneToOne(mappedBy = "productVariant", cascade = CascadeType.ALL, // Hoặc CascadeType.REMOVE
@@ -64,14 +71,6 @@ public class ProductVariant extends BaseEntity {
         this.inventoryItem = inventoryItem;
     }
 
-    // Getters và Setters
-    // public Integer getId() {
-    // return id;
-    // }
-
-    // public void setId(Integer id) {
-    // this.id = id;
-    // }
 
     public Products getProduct() {
         return product;
@@ -159,5 +158,29 @@ public class ProductVariant extends BaseEntity {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public BigDecimal getCostPrice() {
+        return costPrice;
+    }
+
+    public void setCostPrice(BigDecimal costPrice) {
+        this.costPrice = costPrice;
+    }
+
+    public BigDecimal getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(BigDecimal salePrice) {
+        this.salePrice = salePrice;
+    }
+
+    public BigDecimal getListPrice() {
+        return listPrice;
+    }
+
+    public void setListPrice(BigDecimal listPrice) {
+        this.listPrice = listPrice;
     }
 }

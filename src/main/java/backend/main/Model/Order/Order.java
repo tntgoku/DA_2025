@@ -29,7 +29,7 @@ public class Order extends BaseEntity {
 
     // Liên kết tới User (customer)
     // Trong class Order:
-    @Column(name = "customer_id")
+    @Column(name = "customer_id",nullable = true)
     private Integer customer;
 
     @Column(name = "customer_name", length = 255)
@@ -73,7 +73,7 @@ public class Order extends BaseEntity {
 
     // Liên kết voucher
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "voucher_id", foreignKey = @ForeignKey(name = "FK_orders_voucher"))
+    @JoinColumn(name = "voucher_id")
     @JsonIgnore
     private Voucher voucher;
 

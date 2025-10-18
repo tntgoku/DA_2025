@@ -41,12 +41,57 @@ public interface UserRepository extends BaseRepository<User, Integer> {
         Optional<AuthzProjection> findByEmailOrPhoneWithAccountAndRole(@Param("email") String email,
                         @Param("phone") String phone);
 
-        // @Query("SELECT u.id as idUser, u.fullName as fullName, u.emailVerified as
-        // emailVerified, u.email as email, u.phone as phone, u.phoneVerified as
-        // phoneVerified, ac.passwordHash as passwordHash, r.roleName as roleName "
-        // + "FROM User u JOIN Account ac ON u.account = ac.id "
-        // + "JOIN Role r ON ac.role = r.id "
-        // + "WHERE u.email = :email")
-        // Optional<AuthzProjection> findByEmailProjection(@Param("email") String
-        // email);
+        // Tìm kiếm người dùng theo tên, email hoặc số điện thoại
+        @Query("SELECT u FROM User u WHERE " +
+               "LOWER(u.fullName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+               "LOWER(u.email) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+               "u.phone LIKE CONCAT('%', :searchTerm, '%')")
+        List<User> findByFullNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrPhoneContaining(
+            @Param("searchTerm") String searchTerm1,
+            @Param("searchTerm") String searchTerm2,
+            @Param("searchTerm") String searchTerm3
+        );
+
+        // Lấy tất cả User với thông tin Account và Role
+        @Query("SELECT u.id as idUser, u.account as accountId, u.fullName as fullName, " +
+               "u.phone as phone, u.email as email, u.emailVerified as emailVerified, " +
+               "u.phoneVerified as phoneVerified, u.dateOfBirth as dateOfBirth, " +
+               "u.gender as gender, u.address as address, u.totalOrders as totalOrders, " +
+               "u.totalSpent as totalSpent, u.notes as notes, u.createdAt as createdAt, " +
+               "u.updatedAt as updatedAt, ac.username as username, r.roleName as roleName, " +
+               "r.id as roleId, ac.isActive as status " +
+               "FROM User u " +
+               "LEFT JOIN Account ac ON u.account = ac.id " +
+               "LEFT JOIN Role r ON ac.role = r.id")
+        List<backend.main.DTO.UserWithAccountProjection> findAllUsersWithAccountAndRole();
+
+        // Tìm kiếm User với thông tin Account và Role
+        @Query("SELECT u.id as idUser, u.account as accountId, u.fullName as fullName, " +
+               "u.phone as phone, u.email as email, u.emailVerified as emailVerified, " +
+               "u.phoneVerified as phoneVerified, u.dateOfBirth as dateOfBirth, " +
+               "u.gender as gender, u.address as address, u.totalOrders as totalOrders, " +
+               "u.totalSpent as totalSpent, u.notes as notes, u.createdAt as createdAt, " +
+               "u.updatedAt as updatedAt, ac.username as username, r.roleName as roleName, " +
+               "r.id as roleId, ac.isActive as status " +
+               "FROM User u " +
+               "LEFT JOIN Account ac ON u.account = ac.id " +
+               "LEFT JOIN Role r ON ac.role = r.id " +
+               "WHERE LOWER(u.fullName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+               "LOWER(u.email) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+               "u.phone LIKE CONCAT('%', :searchTerm, '%')")
+        List<backend.main.DTO.UserWithAccountProjection> searchUsersWithAccountAndRole(@Param("searchTerm") String searchTerm);
+
+        // Lấy User theo ID với thông tin Account và Role
+        @Query("SELECT u.id as idUser, u.account as accountId, u.fullName as fullName, " +
+               "u.phone as phone, u.email as email, u.emailVerified as emailVerified, " +
+               "u.phoneVerified as phoneVerified, u.dateOfBirth as dateOfBirth, " +
+               "u.gender as gender, u.address as address, u.totalOrders as totalOrders, " +
+               "u.totalSpent as totalSpent, u.notes as notes, u.createdAt as createdAt, " +
+               "u.updatedAt as updatedAt, ac.username as username, r.roleName as roleName, " +
+               "r.id as roleId, ac.isActive as status " +
+               "FROM User u " +
+               "LEFT JOIN Account ac ON u.account = ac.id " +
+               "LEFT JOIN Role r ON ac.role = r.id " +
+               "WHERE u.id = :id")
+        Optional<backend.main.DTO.UserWithAccountProjection> findUserByIdWithAccountAndRole(@Param("id") Integer id);
 }

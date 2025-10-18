@@ -1,33 +1,44 @@
 package backend.main.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import backend.main.Config.LoggerE;
 import backend.main.DTO.OrderDTO;
 import backend.main.DTO.OrderItemDTO;
 import backend.main.DTO.VoucherDTO;
+import backend.main.DTO.Product.VariantDTO;
+import backend.main.DTO.PromotionDTO.PromotionDTO;
 import backend.main.Model.ResponseObject;
 import backend.main.Model.Order.Order;
 import backend.main.Model.Order.OrderItem;
+import backend.main.Model.Product.ProductVariant;
 import backend.main.Model.Promotion.Voucher;
 import backend.main.Model.InventoryItem;
 import backend.main.Repository.InventoryReponsitory;
 import backend.main.Repository.UserRepository;
+import backend.main.Repository.VoucherRepository;
+import backend.main.Request.OrderItemRequest;
 import backend.main.Request.Checkout.CheckoutRequest;
 import backend.main.Request.Json.ItemProductJson;
 import backend.main.Repository.OrderRepository;
+import backend.main.Repository.OrderITemRepository;
 import backend.main.Model.User.User;
 
 @Service
@@ -38,8 +49,17 @@ public class OrderService implements BaseService<Order, Integer> {
     private InventoryReponsitory inventoryReponsitory;
     @Autowired
     private UserRepository userRepository;
-    private final Logger logger = LoggerE.logger;
+    @Autowired
+    private VoucherRepository voucherRepository;
+    @Autowired
+    private OrderITemRepository orderItemRepository;
+    @Autowired
+    private PromotionService promotionService;
+    @Autowired
+    private VariantService variantService;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(OrderService.class);
 
+    @Transactional(readOnly = true)
     public ResponseEntity<ResponseObject> findAll() {
         List<Order> listitem = repository.findAll();
         if (listitem == null || listitem.isEmpty()) {
@@ -56,6 +76,7 @@ public class OrderService implements BaseService<Order, Integer> {
                 HttpStatus.OK);
     }
 
+    @Transactional(readOnly = true)
     public ResponseEntity<ResponseObject> findObjectByID(Integer id) {
         Optional<Order> optional = repository.findById(id);
         if (!optional.isPresent()) {
@@ -68,6 +89,7 @@ public class OrderService implements BaseService<Order, Integer> {
                 HttpStatus.OK);
     }
 
+    @Transactional(readOnly = true)
     public ResponseEntity<ResponseObject> findAllOrderByIdUser(Integer id) {
         List<OrderDTO> listnew = new ArrayList<>();
         repository.findListOrdersByIdCustomer(id)
@@ -81,10 +103,389 @@ public class OrderService implements BaseService<Order, Integer> {
                 HttpStatus.OK);
     }
 
+    @Transactional
+    public ResponseEntity<ResponseObject> createNewDTO(OrderDTO orderDTO) {
+        Order order = convertOrder(orderDTO);
+        return createNew(order);
+    }
+    // Trong OrderService.java (hoặc CheckoutService.java)
+// Inject inventoryReponsitory ở đây
+
+@Transactional // Chỉ đọc, không cần thay đổi data
+public BigDecimal calculateOrderTotal(List<ItemProductJson> cart) throws Exception {
+    BigDecimal total = BigDecimal.ZERO;
+    // ... Khởi tạo các biến khác ...
+    for (ItemProductJson it : cart) {
+        Integer id = it.getId();
+        Optional<InventoryItem> invOpt = inventoryReponsitory.findByProductVariant_Id(id);
+        InventoryItem inv = invOpt.orElseGet(() -> inventoryReponsitory.findById(id).orElse(null));
+        if (inv == null) {
+            throw new Exception("Không tìm thấy tồn kho cho ID: " + id);
+        }
+        logger.info("Inventory: {} {}" , inv.getProductVariant().getId(),it.getQuantity());
+        // Tải Lazy-loaded data TRONG TRANSACTION
+        if(inv.getProductVariant().getSalePrice() != null && inv.getProductVariant().getSalePrice().compareTo(BigDecimal.ZERO) > 0) {
+            total = total.add(inv.getProductVariant().getSalePrice().multiply(BigDecimal.valueOf(it.getQuantity())));
+        } else if (inv.getProductVariant().getListPrice() != null && inv.getProductVariant().getListPrice().compareTo(BigDecimal.ZERO) > 0) {
+            if(promotionService.checkDiscountForProduct(inv.getProductVariant().getProduct().getId())) {
+                PromotionDTO discount = promotionService.calculateDiscountForProduct(inv.getProductVariant().getProduct().getId());
+                logger.info("Discount: {}" , discount.getValue());
+                BigDecimal discountValue = BigDecimal.valueOf(discount.getValue());
+
+                BigDecimal discountPrice = inv.getProductVariant().getListPrice().multiply(discountValue).divide(BigDecimal.valueOf(100));
+                logger.info("DiscountPrice: {}" , discountPrice);
+                 BigDecimal ProductPrice = inv.getProductVariant().getListPrice();
+                 logger.info("ProductPrice before discount: {}" , ProductPrice);
+                 ProductPrice = ProductPrice.subtract(discountPrice);
+
+                logger.info("ProductPrice after discount: {}" , ProductPrice);
+                total = total.add(ProductPrice.multiply(BigDecimal.valueOf(it.getQuantity())));
+            } else {
+                total = total.add(inv.getProductVariant().getListPrice().multiply(BigDecimal.valueOf(it.getQuantity())));
+            }
+            // total = total.add(inv.getProductVariant().getListPrice().multiply(BigDecimal.valueOf(it.getQuantity())));
+       
+       
+        } else if (inv.getProductVariant().getCostPrice() != null && inv.getProductVariant().getCostPrice().compareTo(BigDecimal.ZERO) > 0) {
+            total = total.add(inv.getProductVariant().getCostPrice().multiply(BigDecimal.valueOf(it.getQuantity())));
+        }
+        // BigDecimal unit = inv.getProductVariant().getSalePrice() != null ? inv.getProductVariant().getSalePrice()
+        // : (inv.getProductVariant().getListPrice() != null ? inv.getProductVariant().getListPrice() : inv.getProductVariant().getCostPrice());
+        
+        // total = total.add(unit.multiply(BigDecimal.valueOf(it.getQuantity())));
+    }
+    
+    logger.info("Total: {}" , total);
+    return total;
+}
+    // Create new order from OrderRequest
+    @Transactional
+    public ResponseEntity<ResponseObject> createNewFromRequest(backend.main.Request.OrderRequest orderRequest) {
+        try {
+            Order order = convertFromOrderRequest(orderRequest);
+            order.setCreatedAt(java.time.LocalDateTime.now());
+            order.setUpdatedAt(java.time.LocalDateTime.now());
+
+            // Generate order code if not provided
+            if (order.getOrderCode() == null || order.getOrderCode().isEmpty()) {
+                order.setOrderCode("ORD" + System.currentTimeMillis());
+            }
+
+            Order saved = repository.save(order);
+            logger.info("✅ Created new order: ID={}, Code={}", saved.getId(), saved.getOrderCode());
+
+            return new ResponseEntity<>(
+                    new ResponseObject(201, "Tạo đơn hàng thành công", 0, saved),
+                    HttpStatus.CREATED);
+        } catch (Exception e) {
+            logger.error("❌ Error creating order: {}", e.getMessage());
+            return new ResponseEntity<>(
+                    new ResponseObject(500, "Lỗi khi tạo đơn hàng: " + e.getMessage(), 1, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Update order from OrderRequest
+    @Transactional
+    public ResponseEntity<ResponseObject> updateFromRequest(backend.main.Request.OrderRequest orderRequest) {
+        try {
+            Optional<Order> optional = repository.findById(orderRequest.getId());
+            if (!optional.isPresent()) {
+                return new ResponseEntity<>(
+                        new ResponseObject(404, "Không tìm thấy đơn hàng với ID: " + orderRequest.getId(), 1, null),
+                        HttpStatus.NOT_FOUND);
+            }
+
+            Order existing = optional.get();
+            updateOrderFromRequest(existing, orderRequest);
+            existing.setUpdatedAt(java.time.LocalDateTime.now());
+            Order updated = repository.save(existing);
+            logger.info("✅ Updated order: ID={}, Code={}", updated.getId(), updated.getOrderCode());
+            return new ResponseEntity<>(
+                    new ResponseObject(200, "Cập nhật đơn hàng thành công", 0, updated),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("❌ Error updating order: {}", e.getMessage());
+            return new ResponseEntity<>(
+                    new ResponseObject(500, "Lỗi khi cập nhật đơn hàng: " + e.getMessage(), 1, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+private Order convertFromOrderRequest(backend.main.Request.OrderRequest orderRequest) {
+    Order order = new Order();
+    // Bỏ set ID khi tạo mới, để DB tự sinh (nếu OrderRequest.getId() là null)
+    // Nếu đây là conversion cho việc TẠO MỚI, KHÔNG set ID.
+    // Nếu đây là hàm dùng chung, chỉ set ID nếu nó có giá trị.
+    if (orderRequest.getId() != null) {
+        order.setId(orderRequest.getId());
+    }
+    
+    // Sử dụng Optional/null check để tránh NullPointerException khi Request thiếu trường
+    order.setOrderCode(orderRequest.getOrderCode()); 
+    order.setOrderStatus(orderRequest.getOrderStatus());
+    order.setCustomerName(orderRequest.getCustomerName());
+    order.setCustomerPhone(orderRequest.getCustomerPhone());
+    order.setCustomerEmail(orderRequest.getCustomerEmail());
+    order.setCustomerAddress(orderRequest.getCustomerAddress());
+    order.setPaymentMethod(orderRequest.getPaymentMethod());
+    
+    // Sử dụng các toán tử Elvis (?:) nếu bạn sử dụng Lombok @Builder hoặc Mapping Library
+    order.setSubtotalAmount(orderRequest.getSubtotalAmount());
+    order.setDiscountAmount(orderRequest.getDiscountAmount());
+    order.setShippingFee(orderRequest.getShippingFee());
+    order.setTaxAmount(orderRequest.getTaxAmount());
+    order.setTotalAmount(orderRequest.getTotalAmount());
+    order.setAmountPaid(orderRequest.getAmountPaid());
+    order.setVoucherDiscount(orderRequest.getVoucherDiscount());
+    order.setShippingAddress(orderRequest.getShippingAddress());
+    order.setShippingMethod(orderRequest.getShippingMethod());
+    order.setTrackingNumber(orderRequest.getTrackingNumber());
+    order.setNotes(orderRequest.getNotes());
+
+    // Handle voucher safely - Cần @Autowired VoucherRepository
+    if (orderRequest.getVoucherId() != null) {
+        try {
+            order.setVoucher(voucherRepository.findById(orderRequest.getVoucherId()).orElse(null));
+        } catch (Exception e) {
+            // Log this warning appropriately
+            // logger.warn("Error setting voucher: {}", e.getMessage());
+            order.setVoucher(null);
+        }
+    }
+
+    // Set created/updated dates
+    if (orderRequest.getCreatedAt() != null) {
+        order.setCreatedAt(orderRequest.getCreatedAt());
+    } else {
+        order.setCreatedAt(java.time.LocalDateTime.now()); // Default value if not set by DB
+    }
+    order.setUpdatedAt(java.time.LocalDateTime.now());
+
+    // KHÔNG xử lý OrderItem ở đây, để dành cho hàm riêng (nếu cần tạo mới)
+    
+    return order;
+}
+    // Update existing order from OrderRequest
+    private void updateOrderFromRequest(Order existing, backend.main.Request.OrderRequest orderRequest) {
+        if (orderRequest.getOrderCode() != null) {
+            existing.setOrderCode(orderRequest.getOrderCode());
+        }
+        if (orderRequest.getOrderStatus() != null) {
+            existing.setOrderStatus(orderRequest.getOrderStatus());
+        }
+        if (orderRequest.getCustomerName() != null) {
+            existing.setCustomerName(orderRequest.getCustomerName());
+        }
+        if (orderRequest.getCustomerPhone() != null) {
+            existing.setCustomerPhone(orderRequest.getCustomerPhone());
+        }
+        if (orderRequest.getCustomerEmail() != null) {
+            existing.setCustomerEmail(orderRequest.getCustomerEmail());
+        }
+        if (orderRequest.getCustomerAddress() != null) {
+            existing.setCustomerAddress(orderRequest.getCustomerAddress());
+        }
+        if (orderRequest.getPaymentMethod() != null) {
+            existing.setPaymentMethod(orderRequest.getPaymentMethod());
+        }
+        if (orderRequest.getSubtotalAmount() != null) {
+            existing.setSubtotalAmount(orderRequest.getSubtotalAmount());
+        }
+        if (orderRequest.getDiscountAmount() != null) {
+            existing.setDiscountAmount(orderRequest.getDiscountAmount());
+        }
+        if (orderRequest.getShippingFee() != null) {
+            existing.setShippingFee(orderRequest.getShippingFee());
+        }
+        if (orderRequest.getTaxAmount() != null) {
+            existing.setTaxAmount(orderRequest.getTaxAmount());
+        }
+        if (orderRequest.getTotalAmount() != null) {
+            existing.setTotalAmount(orderRequest.getTotalAmount());
+        }
+        if (orderRequest.getAmountPaid() != null) {
+            existing.setAmountPaid(orderRequest.getAmountPaid());
+        }
+        if (orderRequest.getVoucherDiscount() != null) {
+            existing.setVoucherDiscount(orderRequest.getVoucherDiscount());
+        }
+        if (orderRequest.getShippingAddress() != null) {
+            existing.setShippingAddress(orderRequest.getShippingAddress());
+        }
+        if (orderRequest.getShippingMethod() != null) {
+            existing.setShippingMethod(orderRequest.getShippingMethod());
+        }
+        if (orderRequest.getTrackingNumber() != null) {
+            existing.setTrackingNumber(orderRequest.getTrackingNumber());
+        }
+        if (orderRequest.getNotes() != null) {
+            existing.setNotes(orderRequest.getNotes());
+        }
+        if (orderRequest.getPaymentStatus() != null) {
+            existing.setPaymentStatus(orderRequest.getPaymentStatus());
+        }
+
+  
+        if (orderRequest.getVoucherId() != null) {
+            try {
+                existing.setVoucher(voucherRepository.findById(orderRequest.getVoucherId()).orElse(null));
+            } catch (Exception e) {
+                logger.warn("Error updating voucher: {}", e.getMessage());
+                existing.setVoucher(null);
+            }
+        }
+
+        // Handle order items update
+        if (orderRequest.getItems() != null && !orderRequest.getItems().isEmpty()) {
+            updateOrderItems(existing, orderRequest.getItems());
+        }
+    }
+
+    // Update order items - handle add/update/delete operations
+    private void updateOrderItems(Order order, List<backend.main.Request.OrderItemRequest> newItems) {
+        // 1. Lấy tập hợp OrderItem hiện tại (managed by Hibernate)
+        Set<OrderItem> existingItems = order.getOrderItems(); 
+        
+        // Tải và ánh xạ các Item đã có ID (để cập nhật)
+        Map<Integer, OrderItem> existingItemsMap = existingItems.stream()
+                .filter(item -> item.getId() != null) // Lọc các item đã có ID (đã tồn tại trong DB)
+                .collect(Collectors.toMap(OrderItem::getId, item -> item));
+        Set<OrderItem> updatedItems = new HashSet<>();
+        // 2. Lặp qua Request để CẬP NHẬT hoặc TẠO MỚI
+        for (backend.main.Request.OrderItemRequest newItem : newItems) {
+            if (newItem.getId() != null && existingItemsMap.containsKey(newItem.getId())) {
+                // CẬP NHẬT item đã tồn tại
+                OrderItem existingItem = existingItemsMap.get(newItem.getId());
+                updateOrderItemFromRequest(existingItem, newItem);
+                updatedItems.add(existingItem);
+            } else { // THÊM item mới (hoặc Item cũ không có trong DB)
+                // THÊM item mới (newItem.getId() == null)
+                OrderItem newOrderItem = convertOrderItemFromRequest(newItem, order.getId(), order);// Truyền Order Entity
+                if (newOrderItem != null) {
+                    updatedItems.add(newOrderItem);
+                } else {
+                    logger.error("Error converting order item from request: {}", newItem.toString());
+                }
+            }
+        }
+
+        existingItems.clear(); 
+        // b) addAll() thêm các item mới/đã update vào tập hợp.
+        existingItems.addAll(updatedItems);
+        
+        order.setOrderItems(existingItems); 
+        
+        logger.info("✅ Finished updating items. Total items to be persisted: {}", updatedItems.size());
+    }  // Update existing order item from request
+   
+    private void updateOrderItemFromRequest(OrderItem existing, backend.main.Request.OrderItemRequest request) {
+            BigDecimal listPrice = existing.getVariant().getListPrice();    
+            BigDecimal salePrice = existing.getVariant().getSalePrice();
+            BigDecimal costPrice = existing.getVariant().getCostPrice();
+            PromotionDTO discount = promotionService.calculateDiscountForProduct(existing.getVariant().getProduct().getId());        
+            if(discount != null) {
+                logger.info("Discount:\n\n\n\n\n {}", discount.getValue());
+                BigDecimal discountValue = BigDecimal.valueOf(discount.getValue());
+                BigDecimal discountPrice = listPrice.multiply(discountValue).divide(BigDecimal.valueOf(100));
+                BigDecimal ProductPrice = listPrice;
+                ProductPrice = ProductPrice.subtract(discountPrice);
+                existing.setUnitSalePrice(ProductPrice);
+                existing.setDiscountAmount(discountPrice);
+                existing.setTotalPrice(ProductPrice.multiply(BigDecimal.valueOf(request.getQuantity())));
+            }else{
+                existing.setUnitSalePrice(salePrice);
+                existing.setTotalPrice(listPrice.multiply(BigDecimal.valueOf(request.getQuantity())));
+            }
+            existing.setProductName(existing.getVariant().getProduct().getName()+" - "+existing.getVariant().getColor()+" - "+existing.getVariant().getStorage());
+            if (request.getProductName() != null) {
+                existing.setProductName(request.getProductName());
+            }
+            existing.setVariantAttributes(existing.getVariant().getColor()+" - "+existing.getVariant().getStorage()+" - "+existing.getVariant().getRam()+" - "+existing.getVariant().getRegionCode());
+            if (request.getVariantAttributes() != null) {
+                existing.setVariantAttributes(request.getVariantAttributes());
+            }
+            existing.setSku(existing.getVariant().getSku());
+            if (request.getSku() != null) {
+                existing.setSku(request.getSku());
+            }
+            if (request.getUnitSalePrice() != null) {
+                existing.setUnitSalePrice(request.getUnitSalePrice());
+            }
+            if (request.getUnitCostPrice() != null && request.getUnitCostPrice().compareTo(costPrice) != 0) {
+                existing.setUnitCostPrice(request.getUnitCostPrice());
+            }else{
+                existing.setUnitCostPrice(costPrice);
+            }
+            if (request.getQuantity() != null) {
+                existing.setQuantity(request.getQuantity());
+                Integer stockDelta =  request.getQuantity();
+                Integer newStock = existing.getVariant().getInventoryItem().getStock() - stockDelta;
+                if(newStock < 0){
+                    throw new RuntimeException("Không đủ tồn kho (" + existing.getVariant().getInventoryItem().getStock() + ") để giảm " + stockDelta + " sản phẩm cho biến thể ID " + existing.getVariant().getId());
+                }else{
+                    existing.getVariant().getInventoryItem().setStock(newStock);
+                   InventoryItem inventoryItem = inventoryReponsitory.save(existing.getVariant().getInventoryItem());
+                    if(inventoryItem == null){
+                        throw new RuntimeException("Không thể cập nhật tồn kho cho biến thể ID " + existing.getVariant().getId());
+                    }else{
+                        logger.info("Updated stock for variant {}: Delta {}, new stock {}", existing.getVariant().getId(), stockDelta, newStock);
+                    }
+                }
+            }
+            if (request.getTotalPrice() != null) {
+                existing.setTotalPrice(request.getTotalPrice());
+            }
+            if (request.getWarrantyMonths() != null) {
+                existing.setWarrantyMonths(request.getWarrantyMonths());
+            }
+            existing.setConditionType("request.getConditionType()");
+            logger.debug("Update: {},{},{},{},{}",existing.getId(),existing.getProductName(),existing.getVariantAttributes(),existing.getSku(),existing.getTotalPrice());
+        }
+   // Convert OrderItemRequest to OrderItem entity
+    private OrderItem convertOrderItemFromRequest(OrderItemRequest request, Integer orderId,Order order) {
+        OrderItem item = new OrderItem();
+        try {
+            if(order!=null){
+                item.setOrder(order);
+            }else{
+                logger.error("Order is null");  
+                return null;
+            }
+            item.setProductName(request.getProductName());
+            item.setVariant((ProductVariant)variantService.findVariantById(request.getVariantId()).getBody().getData());
+            item.setVariantAttributes(request.getVariantAttributes());
+            item.setSku(request.getSku());
+            item.setUnitSalePrice(request.getUnitSalePrice());
+            item.setUnitCostPrice(request.getUnitCostPrice());
+            item.setQuantity(request.getQuantity());
+            item.setTotalPrice(request.getTotalPrice());
+            item.setConditionType(null); // <--- Đặt giá trị mặc định nếu không có trong request
+            item.setWarrantyMonths(request.getWarrantyMonths());
+            item.setCreatedAt(java.time.LocalDateTime.now());
+            logger.debug("Convert: {},{},{},{},{}",item.getId(),item.getProductName(),item.getVariantAttributes(),item.getSku(),item.getTotalPrice());
+           
+        } catch (Exception e) {
+            logger.error("Error converting order item from request: {}", e.getMessage());
+            throw new IllegalArgumentException("Variant ID cannot be null for a new order item."+ request.getVariantId()); // Ném ngoại lệ
+        }
+       
+        return item;
+    }
+
+
     @Override
     public ResponseEntity<ResponseObject> createNew(Order entity) {
-        // TODO Auto-generated method stub
-        return null;
+        try {
+            Order saved = repository.save(entity);
+            return new ResponseEntity<>(new ResponseObject(200,
+                    "Tạo đơn hàng thành công", 0, saved),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error creating order: {}", e.getMessage());
+            return new ResponseEntity<>(new ResponseObject(500, "Lỗi khi tạo đơn hàng", 1, e.getMessage()),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Transactional
@@ -103,20 +504,40 @@ public class OrderService implements BaseService<Order, Integer> {
         // Resolve or create customer to satisfy NOT NULL FK
         Integer customerId = request.getId();
         if (customerId == null) {
+            // Tìm user theo email hoặc phone
             Optional<User> byEmail = (request.getEmail() != null && !request.getEmail().isEmpty())
                     ? userRepository.findByEmail(request.getEmail())
                     : Optional.empty();
             Optional<User> byPhone = (byEmail.isPresent() || request.getPhone() == null || request.getPhone().isEmpty())
                     ? Optional.empty()
                     : userRepository.findByPhone(request.getPhone());
+
             User user = byEmail.orElseGet(() -> byPhone.orElseGet(() -> {
+                // Tạo user mới chỉ khi có đủ thông tin bắt buộc
+                if (request.getFullname() == null || request.getFullname().isEmpty()) {
+                    logger.warn("Cannot create user: fullname is required");
+                    return null;
+                }
+                if (request.getPhone() == null || request.getPhone().isEmpty()) {
+                    logger.warn("Cannot create user: phone is required");
+                    return null;
+                }
+
                 User u = new User();
+                u.setId(null);
                 u.setFullName(request.getFullname());
                 u.setEmail(request.getEmail());
                 u.setPhone(request.getPhone());
                 u.setAddress(request.getAddress());
-                return userRepository.save(u);
+                // Set account_id to null for guest users
+                u.setAccount(null);
+                // return userRepository.save(u);
+                return u;
             }));
+
+            if (user == null) {
+                logger.warn("Failed to create or find user for checkout");
+            }
             customerId = user.getId();
         }
         order.setCustomer(customerId);
@@ -125,7 +546,12 @@ public class OrderService implements BaseService<Order, Integer> {
         order.setCustomerEmail(request.getEmail());
         order.setCustomerAddress(request.getAddress());
         order.setPaymentMethod(request.getPaymentMethod());
-        order.setShippingAddress(request.getProvince());
+        // Combine province and district for shipping address
+        String shippingAddress = request.getProvince();
+        if (request.getDistrict() != null && !request.getDistrict().isEmpty()) {
+            shippingAddress += ", " + request.getDistrict();
+        }
+        order.setShippingAddress(shippingAddress);
         order.setNotes(request.getNote());
 
         // Tính toán tiền và giảm tồn
@@ -135,26 +561,29 @@ public class OrderService implements BaseService<Order, Integer> {
         for (ItemProductJson it : cart) {
             Integer id = it.getId();
             logger.info("ID truy vấn product_variant: " + it.getId());
+
+            // Try to find inventory item by variant ID first
             Optional<InventoryItem> invOpt = inventoryReponsitory.findByProductVariant_Id(id);
+
+            // If not found by variant ID, try by inventory item ID
             if (!invOpt.isPresent()) {
-                logger.warning("Not found Variant: " + it.toString());
-                logger.warning("Not found by variantId: " + it.getId());
-                // logger.warning("Cart: " + (invOpt.get().getId()==null? "-1" :
-                // invOpt.get().getId()));
-                return new ResponseEntity<>(
-                        new ResponseObject(404, "Không tìm thấy tồn kho: " + it.getId(), 0, null),
-                        HttpStatus.NOT_FOUND);
+                invOpt = inventoryReponsitory.findById(id);
+            }
+
+            if (!invOpt.isPresent()) {
+                logger.warn("Not found Variant: {}", it.toString());
+                logger.warn("Not found by variantId or inventoryId: {}", it.getId());
             }
             InventoryItem inv = invOpt.get();
             if (inv.getStock() == null || inv.getStock() <= 0) {
-                logger.warning("Stock is 0 or less: " + inv.getProductVariant().getSku());
+                logger.warn("Stock is 0 or less: {}", inv.getProductVariant().getSku());
                 return new ResponseEntity<>(
                         new ResponseObject(400, "Sản phẩm đã hết hàng: " + inv.getProductVariant().getSku(), 0, null),
                         HttpStatus.BAD_REQUEST);
             }
             int newStock = inv.getStock() - it.getQuantity();
             if (newStock < 0) {
-                logger.warning("Stock is less than quantity: " + inv.getProductVariant().getSku());
+                logger.warn("Stock is less than quantity: {}", inv.getProductVariant().getSku());
                 return new ResponseEntity<>(
                         new ResponseObject(400,
                                 "Kho không đủ hàng cho SKU: "
@@ -164,54 +593,175 @@ public class OrderService implements BaseService<Order, Integer> {
                                 null),
                         HttpStatus.BAD_REQUEST);
             }
-
             OrderItem oi = new OrderItem();
             oi.setOrder(order);
-            oi.setInventoryItem(inv);
             oi.setVariant(inv.getProductVariant());
             oi.setProductName(inv.getProductVariant().getProduct().getName());
             oi.setVariantAttributes(inv.getProductVariant().getColor() + " " + inv.getProductVariant().getStorage());
             oi.setSku(inv.getProductVariant().getSku());
             oi.setConditionType("new");
-            oi.setUnitSalePrice(inv.getSalePrice() != null ? inv.getSalePrice() : inv.getListPrice());
-            oi.setUnitCostPrice(inv.getCostPrice());
+            PromotionDTO discount= promotionService.calculateDiscountForProduct(inv.getProductVariant().getProduct().getId());
+            if(discount != null) {
+                BigDecimal discountValue = BigDecimal.valueOf(discount.getValue());
+                BigDecimal discountPrice = inv.getProductVariant().getListPrice().multiply(discountValue).divide(BigDecimal.valueOf(100));
+                BigDecimal ProductPrice = inv.getProductVariant().getListPrice();
+                ProductPrice = ProductPrice.subtract(discountPrice);
+                oi.setUnitSalePrice(ProductPrice);
+            } else {
+                oi.setUnitSalePrice(inv.getProductVariant().getSalePrice() != null ? inv.getProductVariant().getSalePrice()
+                        : inv.getProductVariant().getListPrice());
+            } 
+            oi.setUnitCostPrice(inv.getProductVariant().getCostPrice());
             oi.setQuantity(it.getQuantity());
-            oi.setTotalPrice(oi.getUnitSalePrice().multiply(java.math.BigDecimal.valueOf(it.getQuantity())));
-            items.add(oi);
 
+            BigDecimal unitPrice = BigDecimal.ZERO;
+            if (it.getObject() != null && it.getObject().getPrice() != null) {
+                unitPrice = it.getObject().getPrice();
+            }
+            BigDecimal totalPrice = BigDecimal.ZERO;
+            if(discount != null) {
+                BigDecimal discountValue = BigDecimal.valueOf(discount.getValue());
+                BigDecimal discountPrice = inv.getProductVariant().getListPrice().multiply(discountValue).divide(BigDecimal.valueOf(100));
+                BigDecimal ProductPrice = inv.getProductVariant().getListPrice();
+                ProductPrice = ProductPrice.subtract(discountPrice);
+                totalPrice = ProductPrice.multiply(BigDecimal.valueOf(it.getQuantity()));
+            }
+            else{
+                totalPrice = unitPrice.multiply(BigDecimal.valueOf(it.getQuantity()));
+            }
+            oi.setTotalPrice(totalPrice);
+            subtotal = subtotal.add(totalPrice);
+            items.add(oi);
             // giảm tồn (đảm bảo không âm)
             inv.setStock(newStock);
             inventoryReponsitory.save(inv);
-
-            subtotal = subtotal.add(oi.getTotalPrice());
         }
-
+        subtotal = subtotal.add(request.getShippingFee() != null ? request.getShippingFee() : BigDecimal.ZERO);
+        logger.info("Subtotal: {}" , subtotal);
+        order.setShippingFee(request.getShippingFee() != null ? request.getShippingFee() : BigDecimal.ZERO);
+        order.setDiscountAmount(request.getDiscountAmount() != null ? request.getDiscountAmount() : BigDecimal.ZERO);
+        order.setVoucherDiscount(request.getVoucherDiscount() != null ? request.getVoucherDiscount() : BigDecimal.ZERO);
+        order.setTotalAmount(request.getTotalPrice() != null ? request.getTotalPrice() : BigDecimal.ZERO);
         order.setSubtotalAmount(subtotal);
-        order.setTotalAmount(subtotal);
-        order.setOrderItems(new java.util.HashSet<>(items));
-
+        if (request.getVoucher() != null && !request.getVoucher().isEmpty()) {
+            Voucher findv = voucherRepository.findById(Integer.parseInt(request.getVoucher())).orElse(null);
+            order.setVoucher(findv);
+        }
+   
         Order saved = repository.save(order);
-        logger.info("Order saved: " + saved.getOrderCode());
-        return new ResponseEntity<>(
-                new ResponseObject(201, "Đặt hàng thành công", 0, saved.getOrderCode()),
-                HttpStatus.CREATED);
+        for (OrderItem item : items) {
+            item.setOrder(saved);
+            try {
+                OrderItem savedItem = orderItemRepository.save(item);
+                if(savedItem!=null){
+                 logger.info("Đặt hàng thành công: ID: {}, Code: {}, subtotal: {}" , saved.getId(), saved.getOrderCode(), subtotal);
+                }
+            } catch (Exception e) {
+                logger.error("Lỗi khi đặt hàng: {}", e.getMessage());
+            }
+       
+        }
+        // saved.getOrderCode(),subtotal);
+        if(saved!=null){
+            return new ResponseEntity<>(
+                    new ResponseObject(200, "Đặt hàng thành công", 0, saved),
+                    HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(
+                    new ResponseObject(500, "Lỗi khi đặt hàng", 1, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }   
     }
 
     @Override
     public ResponseEntity<ResponseObject> delete(Integer id) {
-        // TODO Auto-generated method stub
-        return null;
+        try {
+            repository.deleteById(id);
+            return new ResponseEntity<>(new ResponseObject(200,
+                    "Xóa đơn hàng thành công", 0, id.toString()),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error deleting order: {}", e.getMessage());
+            return new ResponseEntity<>(new ResponseObject(500, "Lỗi khi xóa đơn hàng", 1, e.getMessage()),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<ResponseObject> updateDTO(OrderDTO orderDTO) {
+        Order order = convertOrder(orderDTO);
+        return update(order);
+    }
+    private Order convertOrder(OrderDTO orderDTO) {
+        Order order = new Order();
+        if (orderDTO.getId() != null) {
+            order.setId(orderDTO.getId());
+        } else {
+            order.setId(null);
+        }
+        order.setOrderCode(orderDTO.getOrderCode());
+        order.setCustomer(orderDTO.getCustomer());
+        order.setCustomerName(orderDTO.getCustomerName());
+        order.setCustomerPhone(orderDTO.getCustomerPhone());
+        order.setCustomerEmail(orderDTO.getCustomerEmail());
+        order.setCustomerAddress(orderDTO.getCustomerAddress());
+        order.setOrderStatus(orderDTO.getOrderStatus());
+        order.setPaymentStatus(orderDTO.getPaymentStatus());
+        order.setPaymentMethod(orderDTO.getPaymentMethod());
+        order.setSubtotalAmount(orderDTO.getSubtotalAmount());
+        order.setDiscountAmount(orderDTO.getDiscountAmount());
+        order.setShippingFee(orderDTO.getShippingFee());
+        order.setTaxAmount(orderDTO.getTaxAmount());
+        Voucher voucher = voucherRepository.findById(orderDTO.getVoucherId()).orElse(null);
+        if (voucher != null) {
+            order.setVoucher(voucher);
+        } else {
+            order.setVoucher(null);
+        }
+        order.setTotalAmount(orderDTO.getTotalAmount());
+        order.setAmountPaid(orderDTO.getAmountPaid());
+        order.setVoucherDiscount(orderDTO.getVoucherDiscount());
+        order.setShippingAddress(orderDTO.getShippingAddress());
+        order.setShippingMethod(orderDTO.getShippingMethod());
+        order.setTrackingNumber(orderDTO.getTrackingNumber());
+        order.setNotes(orderDTO.getNotes());
+        order.setCreatedAt(orderDTO.getCreatedAt());
+        order.setCreatedBy(orderDTO.getCreatedBy());
+        order.getOrderItems().forEach(item -> {
+            item.setOrder(order);
+            item.setVariant(item.getVariant());
+            item.setProductName(item.getVariant().getProduct().getName());
+            item.setVariantAttributes(item.getVariant().getColor() + " " + item.getVariant().getStorage());
+            item.setSku(item.getVariant().getSku());
+            item.setUnitSalePrice(item.getVariant().getSalePrice() != null ? item.getVariant().getSalePrice()
+                    : item.getVariant().getListPrice());
+            item.setUnitCostPrice(item.getVariant().getCostPrice());
+            item.setQuantity(item.getQuantity());
+            item.setTotalPrice(item.getUnitSalePrice().multiply(java.math.BigDecimal.valueOf(item.getQuantity())));
+        });
+        return order;
+    }
+    public ResponseEntity<ResponseObject> updateOrderDTO(OrderDTO orderDTO) {
+        Order order = convertOrder(orderDTO);
+        return update(order);
     }
 
     @Override
     public ResponseEntity<ResponseObject> update(Order entity) {
-        // TODO Auto-generated method stub
-        return null;
+        try {
+            Order saved = repository.save(entity);
+            return new ResponseEntity<>(new ResponseObject(200,
+                    "Cập nhật đơn hàng thành công", 0, saved),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error updating order: {}", e.getMessage());
+            return new ResponseEntity<>(new ResponseObject(500, "Lỗi khi cập nhật đơn hàng", 1, e.getMessage()),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     private OrderDTO convertOrderDTO(Order a) {
         OrderDTO dto = new OrderDTO();
-
         dto.setId(a.getId());
         dto.setOrderCode(a.getOrderCode());
         dto.setCustomer(a.getCustomer());
@@ -254,21 +804,28 @@ public class OrderService implements BaseService<Order, Integer> {
         }
         return dto;
     }
-
     private OrderItemDTO convertItems(OrderItem item) {
         OrderItemDTO newItem = new OrderItemDTO();
         newItem.setId(item.getId());
-        newItem.setOrderId(item.getOrder() != null ? item.getOrder().getId() : null);
-        newItem.setInventoryId(item.getInventoryItem() != null ? item.getInventoryItem().getId() : -1);
-        newItem.setVariantId(item.getVariant() != null ? item.getVariant().getId() : -1);
-        newItem.setProductName(item.getProductName());
-        newItem.setVariantAttributes(item.getVariantAttributes());
-        newItem.setSku(item.getSku());
-        newItem.setUnitSalePrice(item.getUnitSalePrice());
-        newItem.setUnitCostPrice(item.getUnitCostPrice());
+        
+        // Kiểm tra variant có tồn tại không để tránh LazyInitializationException
+        if (item.getVariant() != null) {
+            try {
+                VariantDTO itemorder = variantService.convertObject(item.getVariant());
+                newItem.setObject(itemorder);
+            } catch (Exception e) {
+                logger.warn("Lỗi khi convert variant cho OrderItem ID {}: {}", item.getId(), e.getMessage());
+                // Tạo VariantDTO rỗng nếu có lỗi
+                VariantDTO emptyVariant = new VariantDTO();
+                newItem.setObject(emptyVariant);
+            }
+        } else {
+            // Tạo VariantDTO rỗng nếu variant null
+            VariantDTO emptyVariant = new VariantDTO();
+            newItem.setObject(emptyVariant);
+        }
+        
         newItem.setQuantity(item.getQuantity());
-        newItem.setTotalPrice(item.getTotalPrice());
-        newItem.setWarrantyMonths(item.getWarrantyMonths());
         return newItem;
     }
 
@@ -296,4 +853,29 @@ public class OrderService implements BaseService<Order, Integer> {
         return dto;
     }
 
+    // Update order status
+    public ResponseEntity<ResponseObject> updateOrderStatus(Integer orderId, String status) {
+        try {
+            Optional<Order> orderOptional = repository.findById(orderId);
+            if (!orderOptional.isPresent()) {
+                return new ResponseEntity<>(new ResponseObject(404,
+                        "Không tìm thấy đơn hàng", 1, null),
+                        HttpStatus.NOT_FOUND);
+            }
+
+            Order order = orderOptional.get();
+            order.setOrderStatus(status);
+            order.setUpdatedAt(java.time.LocalDateTime.now());
+
+            Order updatedOrder = repository.save(order);
+            logger.info("Order updated: {}", updatedOrder.getOrderCode());
+            logger.info("Order status updated: {}", updatedOrder.getOrderStatus());
+            return new ResponseEntity<>(new ResponseObject(200, "Cập nhật trạng thái đơn hàng thành công",
+                    0, updatedOrder.getOrderStatus()), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error updating order status: {}", e.getMessage());
+            return new ResponseEntity<>(new ResponseObject(500, "Lỗi khi cập nhật trạng thái đơn hàng",
+                    1, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package backend.main.Service.ServiceImp.Product;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +12,6 @@ import com.google.gson.reflect.TypeToken;
 
 import backend.main.Config.Engine;
 import backend.main.Config.LoggerE;
-import backend.main.Controller.ProductController;
 import backend.main.DTO.ImageDTO;
 import backend.main.DTO.Product.ImageProjection;
 import backend.main.DTO.Product.ProductDTO;
@@ -22,11 +22,10 @@ import backend.main.Model.ResponseObject;
 import backend.main.Model.Product.ProductVariant;
 import backend.main.Model.Product.Products;
 import backend.main.Repository.ProductRepository;
-import backend.main.Repository.ProductSpecificationRepository;
 import backend.main.Request.ProductRequest;
 import backend.main.Service.BaseService;
 import backend.main.Service.InventoryService;
-import backend.main.Service.SpecificationService;
+import backend.main.Service.ProductImageService;
 import backend.main.Service.VariantService;
 
 import java.time.LocalDateTime;
@@ -38,11 +37,9 @@ import java.util.stream.Collectors;
 public class ProductService implements BaseService<Products, Integer> {
 
     private final ProductSpecificationService productSpecificationService;
-    private final SpecificationService specificationService;
 
-    ProductService(ProductSpecificationService pSpecificationRepository, SpecificationService specificationService) {
+    ProductService(ProductSpecificationService pSpecificationRepository) {
         this.productSpecificationService = pSpecificationRepository;
-        this.specificationService = specificationService;
     }
 
     ResponseEntity<ResponseObject> addProduct(ProductRequest productRequest) {
@@ -58,8 +55,10 @@ public class ProductService implements BaseService<Products, Integer> {
     @Autowired
     private VariantService variantService;
     @Autowired
+    private ProductImageService productImageService;
+    @Autowired
     private InventoryService inventoryService;
-    private final Logger logger = LoggerE.logger;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProductService.class);   
 
     public ResponseEntity<ResponseObject> findAll() {
         List<Products> products = repository.findAll();
@@ -191,7 +190,7 @@ public class ProductService implements BaseService<Products, Integer> {
     public ResponseEntity<ResponseObject> createNew(Products entity) {
         entity.setCreatedAt(LocalDateTime.now());
         entity.setUpdatedAt(LocalDateTime.now());
-
+        Products saved = repository.save(entity);
         // ===== Xử lý variants =====
         if (entity.getVariants() != null && !entity.getVariants().isEmpty()) {
             for (ProductVariant variant : entity.getVariants()) {
@@ -204,13 +203,9 @@ public class ProductService implements BaseService<Products, Integer> {
             logger.info("Sản phẩm không có biến thể nào");
         }
 
-        Products saved = repository.save(entity);
-
         // 🔒 Kiểm tra tránh NullPointerException
         if (saved != null && saved.getId() != null) {
             logger.info("Save Successfully : Id: " + saved.getId() + " Name: " + saved.getName());
-
-            // persist inventory items if variants carried inventory data
             if (entity.getVariants() != null && !entity.getVariants().isEmpty()) {
                 Map<String, ProductVariant> keyToClientVariant = new HashMap<>();
                 for (ProductVariant v : entity.getVariants()) {
@@ -231,13 +226,10 @@ public class ProductService implements BaseService<Products, Integer> {
                                 .orElse(new InventoryItem());
                         inventoryItem.setProductVariant(savedVar);
                         inventoryItem.setStock(invReq.getStock());
-                        inventoryItem.setCostPrice(invReq.getCostPrice());
-                        inventoryItem.setSalePrice(invReq.getSalePrice());
-                        inventoryItem.setListPrice(invReq.getListPrice());
                         inventoryItem.setStatus(invReq.getStatus());
                         inventoryItem.setWarrantyMonths(invReq.getWarrantyMonths());
-                        inventoryService.createNew(inventoryItem);
                         savedVar.setInventoryItem(inventoryItem);
+                        inventoryService.createNew(inventoryItem);
                     }
                 }
             }
@@ -254,7 +246,7 @@ public class ProductService implements BaseService<Products, Integer> {
         }
 
         // Trường hợp lưu thất bại
-        logger.warning("Save Failed: " + (saved != null ? saved.getName() : "null"));
+        logger.error("Save Failed: {}" , (saved != null ? saved.getName() : "null"));
         return new ResponseEntity<>(
                 new ResponseObject(500, "Tạo mới thất bại", 1, null),
                 HttpStatus.INTERNAL_SERVER_ERROR);
@@ -270,17 +262,18 @@ public class ProductService implements BaseService<Products, Integer> {
                     HttpStatus.NOT_FOUND);
         }
         try {
+            productImageService.deleteImagesByProductId(id);
             optional.get().getVariants().forEach(variant -> {
                 inventoryService.deleteByProductVariantId(variant.getId());
                 variantService.delete(variant.getId());
             });
             repository.deleteById(id);
-            logger.info("Delete Successfully ID: " + id);
+            logger.info("Delete Successfully ID: {}" , id);
             return new ResponseEntity<>(
                     new ResponseObject(200, "Xóa thành công", 0, null),
                     HttpStatus.OK);
         } catch (Exception e) {
-            logger.warning("Delete Exception: " + e.getMessage());
+            logger.error("Delete Exception: {}" , e.getMessage());
             return new ResponseEntity<>(
                     new ResponseObject(500, "Xóa thất bại: " + e.getMessage(), 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
@@ -297,7 +290,7 @@ public class ProductService implements BaseService<Products, Integer> {
 
         Optional<Products> optional = repository.findById(entity.getId());
         if (!optional.isPresent()) {
-            logger.info("Không tìm thấy sản phẩm với ID: " + entity.getId());
+            logger.info("Không tìm thấy sản phẩm với ID: {}" , entity.getId());
             return createNew(entity);
         }
 
@@ -319,7 +312,6 @@ public class ProductService implements BaseService<Products, Integer> {
             // --- Xử lý variants ---
             List<ProductVariant> updatedVariants = new ArrayList<>();
             for (ProductVariant variant : entity.getVariants()) {
-
                 ProductVariant variantEntity;
                 if (variant.getId() != null) {
                     // Variant cũ, lấy từ DB
@@ -331,10 +323,13 @@ public class ProductService implements BaseService<Products, Integer> {
                     // Variant mới
                     variantEntity = new ProductVariant();
                 }
-
                 // Gán thông tin variant
                 variantEntity.setNameVariants(variant.getNameVariants());
+                variantEntity.setCostPrice(variant.getCostPrice());
+                variantEntity.setSalePrice(variant.getSalePrice());
+                variantEntity.setListPrice(variant.getListPrice());
                 variantEntity.setColor(variant.getColor());
+                variantEntity.setColorCode(variant.getColorCode());
                 variantEntity.setStorage(variant.getStorage());
                 variantEntity.setRam(variant.getRam());
                 variantEntity.setSku(variant.getSku() != null ? variant.getSku()
@@ -358,7 +353,6 @@ public class ProductService implements BaseService<Products, Integer> {
                                         + (v.getStorage() == null ? "" : v.getStorage())));
                 keyToClientVariant.put(key, v);
             }
-
             for (ProductVariant variant : savedProduct.getVariants()) {
                 String key = (variant.getId() != null) ? ("ID:" + variant.getId())
                         : ((variant.getSku() != null && !variant.getSku().isEmpty()) ? ("SKU:" + variant.getSku())
@@ -372,10 +366,6 @@ public class ProductService implements BaseService<Products, Integer> {
                             .orElse(new InventoryItem());
                     inventoryItem.setProductVariant(variant);
                     inventoryItem.setStock(invData.getStock());
-                    inventoryItem.setCostPrice(invData.getCostPrice());
-                    inventoryItem.setSalePrice(invData.getSalePrice());
-                    inventoryItem.setListPrice(invData.getListPrice());
-                    inventoryItem.setStatus(invData.getStatus());
                     inventoryItem.setWarrantyMonths(invData.getWarrantyMonths());
                     inventoryService.createNew(inventoryItem);
                     variant.setInventoryItem(inventoryItem);
@@ -390,34 +380,32 @@ public class ProductService implements BaseService<Products, Integer> {
                     HttpStatus.OK);
 
         } catch (Exception e) {
-            logger.warning("Update Exception: " + e.getMessage());
+            logger.error("Update Exception: {}" , e.getMessage());
             return new ResponseEntity<>(
                     new ResponseObject(500, "Cập nhật thất bại: " + e.getMessage(), 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
     public ResponseEntity<ResponseObject> deletes(List<Integer> list) {
         try {
             for (Integer id : list) {
                 if (repository.existsById(id)) { // kiểm tra tồn tại trước khi xóa
                     repository.deleteById(id);
-                    logger.info("Delete Successfully ID: " + id);
+                    logger.info("Delete Successfully ID: {}" , id);
                 } else {
-                    logger.warning("ID not found: " + id);
+                    logger.warn("ID not found: {}" , id);
                 }
             }
             return new ResponseEntity<>(
                     new ResponseObject(200, "Xóa thành công", 0, null),
                     HttpStatus.OK);
         } catch (Exception e) {
-            logger.warning("Delete Exception: " + e.getMessage());
+            logger.error("Delete Exception: {}" , e.getMessage());
             return new ResponseEntity<>(
                     new ResponseObject(500, "Xóa thất bại: " + e.getMessage(), 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
     private ProductDTO convertProductDTO(Products product) {
         ProductDTO dto = new ProductDTO();
         dto.setId(product.getId());
@@ -451,7 +439,6 @@ public class ProductService implements BaseService<Products, Integer> {
         dto.setVariants(variantDTOs);
         return dto;
     }
-
     public List<ProductSpecificationDTO> getSpecsByProduct(int productId) {
         List<Object[]> results = repository.getProductSpecifications(productId);
         List<ProductSpecificationDTO> list = new ArrayList<>();

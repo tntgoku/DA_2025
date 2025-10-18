@@ -1,6 +1,5 @@
 package backend.main.Request.Json;
 
-import java.util.List;
 import java.util.Objects;
 
 import backend.main.DTO.Product.VariantDTO;
@@ -12,7 +11,6 @@ public class ItemProductJson {
 
     public ItemProductJson() {
     }
-
     public ItemProductJson(Integer id, VariantDTO object, Integer quantity) {
         this.id = id;
         this.object = object;

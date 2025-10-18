@@ -9,6 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +26,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
-    private final Logger logger = LoggerE.logger;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(JwtFilter.class);
 
     public JwtFilter(JwtUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
@@ -53,10 +54,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            logger.info("Token dc lay la:" + token);
+            logger.info("Token dc lay la:{}" , token);
             try {
                 String email = jwtUtil.extractUsername(token);
-                logger.info("🟢 Email trong token: " + email);
+                logger.info("🟢 Email trong token: {}" , email);
                 if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
                     Optional<AuthzProjection> userOpt = userRepository.findByEmailWithAccountAndRole(email);
@@ -65,7 +66,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
                         AuthzProjection user = userOpt.get();
                         String roleName = (user.getRoleName() != null) ? user.getRoleName() : "USER";
-                        logger.info("Role: " + roleName);
+                        logger.info("Role: {}" , roleName);
                         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                                 user.getEmail(),
                                 null,
@@ -78,7 +79,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
 
             } catch (Exception e) {
-                logger.info("Token không hợp lệ: " + e.getMessage());
+                logger.info("Token không hợp lệ: {}" , e.getMessage());
             }
         }
 

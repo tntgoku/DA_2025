@@ -6,6 +6,8 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Entity cho mã giảm giá (Voucher code)
  * Khách hàng nhập mã này khi checkout để được giảm giá
@@ -58,41 +60,15 @@ public class Voucher {
 
     @Column(name = "is_active")
     private Boolean isActive = true;
-
-    /**
-     * Áp dụng cho loại sản phẩm nào
-     * - 'ALL': Tất cả sản phẩm
-     * - 'CATEGORY': Chỉ danh mục cụ thể
-     * - 'PRODUCT': Chỉ sản phẩm cụ thể
-     */
-    @Column(name = "applicable_to", length = 20)
-    private String applicableTo = "ALL";
-
-    /**
-     * Danh sách ID áp dụng (category_ids hoặc product_ids)
-     * JSON Format: ["1", "2", "3"]
-     */
-    @Column(name = "applicable_ids", columnDefinition = "NVARCHAR(MAX)")
-    private String applicableIds;
-
-    /**
-     * Áp dụng cho loại khách hàng
-     * - 'ALL': Tất cả
-     * - 'NEW': Khách mới
-     * - 'VIP': Khách VIP
-     */
-    @Column(name = "user_type", length = 20)
-    private String userType = "ALL";
-
     /**
      * Priority khi có nhiều voucher
      */
     @Column(name = "priority")
     private Integer priority = 0;
 
-    // Liên kết tới DiscountCampaign
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "campaign_id", foreignKey = @ForeignKey(name = "FK_voucher_campaign"))
+    @JoinColumn(name = "campaign_id")
+    @JsonIgnore
     private DiscountCampaign campaign;
 
     @Column(name = "created_at")
