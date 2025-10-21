@@ -89,7 +89,6 @@ public class ProductComment extends BaseEntity {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Helper methods
     public boolean isReply() {
         return parentCommentId != null;
     }
