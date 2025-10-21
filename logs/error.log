@@ -303,3 +303,7 @@ org.hibernate.LazyInitializationException: Could not initialize proxy [backend.m
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:493)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
 	at java.base/java.lang.Thread.run(Thread.java:842)
+2025-10-21 21:52:03.443 [http-nio-8080-exec-3] ERROR b.main.Service.ProductImageService - Error reading image: D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\uploads\product_51_1760761997168_photo_6298792191148625544_x.jpg 
+2025-10-21 21:52:03.455 [http-nio-8080-exec-3] ERROR b.m.Controller.FileUploadController - Không tìm thấy ảnh với ID: 51 - Error reading image: D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\uploads\product_51_1760761997168_photo_6298792191148625544_x.jpg
+2025-10-21 21:52:13.321 [http-nio-8080-exec-2] ERROR b.main.Service.ProductImageService - Error reading image: D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\uploads\product_51_1760761997168_photo_6298792191148625544_x.jpg 
+2025-10-21 21:52:13.321 [http-nio-8080-exec-2] ERROR b.m.Controller.FileUploadController - Không tìm thấy ảnh với ID: 51 - Error reading image: D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\uploads\product_51_1760761997168_photo_6298792191148625544_x.jpg

@@ -1162,3 +1162,661 @@ Using generated security password: 648a2101-3405-42de-a378-88d0fcccae7d
 2025-10-21 21:48:38.917 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-10-21 21:48:38.917 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2025-10-21 21:48:38.917 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-10-21 21:51:46.472 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2025-10-21 21:51:46.537 [restartedMain] INFO  backend.main.MainApplication - Starting MainApplication using Java 17.0.12 with PID 6648 (D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\target\classes started by trung in D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main)
+2025-10-21 21:51:46.537 [restartedMain] INFO  backend.main.MainApplication - No active profile set, falling back to 1 default profile: "default"
+2025-10-21 21:51:46.604 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-10-21 21:51:46.604 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-10-21 21:51:47.243 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-10-21 21:51:47.465 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 208 ms. Found 18 JPA repository interfaces.
+2025-10-21 21:51:49.422 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-10-21 21:51:49.451 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-10-21 21:51:49.456 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-10-21 21:51:49.457 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-10-21 21:51:49.565 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-10-21 21:51:49.565 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2961 ms
+2025-10-21 21:51:49.837 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-10-21 21:51:49.935 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.29.Final
+2025-10-21 21:51:49.988 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-10-21 21:51:50.175 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-10-21 21:51:50.851 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection ConnectionID:1 ClientConnectionId: 728fb894-9840-4f4a-b9ad-89da39547c62
+2025-10-21 21:51:50.862 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-10-21 21:51:50.913 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: SQLServer2016Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-10-21 21:51:50.914 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: SQLServer2016Dialect has been deprecated; use org.hibernate.dialect.SQLServerDialect instead
+2025-10-21 21:51:50.965 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 13.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-10-21 21:51:51.294 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-10-21 21:51:52.966 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-10-21 21:51:52.974 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-10-21 21:51:53.711 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-10-21 21:51:56.318 [restartedMain] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 86786fc4-0049-4396-8871-07aceafcdfb2
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-10-21 21:51:56.327 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-10-21 21:51:56.783 [restartedMain] INFO  o.s.b.a.s.r.ReactiveUserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 86786fc4-0049-4396-8871-07aceafcdfb2
+
+2025-10-21 21:51:56.819 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-10-21 21:51:56.839 [restartedMain] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-10-21 21:51:56.839 [restartedMain] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@11d33507]]
+2025-10-21 21:51:56.840 [restartedMain] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-10-21 21:51:56.860 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-10-21 21:51:56.888 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-10-21 21:51:56.900 [restartedMain] INFO  backend.main.MainApplication - Started MainApplication in 10.899 seconds (process running for 11.352)
+2025-10-21 21:52:02.268 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-10-21 21:52:02.268 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-10-21 21:52:02.268 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+2025-10-21 21:52:02.428 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select p1_0.id,p1_0.brand,p1_0.category_id,p1_0.created_at,p1_0.description,p1_0.is_active,p1_0.is_featured,p1_0.is_hot,p1_0.model,p1_0.name,p1_0.product_type,p1_0.slug,p1_0.specifications,p1_0.updated_at,v1_0.product_id,v1_0.id,v1_0.color,v1_0.color_code,v1_0.cost_price,v1_0.created_at,v1_0.is_active,v1_0.list_price,v1_0.name_variants,v1_0.ram,v1_0.region_code,v1_0.sale_price,v1_0.sku,v1_0.storage,v1_0.updated_at from dbo.products p1_0 left join product_variants v1_0 on p1_0.id=v1_0.product_id where p1_0.is_featured=1
+2025-10-21 21:52:02.428 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - select c1_0.id,c1_0.created_at,c1_0.description,c1_0.display_order,c1_0.image_url,c1_0.is_active,c1_0.name,c1_0.parent_id,c1_0.slug,c1_0.updated_at from categories c1_0
+2025-10-21 21:52:02.596 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:02.628 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:02.628 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:02.628 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:02.628 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:02.646 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:02.647 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:02.757 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - EXEC GetProductSpecifications ?
+2025-10-21 21:52:02.812 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:02.916 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:02.954 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:02.980 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:02.987 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:02.997 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:03.012 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:03.031 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:03.064 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select pi1_0.id,p1_0.name,p1_0.product_type,pi1_0.is_primary,pi1_0.product_id,pi1_0.product_variant_id,pi1_0.image_url,pi1_0.alt_img,pi1_0.display_order from dbo.products p1_0 join product_images pi1_0 on p1_0.id=pi1_0.product_id where pi1_0.product_id=?
+2025-10-21 21:52:03.064 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - EXEC GetProductSpecifications ?
+2025-10-21 21:52:03.111 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:03.139 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:03.190 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:03.202 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:03.206 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:03.218 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:03.222 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select pi1_0.id,p1_0.name,p1_0.product_type,pi1_0.is_primary,pi1_0.product_id,pi1_0.product_variant_id,pi1_0.image_url,pi1_0.alt_img,pi1_0.display_order from dbo.products p1_0 join product_images pi1_0 on p1_0.id=pi1_0.product_id where pi1_0.product_id=?
+2025-10-21 21:52:03.402 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - select pi1_0.id,pi1_0.alt_img,pi1_0.created_at,pi1_0.display_order,pi1_0.image_type,pi1_0.image_url,pi1_0.is_primary,pi1_0.product_id,pi1_0.product_variant_id from product_images pi1_0
+2025-10-21 21:52:03.442 [http-nio-8080-exec-3] INFO  b.main.Service.ProductImageService - Image URL: /uploads/product_51_1760761997168_photo_6298792191148625544_x.jpg 
+2025-10-21 21:52:03.443 [http-nio-8080-exec-3] ERROR b.main.Service.ProductImageService - Error reading image: D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\uploads\product_51_1760761997168_photo_6298792191148625544_x.jpg 
+2025-10-21 21:52:03.455 [http-nio-8080-exec-3] ERROR b.m.Controller.FileUploadController - Không tìm thấy ảnh với ID: 51 - Error reading image: D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\uploads\product_51_1760761997168_photo_6298792191148625544_x.jpg
+2025-10-21 21:52:06.313 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - select c1_0.id,c1_0.created_at,c1_0.description,c1_0.display_order,c1_0.image_url,c1_0.is_active,c1_0.name,c1_0.parent_id,c1_0.slug,c1_0.updated_at from categories c1_0
+2025-10-21 21:52:06.313 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - select c1_0.id,c1_0.created_at,c1_0.description,c1_0.display_order,c1_0.image_url,c1_0.is_active,c1_0.name,c1_0.parent_id,c1_0.slug,c1_0.updated_at from categories c1_0
+2025-10-21 21:52:06.335 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select c1_0.id,c1_0.created_at,c1_0.description,c1_0.display_order,c1_0.image_url,c1_0.is_active,c1_0.name,c1_0.parent_id,c1_0.slug,c1_0.updated_at from categories c1_0
+2025-10-21 21:52:06.340 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select pv1_0.id,pv1_0.color,pv1_0.color_code,pv1_0.cost_price,pv1_0.created_at,ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months,pv1_0.is_active,pv1_0.list_price,pv1_0.name_variants,pv1_0.product_id,pv1_0.ram,pv1_0.region_code,pv1_0.sale_price,pv1_0.sku,pv1_0.storage,pv1_0.updated_at from product_variants pv1_0 left join inventory_items ii1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:06.353 [http-nio-8080-exec-9] INFO  backend.main.Service.VariantService - Lay thanh  cong Object nay ID:92
+2025-10-21 21:52:06.360 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:06.373 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:06.392 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - select p1_0.id,p1_0.brand,p1_0.category_id,p1_0.created_at,p1_0.description,p1_0.is_active,p1_0.is_featured,p1_0.is_hot,p1_0.model,p1_0.name,p1_0.product_type,p1_0.slug,p1_0.specifications,p1_0.updated_at,v1_0.product_id,v1_0.id,v1_0.color,v1_0.color_code,v1_0.cost_price,v1_0.created_at,v1_0.is_active,v1_0.list_price,v1_0.name_variants,v1_0.ram,v1_0.region_code,v1_0.sale_price,v1_0.sku,v1_0.storage,v1_0.updated_at from dbo.products p1_0 left join product_variants v1_0 on p1_0.id=v1_0.product_id where p1_0.id=?
+2025-10-21 21:52:06.396 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:06.396 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:06.396 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:06.396 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:06.396 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - EXEC GetProductSpecifications ?
+2025-10-21 21:52:06.415 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:06.421 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:06.424 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:06.428 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:06.431 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:06.438 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:06.441 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:06.445 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:06.445 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - select pi1_0.id,p1_0.name,p1_0.product_type,pi1_0.is_primary,pi1_0.product_id,pi1_0.product_variant_id,pi1_0.image_url,pi1_0.alt_img,pi1_0.display_order from dbo.products p1_0 join product_images pi1_0 on p1_0.id=pi1_0.product_id where pi1_0.product_id=?
+2025-10-21 21:52:06.583 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select c1_0.id,c1_0.created_at,c1_0.description,c1_0.display_order,c1_0.image_url,c1_0.is_active,c1_0.name,c1_0.parent_id,c1_0.slug,c1_0.updated_at from categories c1_0
+2025-10-21 21:52:08.656 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - select pv1_0.id,pv1_0.color,pv1_0.color_code,pv1_0.cost_price,pv1_0.created_at,ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months,pv1_0.is_active,pv1_0.list_price,pv1_0.name_variants,pv1_0.product_id,pv1_0.ram,pv1_0.region_code,pv1_0.sale_price,pv1_0.sku,pv1_0.storage,pv1_0.updated_at from product_variants pv1_0 left join inventory_items ii1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:08.669 [http-nio-8080-exec-4] INFO  backend.main.Service.VariantService - Lay thanh  cong Object nay ID:97
+2025-10-21 21:52:08.671 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:08.683 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:08.717 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select p1_0.id,p1_0.brand,p1_0.category_id,p1_0.created_at,p1_0.description,p1_0.is_active,p1_0.is_featured,p1_0.is_hot,p1_0.model,p1_0.name,p1_0.product_type,p1_0.slug,p1_0.specifications,p1_0.updated_at,v1_0.product_id,v1_0.id,v1_0.color,v1_0.color_code,v1_0.cost_price,v1_0.created_at,v1_0.is_active,v1_0.list_price,v1_0.name_variants,v1_0.ram,v1_0.region_code,v1_0.sale_price,v1_0.sku,v1_0.storage,v1_0.updated_at from dbo.products p1_0 left join product_variants v1_0 on p1_0.id=v1_0.product_id where p1_0.id=?
+2025-10-21 21:52:08.722 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:08.731 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:08.738 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:08.738 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:08.747 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - EXEC GetProductSpecifications ?
+2025-10-21 21:52:08.759 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:08.763 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:08.767 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:08.772 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:08.774 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:08.776 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:08.779 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:08.779 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:08.779 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select pi1_0.id,p1_0.name,p1_0.product_type,pi1_0.is_primary,pi1_0.product_id,pi1_0.product_variant_id,pi1_0.image_url,pi1_0.alt_img,pi1_0.display_order from dbo.products p1_0 join product_images pi1_0 on p1_0.id=pi1_0.product_id where pi1_0.product_id=?
+2025-10-21 21:52:08.852 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - select c1_0.id,c1_0.created_at,c1_0.description,c1_0.display_order,c1_0.image_url,c1_0.is_active,c1_0.name,c1_0.parent_id,c1_0.slug,c1_0.updated_at from categories c1_0
+2025-10-21 21:52:10.383 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - select pv1_0.id,pv1_0.color,pv1_0.color_code,pv1_0.cost_price,pv1_0.created_at,ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months,pv1_0.is_active,pv1_0.list_price,pv1_0.name_variants,pv1_0.product_id,pv1_0.ram,pv1_0.region_code,pv1_0.sale_price,pv1_0.sku,pv1_0.storage,pv1_0.updated_at from product_variants pv1_0 left join inventory_items ii1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:10.389 [http-nio-8080-exec-8] INFO  backend.main.Service.VariantService - Lay thanh  cong Object nay ID:96
+2025-10-21 21:52:10.389 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:10.401 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:10.437 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select p1_0.id,p1_0.brand,p1_0.category_id,p1_0.created_at,p1_0.description,p1_0.is_active,p1_0.is_featured,p1_0.is_hot,p1_0.model,p1_0.name,p1_0.product_type,p1_0.slug,p1_0.specifications,p1_0.updated_at,v1_0.product_id,v1_0.id,v1_0.color,v1_0.color_code,v1_0.cost_price,v1_0.created_at,v1_0.is_active,v1_0.list_price,v1_0.name_variants,v1_0.ram,v1_0.region_code,v1_0.sale_price,v1_0.sku,v1_0.storage,v1_0.updated_at from dbo.products p1_0 left join product_variants v1_0 on p1_0.id=v1_0.product_id where p1_0.id=?
+2025-10-21 21:52:10.437 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:10.437 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:10.448 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:10.450 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:10.452 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - EXEC GetProductSpecifications ?
+2025-10-21 21:52:10.457 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:10.459 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:10.462 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:10.463 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:10.463 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:10.463 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:10.463 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:10.463 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:10.478 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select pi1_0.id,p1_0.name,p1_0.product_type,pi1_0.is_primary,pi1_0.product_id,pi1_0.product_variant_id,pi1_0.image_url,pi1_0.alt_img,pi1_0.display_order from dbo.products p1_0 join product_images pi1_0 on p1_0.id=pi1_0.product_id where pi1_0.product_id=?
+2025-10-21 21:52:10.524 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select c1_0.id,c1_0.created_at,c1_0.description,c1_0.display_order,c1_0.image_url,c1_0.is_active,c1_0.name,c1_0.parent_id,c1_0.slug,c1_0.updated_at from categories c1_0
+2025-10-21 21:52:11.030 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select pv1_0.id,pv1_0.color,pv1_0.color_code,pv1_0.cost_price,pv1_0.created_at,ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months,pv1_0.is_active,pv1_0.list_price,pv1_0.name_variants,pv1_0.product_id,pv1_0.ram,pv1_0.region_code,pv1_0.sale_price,pv1_0.sku,pv1_0.storage,pv1_0.updated_at from product_variants pv1_0 left join inventory_items ii1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:11.038 [http-nio-8080-exec-2] INFO  backend.main.Service.VariantService - Lay thanh  cong Object nay ID:93
+2025-10-21 21:52:11.038 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:11.047 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:11.072 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - select p1_0.id,p1_0.brand,p1_0.category_id,p1_0.created_at,p1_0.description,p1_0.is_active,p1_0.is_featured,p1_0.is_hot,p1_0.model,p1_0.name,p1_0.product_type,p1_0.slug,p1_0.specifications,p1_0.updated_at,v1_0.product_id,v1_0.id,v1_0.color,v1_0.color_code,v1_0.cost_price,v1_0.created_at,v1_0.is_active,v1_0.list_price,v1_0.name_variants,v1_0.ram,v1_0.region_code,v1_0.sale_price,v1_0.sku,v1_0.storage,v1_0.updated_at from dbo.products p1_0 left join product_variants v1_0 on p1_0.id=v1_0.product_id where p1_0.id=?
+2025-10-21 21:52:11.072 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:11.086 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:11.091 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:11.092 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:11.096 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - EXEC GetProductSpecifications ?
+2025-10-21 21:52:11.097 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:11.097 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:11.097 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:11.097 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:11.097 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:11.114 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:11.114 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:11.114 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:11.114 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - select pi1_0.id,p1_0.name,p1_0.product_type,pi1_0.is_primary,pi1_0.product_id,pi1_0.product_variant_id,pi1_0.image_url,pi1_0.alt_img,pi1_0.display_order from dbo.products p1_0 join product_images pi1_0 on p1_0.id=pi1_0.product_id where pi1_0.product_id=?
+2025-10-21 21:52:11.173 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - select c1_0.id,c1_0.created_at,c1_0.description,c1_0.display_order,c1_0.image_url,c1_0.is_active,c1_0.name,c1_0.parent_id,c1_0.slug,c1_0.updated_at from categories c1_0
+2025-10-21 21:52:11.631 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - select pv1_0.id,pv1_0.color,pv1_0.color_code,pv1_0.cost_price,pv1_0.created_at,ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months,pv1_0.is_active,pv1_0.list_price,pv1_0.name_variants,pv1_0.product_id,pv1_0.ram,pv1_0.region_code,pv1_0.sale_price,pv1_0.sku,pv1_0.storage,pv1_0.updated_at from product_variants pv1_0 left join inventory_items ii1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:11.638 [http-nio-8080-exec-7] INFO  backend.main.Service.VariantService - Lay thanh  cong Object nay ID:92
+2025-10-21 21:52:11.638 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:11.647 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:11.669 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - select p1_0.id,p1_0.brand,p1_0.category_id,p1_0.created_at,p1_0.description,p1_0.is_active,p1_0.is_featured,p1_0.is_hot,p1_0.model,p1_0.name,p1_0.product_type,p1_0.slug,p1_0.specifications,p1_0.updated_at,v1_0.product_id,v1_0.id,v1_0.color,v1_0.color_code,v1_0.cost_price,v1_0.created_at,v1_0.is_active,v1_0.list_price,v1_0.name_variants,v1_0.ram,v1_0.region_code,v1_0.sale_price,v1_0.sku,v1_0.storage,v1_0.updated_at from dbo.products p1_0 left join product_variants v1_0 on p1_0.id=v1_0.product_id where p1_0.id=?
+2025-10-21 21:52:11.675 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:11.675 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:11.682 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:11.684 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:11.689 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - EXEC GetProductSpecifications ?
+2025-10-21 21:52:11.697 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:11.698 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:11.698 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:11.698 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:11.698 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:11.714 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:11.717 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:11.722 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:11.725 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - select pi1_0.id,p1_0.name,p1_0.product_type,pi1_0.is_primary,pi1_0.product_id,pi1_0.product_variant_id,pi1_0.image_url,pi1_0.alt_img,pi1_0.display_order from dbo.products p1_0 join product_images pi1_0 on p1_0.id=pi1_0.product_id where pi1_0.product_id=?
+2025-10-21 21:52:11.778 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - select c1_0.id,c1_0.created_at,c1_0.description,c1_0.display_order,c1_0.image_url,c1_0.is_active,c1_0.name,c1_0.parent_id,c1_0.slug,c1_0.updated_at from categories c1_0
+2025-10-21 21:52:13.026 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - select c1_0.id,c1_0.created_at,c1_0.description,c1_0.display_order,c1_0.image_url,c1_0.is_active,c1_0.name,c1_0.parent_id,c1_0.slug,c1_0.updated_at from categories c1_0
+2025-10-21 21:52:13.027 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select p1_0.id,p1_0.brand,p1_0.category_id,p1_0.created_at,p1_0.description,p1_0.is_active,p1_0.is_featured,p1_0.is_hot,p1_0.model,p1_0.name,p1_0.product_type,p1_0.slug,p1_0.specifications,p1_0.updated_at,v1_0.product_id,v1_0.id,v1_0.color,v1_0.color_code,v1_0.cost_price,v1_0.created_at,v1_0.is_active,v1_0.list_price,v1_0.name_variants,v1_0.ram,v1_0.region_code,v1_0.sale_price,v1_0.sku,v1_0.storage,v1_0.updated_at from dbo.products p1_0 left join product_variants v1_0 on p1_0.id=v1_0.product_id where p1_0.is_featured=1
+2025-10-21 21:52:13.069 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:13.078 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:13.084 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:13.091 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:13.094 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:13.096 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:13.103 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 where ii1_0.product_variant_id=?
+2025-10-21 21:52:13.109 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - EXEC GetProductSpecifications ?
+2025-10-21 21:52:13.118 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:13.133 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:13.144 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:13.151 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:13.157 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:13.170 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:13.175 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:13.180 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:13.192 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select pi1_0.id,p1_0.name,p1_0.product_type,pi1_0.is_primary,pi1_0.product_id,pi1_0.product_variant_id,pi1_0.image_url,pi1_0.alt_img,pi1_0.display_order from dbo.products p1_0 join product_images pi1_0 on p1_0.id=pi1_0.product_id where pi1_0.product_id=?
+2025-10-21 21:52:13.206 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - EXEC GetProductSpecifications ?
+2025-10-21 21:52:13.216 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:13.227 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:13.245 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:13.262 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:13.267 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL -     SELECT dt.id as discountTargetId,
+           dt.target_type as targetType,
+           d.value,
+           d.is_active as isActive,
+           d.discount_type as discountType,
+           p.id as productId,
+           p.name as productName
+    FROM discount_targets dt
+    JOIN discounts d ON d.id = dt.discount_id
+    JOIN products p ON p.id = dt.target_id
+    WHERE dt.target_type = 'product'
+
+2025-10-21 21:52:13.272 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select ii1_0.id,ii1_0.condition_id,ii1_0.created_at,ii1_0.device_condition_notes,ii1_0.imei,ii1_0.import_date,ii1_0.position,ii1_0.previous_owner_info,ii1_0.product_variant_id,ii1_0.serial_number,ii1_0.sold_date,ii1_0.source_id,ii1_0.status,ii1_0.stock,ii1_0.updated_at,ii1_0.warranty_months from inventory_items ii1_0 left join product_variants pv1_0 on pv1_0.id=ii1_0.product_variant_id where pv1_0.id=?
+2025-10-21 21:52:13.272 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select pi1_0.id,p1_0.name,p1_0.product_type,pi1_0.is_primary,pi1_0.product_id,pi1_0.product_variant_id,pi1_0.image_url,pi1_0.alt_img,pi1_0.display_order from dbo.products p1_0 join product_images pi1_0 on p1_0.id=pi1_0.product_id where pi1_0.product_id=?
+2025-10-21 21:52:13.305 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select pi1_0.id,pi1_0.alt_img,pi1_0.created_at,pi1_0.display_order,pi1_0.image_type,pi1_0.image_url,pi1_0.is_primary,pi1_0.product_id,pi1_0.product_variant_id from product_images pi1_0
+2025-10-21 21:52:13.320 [http-nio-8080-exec-2] INFO  b.main.Service.ProductImageService - Image URL: /uploads/product_51_1760761997168_photo_6298792191148625544_x.jpg 
+2025-10-21 21:52:13.321 [http-nio-8080-exec-2] ERROR b.main.Service.ProductImageService - Error reading image: D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\uploads\product_51_1760761997168_photo_6298792191148625544_x.jpg 
+2025-10-21 21:52:13.321 [http-nio-8080-exec-2] ERROR b.m.Controller.FileUploadController - Không tìm thấy ảnh với ID: 51 - Error reading image: D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\uploads\product_51_1760761997168_photo_6298792191148625544_x.jpg
+2025-10-21 21:52:16.556 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - select c1_0.id,c1_0.created_at,c1_0.description,c1_0.display_order,c1_0.image_url,c1_0.is_active,c1_0.name,c1_0.parent_id,c1_0.slug,c1_0.updated_at from categories c1_0
+2025-10-21 21:52:56.847 [MessageBroker-1] INFO  o.s.w.s.c.WebSocketMessageBrokerStats - WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 1, active threads = 1, queued tasks = 0, completed tasks = 0]
+2025-10-21 21:53:09.992 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-10-21 21:53:10.198 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-10-21 21:53:10.201 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-10-21 21:53:10.201 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@11d33507]]
+2025-10-21 21:53:10.201 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-10-21 21:53:10.253 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-10-21 21:53:10.259 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-10-21 21:53:10.270 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

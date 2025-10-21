@@ -31,33 +31,17 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints - không cần xác thực
-                        .requestMatchers("/api/authz/login", "/api/authz/register", "/api/authz/forgot-password",
-                                "/api/authz/reset-password")
-                        .permitAll()
-
-                        // Endpoint để tạo admin user (tạm thời cho phép public)
-                        .requestMatchers("/api/user/make-admin").permitAll()
-
                         // Logout endpoint - cần xác thực để logout
                         .requestMatchers("/api/authz/logout").authenticated()
-
-                        // Public product/category endpoints - cho phép xem sản phẩm
-                        .requestMatchers("/api/products/**", "/api/categories/**", "/api/image/**").permitAll()
-
                         // Discount calculation endpoints - cho phép tính toán giảm giá
                         .requestMatchers("/api/discounts/**").permitAll()
                         // Protected endpoints - cần xác thực JWT
                         .requestMatchers("/api/authz/profile").authenticated()
-                        .requestMatchers("/api/users/**").permitAll()
-                        .requestMatchers("/api/order/**").permitAll()
+                        .requestMatchers("/api/users/**").authenticated()
+                        .requestMatchers("/api/order/**").authenticated()
                         .requestMatchers("/api/voucher/**").permitAll()
                         // authenticated()
                         // authenticated()
-                        // Admin endpoints - cần role ADMIN
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
-                        // Các endpoint khác → cho phép
                         .anyRequest().permitAll())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
