@@ -27,7 +27,7 @@ public class ProductComment extends BaseEntity {
     private String content;
 
     @Column(name = "rating")
-    private Integer rating; // 1-5 stars
+    private Integer rating; 
 
     @Column(name = "is_approved")
     private Boolean isApproved = false;
@@ -36,7 +36,7 @@ public class ProductComment extends BaseEntity {
     private Boolean isAnonymous = false;
 
     @Column(name = "parent_comment_id")
-    private Integer parentCommentId; // For replies
+    private Integer parentCommentId; 
 
     @Column(name = "likes_count")
     private Integer likesCount = 0;
