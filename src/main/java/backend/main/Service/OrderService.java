@@ -57,6 +57,8 @@ public class OrderService implements BaseService<Order, Integer> {
     private PromotionService promotionService;
     @Autowired
     private VariantService variantService;
+    @Autowired
+    private EmailService emailService;
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(OrderService.class);
 
     @Transactional(readOnly = true)
@@ -206,9 +208,30 @@ public class OrderService implements BaseService<Order, Integer> {
             }
 
             Order existing = optional.get();
+            String oldStatus = existing.getOrderStatus(); // Lưu trạng thái cũ
+            
             updateOrderFromRequest(existing, orderRequest);
             existing.setUpdatedAt(java.time.LocalDateTime.now());
             Order updated = repository.save(existing);
+            
+            // Gửi email thông báo nếu trạng thái thay đổi
+            if (orderRequest.getOrderStatus() != null && !orderRequest.getOrderStatus().equals(oldStatus)) {
+                try {
+                    emailService.sendOrderStatusUpdateEmail(
+                        updated.getCustomerEmail(),
+                        updated.getCustomerName(),
+                        updated.getOrderCode(),
+                        oldStatus,
+                        updated.getOrderStatus(),
+                        updated.getNotes()
+                    );
+                    logger.info("Email cập nhật trạng thái đơn hàng đã được gửi cho: {}", updated.getCustomerEmail());
+                } catch (Exception e) {
+                    logger.error("Lỗi khi gửi email cập nhật trạng thái đơn hàng: {}", e.getMessage());
+                    // Không throw exception để không ảnh hưởng đến việc cập nhật đơn hàng
+                }
+            }
+            
             logger.info("✅ Updated order: ID={}, Code={}", updated.getId(), updated.getOrderCode());
             return new ResponseEntity<>(
                     new ResponseObject(200, "Cập nhật đơn hàng thành công", 0, updated),
@@ -506,40 +529,8 @@ public class OrderService implements BaseService<Order, Integer> {
         Order order = new Order();
         order.setOrderCode("OD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
         Integer customerId = request.getId();
-        if (customerId == null) {
-            // Tìm user theo email hoặc phone
-            Optional<User> byEmail = (request.getEmail() != null && !request.getEmail().isEmpty())
-                    ? userRepository.findByEmail(request.getEmail())
-                    : Optional.empty();
-            Optional<User> byPhone = (byEmail.isPresent() || request.getPhone() == null || request.getPhone().isEmpty())
-                    ? Optional.empty()
-                    : userRepository.findByPhone(request.getPhone());
-
-            User user = byEmail.orElseGet(() -> byPhone.orElseGet(() -> {
-                // Tạo user mới chỉ khi có đủ thông tin bắt buộc
-                if (request.getFullname() == null || request.getFullname().isEmpty()) {
-                    logger.warn("Cannot create user: fullname is required");
-                    return null;
-                }
-                if (request.getPhone() == null || request.getPhone().isEmpty()) {
-                    logger.warn("Cannot create user: phone is required");
-                    return null;
-                }
-
-                User u = new User();
-                u.setId(null);
-                u.setFullName(request.getFullname());
-                u.setEmail(request.getEmail());
-                u.setPhone(request.getPhone());
-                u.setAddress(request.getAddress());
-                u.setAccount(null);
-                return u;
-            }));
-
-            if (user == null) {
-                logger.warn("Failed to create or find user for checkout");
-            }
-            customerId = user.getId();
+        if(customerId != null){
+        logger.info("Customer ID: {}", customerId);
         }
         order.setCustomer(customerId);
         order.setCustomerName(request.getFullname());
@@ -612,7 +603,7 @@ public class OrderService implements BaseService<Order, Integer> {
 
             BigDecimal unitPrice = BigDecimal.ZERO;
             if (it.getObject() != null && it.getObject().getPrice() != null) {
-                unitPrice = it.getObject().getPrice();
+                unitPrice = it.getObject().getList_price();
             }
             BigDecimal totalPrice = BigDecimal.ZERO;
             if (discount != null) {
@@ -660,6 +651,22 @@ public class OrderService implements BaseService<Order, Integer> {
         }
         // saved.getOrderCode(),subtotal);
         if (saved != null) {
+            // Gửi email xác nhận đơn hàng
+            try {
+                String orderItemsHtml = buildOrderItemsHtml(items);
+                emailService.sendOrderConfirmationEmail(
+                    saved.getCustomerEmail(),
+                    saved.getCustomerName(),
+                    saved.getOrderCode(),
+                    saved.getTotalAmount().toString(),
+                    orderItemsHtml
+                );
+                logger.info("Email xác nhận đơn hàng đã được gửi cho: {}", saved.getCustomerEmail());
+            } catch (Exception e) {
+                logger.error("Lỗi khi gửi email xác nhận đơn hàng: {}", e.getMessage());
+                // Không throw exception để không ảnh hưởng đến việc tạo đơn hàng
+            }
+            
             return new ResponseEntity<>(
                     new ResponseObject(200, "Đặt hàng thành công", 0, saved),
                     HttpStatus.OK);
@@ -682,6 +689,31 @@ public class OrderService implements BaseService<Order, Integer> {
             return new ResponseEntity<>(new ResponseObject(500, "Lỗi khi xóa đơn hàng", 1, e.getMessage()),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    // Helper method để build HTML cho order items
+    private String buildOrderItemsHtml(List<OrderItem> items) {
+        StringBuilder html = new StringBuilder();
+        html.append("<ul style='list-style: none; padding: 0;'>");
+        
+        for (OrderItem item : items) {
+            html.append("<li style='border-bottom: 1px solid #eee; padding: 10px 0;'>");
+            html.append("<div style='display: flex; justify-content: space-between;'>");
+            html.append("<div>");
+            html.append("<strong>").append(item.getProductName()).append("</strong><br>");
+            html.append("<small style='color: #666;'>").append(item.getVariantAttributes()).append("</small><br>");
+            html.append("<small>SKU: ").append(item.getSku()).append("</small>");
+            html.append("</div>");
+            html.append("<div style='text-align: right;'>");
+            html.append("<div>").append(item.getQuantity()).append(" x ").append(item.getUnitSalePrice()).append(" VNĐ</div>");
+            html.append("<strong>").append(item.getTotalPrice()).append(" VNĐ</strong>");
+            html.append("</div>");
+            html.append("</div>");
+            html.append("</li>");
+        }
+        
+        html.append("</ul>");
+        return html.toString();
     }
 
     public ResponseEntity<ResponseObject> updateDTO(OrderDTO orderDTO) {
@@ -734,7 +766,8 @@ public class OrderService implements BaseService<Order, Integer> {
                     : item.getVariant().getListPrice());
             item.setUnitCostPrice(item.getVariant().getCostPrice());
             item.setQuantity(item.getQuantity());
-            item.setTotalPrice(item.getUnitSalePrice().multiply(java.math.BigDecimal.valueOf(item.getQuantity())));
+            item.setTotalPrice(
+                item.getUnitSalePrice().multiply(java.math.BigDecimal.valueOf(item.getQuantity())));
         });
         return order;
     }
@@ -791,14 +824,14 @@ public class OrderService implements BaseService<Order, Integer> {
         dto.setNotes(a.getNotes());
         dto.setCreatedBy(a.getCreatedBy());
         dto.setCreatedAt(a.getCreatedAt());
-        dto.setListiem(null);
+        dto.setItems(null);
         if (a.getOrderItems() != null) {
             List<OrderItemDTO> items = a.getOrderItems().stream().map(item -> {
                 return convertItems(item);
             }).collect(Collectors.toList());
-            dto.setListiem(items);
+            dto.setItems(items);
         } else {
-            dto.setListiem(Collections.emptyList());
+            dto.setItems(Collections.emptyList());
         }
         return dto;
     }

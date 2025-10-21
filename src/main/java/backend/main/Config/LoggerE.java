@@ -5,9 +5,20 @@ import org.slf4j.LoggerFactory;
 
 public class LoggerE {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoggerE.class);
+    public static final Logger logger = LoggerFactory.getLogger(LoggerE.class);
 
-    /** 🔍 Lấy thông tin file, dòng, method của caller thật */
+    // Để Bắt lỗi lấy log Debug dễ hơnhơn
+    public static Logger getLogger() {
+        // Lấy class gọi đến (caller)
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        // [0] getStackTrace, [1] getLogger, [2] caller
+        String className = stackTrace[2].getClassName();
+        try {
+            return LoggerFactory.getLogger(Class.forName(className));
+        } catch (ClassNotFoundException e) {
+            return LoggerFactory.getLogger(LoggerE.class);
+        }
+    }
     private static StackTraceElement getCaller() {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         for (StackTraceElement ste : stackTrace) {
@@ -25,25 +36,21 @@ public class LoggerE {
         logger.info(format(message, caller));
     }
 
-    /** 🟡 Warning log */
     public static void warning(String message) {
         StackTraceElement caller = getCaller();
         logger.warn(format(message, caller));
     }
 
-    /** 🔴 Error log */
     public static void error(String message, Throwable t) {
         StackTraceElement caller = getCaller();
         logger.error(format(message, caller), t);
     }
 
-    /** ⚙️ Config/Debug log */
     public static void debug(String message) {
         StackTraceElement caller = getCaller();
         logger.debug(format(message, caller));
     }
 
-    /** 🧩 Định dạng log hiển thị */
     private static String format(String message, StackTraceElement ste) {
         return String.format("[%s:%d %s()] %s",
                 ste.getFileName(),

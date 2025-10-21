@@ -168,7 +168,8 @@ public class ProductController {
         tes.setProductType(data.getProductType());
         String makeslug = data.getSlug();
 
-        if (makeslug == null || makeslug.trim().isEmpty()) { // Kiểm tra null HOẶC rỗng (sau khi loại bỏ khoảng trắng)
+        // Kiểm tra null HOẶC rỗng (sau khi loại bỏ khoảng trắng)
+        if (makeslug == null || makeslug.trim().isEmpty()) {
             // Nếu slug không tồn tại, tạo slug từ tên
             String newSlug = Engine.makeSlug(data.getName());
             tes.setSlug(newSlug);

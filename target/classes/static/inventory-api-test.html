@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .section h3 {
+            color: #007bff;
+            margin-top: 0;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #e9ecef;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Inventory API Test</h1>
+        
+        <div class="info">
+            <strong>🔧 Hướng dẫn:</strong>
+            <ol>
+                <li>Đảm bảo backend đang chạy trên <code>http://localhost:8080</code></li>
+                <li>Nhập JWT token để test các API cần authentication</li>
+                <li>Click các button để test từng endpoint</li>
+                <li>Xem kết quả trong phần Response bên dưới</li>
+            </ol>
+        </div>
+
+        <div class="form-group">
+            <label for="jwtToken">JWT Token (nếu cần):</label>
+            <input type="text" id="jwtToken" placeholder="Bearer your-jwt-token-here">
+        </div>
+
+        <div class="grid">
+            <!-- Basic CRUD Tests -->
+            <div class="section">
+                <h3>🔧 Basic CRUD Operations</h3>
+                <button onclick="testGetAllInventory()">GET All Inventory</button>
+                <button onclick="testGetInventoryById()">GET Inventory by ID</button>
+                <button onclick="testCreateInventory()">POST Create Inventory</button>
+                <button onclick="testUpdateInventory()">PUT Update Inventory</button>
+                <button onclick="testDeleteInventory()">DELETE Inventory</button>
+            </div>
+
+            <!-- Stock Management Tests -->
+            <div class="section">
+                <h3>📦 Stock Management</h3>
+                <button onclick="testUpdateStock()">PATCH Update Stock</button>
+                <button onclick="testImportStock()">POST Import Stock</button>
+                <button onclick="testExportStock()">POST Export Stock</button>
+            </div>
+
+            <!-- Reports Tests -->
+            <div class="section">
+                <h3>📊 Reports & Analytics</h3>
+                <button onclick="testGetReport()">GET Inventory Report</button>
+                <button onclick="testGetLowStock()">GET Low Stock</button>
+                <button onclick="testGetOutOfStock()">GET Out of Stock</button>
+                <button onclick="testGetStats()">GET Stats</button>
+            </div>
+
+            <!-- Search Tests -->
+            <div class="section">
+                <h3>🔍 Search & Filter</h3>
+                <button onclick="testSearchInventory()">GET Search</button>
+                <button onclick="testGetByVariant()">GET By Variant</button>
+                <button onclick="testGetByProduct()">GET By Product</button>
+            </div>
+        </div>
+
+        <!-- Test Forms -->
+        <div class="section">
+            <h3>📝 Test Forms</h3>
+            
+            <div class="grid">
+                <div>
+                    <h4>Create Inventory</h4>
+                    <div class="form-group">
+                        <label>Product Variant ID:</label>
+                        <input type="number" id="createVariantId" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Stock:</label>
+                        <input type="number" id="createStock" value="50">
+                    </div>
+                    <div class="form-group">
+                        <label>Status:</label>
+                        <select id="createStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Position:</label>
+                        <input type="text" id="createPosition" value="Kho A, Kệ 1">
+                    </div>
+                </div>
+
+                <div>
+                    <h4>Import/Export Stock</h4>
+                    <div class="form-group">
+                        <label>Inventory ID:</label>
+                        <input type="number" id="stockInventoryId" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity:</label>
+                        <input type="number" id="stockQuantity" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label>Reason:</label>
+                        <select id="stockReason">
+                            <option value="purchase">Purchase</option>
+                            <option value="sale">Sale</option>
+                            <option value="adjustment">Adjustment</option>
+                            <option value="return">Return</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes:</label>
+                        <textarea id="stockNotes" rows="3">Test import/export</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Response Display -->
+        <div class="section">
+            <h3>📤 Response</h3>
+            <div id="response"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api/inventory';
+        
+        function getHeaders() {
+            const token = document.getElementById('jwtToken').value;
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            if (token) {
+                headers['Authorization'] = token.startsWith('Bearer') ? token : `Bearer ${token}`;
+            }
+            return headers;
+        }
+
+        function displayResponse(data, isError = false) {
+            const responseDiv = document.getElementById('response');
+            const className = isError ? 'error' : 'success';
+            responseDiv.innerHTML = `<div class="${className}"><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+        }
+
+        function displayError(error) {
+            const responseDiv = document.getElementById('response');
+            responseDiv.innerHTML = `<div class="error"><strong>Error:</strong> ${error.message || error}</div>`;
+        }
+
+        // Basic CRUD Tests
+        async function testGetAllInventory() {
+            try {
+                const response = await fetch(API_BASE, {
+                    method: 'GET',
+                    headers: getHeaders()
+                });
+                const data = await response.json();
+                displayResponse(data, !response.ok);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function testGetInventoryById() {
+            const id = prompt('Enter Inventory ID:', '1');
+            if (!id) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/${id}`, {
+                    method: 'GET',
+                    headers: getHeaders()
+                });
+                const data = await response.json();
+                displayResponse(data, !response.ok);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function testCreateInventory() {
+            const inventoryData = {
+                productVariant: parseInt(document.getElementById('createVariantId').value),
+                stock: parseInt(document.getElementById('createStock').value),
+                status: document.getElementById('createStatus').value,
+                position: document.getElementById('createPosition').value,
+                condition: 1,
+                source: 1,
+                importDate: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch(API_BASE, {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    body: JSON.stringify(inventoryData)
+                });
+                const data = await response.json();
+                displayResponse(data, !response.ok);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function testUpdateInventory() {
+            const id = prompt('Enter Inventory ID to update:', '1');
+            if (!id) return;
+
+            const inventoryData = {
+                stock: parseInt(document.getElementById('createStock').value),
+                status: document.getElementById('createStatus').value,
+                position: document.getElementById('createPosition').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/${id}`, {
+                    method: 'PUT',
+                    headers: getHeaders(),
+                    body: JSON.stringify(inventoryData)
+                });
+                const data = await response.json();
+                displayResponse(data, !response.ok);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function testDeleteInventory() {
+            const id = prompt('Enter Inventory ID to delete:', '1');
+            if (!id) return;
+
+            if (!confirm(`Are you sure you want to delete inventory ID ${id}?`)) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/${id}`, {
+                    method: 'DELETE',
+                    headers: getHeaders()
+                });
+                const data = await response.json();
+                displayResponse(data, !response.ok);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        // Stock Management Tests
+        async function testUpdateStock() {
+            const id = document.getElementById('stockInventoryId').value;
+            const stockData = {
+                stock: parseInt(document.getElementById('stockQuantity').value),
+                reason: document.getElementById('stockReason').value,
+                notes: document.getElementById('stockNotes').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/${id}/stock`, {
+                    method: 'PATCH',
+                    headers: getHeaders(),
+                    body: JSON.stringify(stockData)
+                });
+                const data = await response.json();
+                displayResponse(data, !response.ok);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function testImportStock() {
+            const id = document.getElementById('stockInventoryId').value;
+            const importData = {
+                quantity: parseInt(document.getElementById('stockQuantity').value),
+                reason: document.getElementById('stockReason').value,
+                notes: document.getElementById('stockNotes').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/${id}/import`, {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    body: JSON.stringify(importData)
+                });
+                const data = await response.json();
+                displayResponse(data, !response.ok);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function testExportStock() {
+            const id = document.getElementById('stockInventoryId').value;
+            const exportData = {
+                quantity: parseInt(document.getElementById('stockQuantity').value),
+                reason: document.getElementById('stockReason').value,
+                notes: document.getElementById('stockNotes').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/${id}/export`, {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    body: JSON.stringify(exportData)
+                });
+                const data = await response.json();
+                displayResponse(data, !response.ok);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        // Reports Tests
+        async function testGetReport() {
+            try {
+                const response = await fetch(`${API_BASE}/report`, {
+                    method: 'GET',
+                    headers: getHeaders()
+                });
+                const data = await response.json();
+                displayResponse(data, !response.ok);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function testGetLowStock() {
+            const threshold = prompt('Enter threshold (default 10):', '10');
+            const url = threshold ? `${API_BASE}/low-stock?threshold=${threshold}` : `${API_BASE}/low-stock`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: getHeaders()
+                });
+                const data = await response.json();
+                displayResponse(data, !response.ok);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function testGetOutOfStock() {
+            try {
+                const response = await fetch(`${API_BASE}/out-of-stock`, {
+                    method: 'GET',
+                    headers: getHeaders()
+                });
+                const data = await response.json();
+                displayResponse(data, !response.ok);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function testGetStats() {
+            try {
+                const response = await fetch(`${API_BASE}/stats`, {
+                    method: 'GET',
+                    headers: getHeaders()
+                });
+                const data = await response.json();
+                displayResponse(data, !response.ok);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        // Search Tests
+        async function testSearchInventory() {
+            const query = prompt('Enter search query:', 'iPhone');
+            const status = prompt('Enter status filter (active/inactive/all):', 'all');
+            const stockStatus = prompt('Enter stock status (in-stock/low-stock/out-of-stock/all):', 'all');
+            
+            const params = new URLSearchParams();
+            if (query) params.append('query', query);
+            if (status && status !== 'all') params.append('status', status);
+            if (stockStatus && stockStatus !== 'all') params.append('stockStatus', stockStatus);
+            
+            try {
+                const response = await fetch(`${API_BASE}/search?${params}`, {
+                    method: 'GET',
+                    headers: getHeaders()
+                });
+                const data = await response.json();
+                displayResponse(data, !response.ok);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function testGetByVariant() {
+            const variantId = prompt('Enter Variant ID:', '1');
+            if (!variantId) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/by-variant/${variantId}`, {
+                    method: 'GET',
+                    headers: getHeaders()
+                });
+                const data = await response.json();
+                displayResponse(data, !response.ok);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function testGetByProduct() {
+            const productId = prompt('Enter Product ID:', '1');
+            if (!productId) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/by-product/${productId}`, {
+                    method: 'GET',
+                    headers: getHeaders()
+                });
+                const data = await response.json();
+                displayResponse(data, !response.ok);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        // Auto-test on page load
+        window.onload = function() {
+            console.log('📦 Inventory API Test Page Loaded');
+            console.log('🔧 Make sure backend is running on http://localhost:8080');
+            
+            // Test basic connectivity
+            fetch(API_BASE)
+                .then(response => {
+                    if (response.ok) {
+                        console.log('✅ Backend is running and accessible');
+                    } else {
+                        console.log('⚠️ Backend responded with status:', response.status);
+                    }
+                })
+                .catch(error => {
+                    console.log('❌ Backend is not accessible:', error.message);
+                    document.getElementById('response').innerHTML = 
+                        '<div class="error"><strong>Backend Connection Error:</strong> Make sure the backend is running on http://localhost:8080</div>';
+                });
+        };
+    </script>
+</body>
+</html>

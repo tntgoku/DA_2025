@@ -1,6 +1,7 @@
 package backend.main.Controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import backend.main.Service.EmailService;

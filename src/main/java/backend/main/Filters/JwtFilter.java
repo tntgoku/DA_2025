@@ -56,13 +56,25 @@ public class JwtFilter extends OncePerRequestFilter {
             String token = authHeader.substring(7);
             logger.info("Token dc lay la:{}" , token);
             try {
-                String email = jwtUtil.extractUsername(token);
+                // Kiểm tra xem token có được encode base64 không
+                String decodedToken = token;
+                try {
+                    // Thử decode base64
+                    byte[] decodedBytes = java.util.Base64.getDecoder().decode(token);
+                    decodedToken = new String(decodedBytes, "UTF-8");
+                    logger.info("Token đã được decode từ base64");
+                } catch (Exception e) {
+                    // Nếu không phải base64, sử dụng token gốc
+                    logger.info("Token không phải base64, sử dụng token gốc");
+                }
+                
+                String email = jwtUtil.extractUsername(decodedToken);
                 logger.info("🟢 Email trong token: {}" , email);
                 if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
                     Optional<AuthzProjection> userOpt = userRepository.findByEmailWithAccountAndRole(email);
 
-                    if (userOpt.isPresent() && jwtUtil.validateToken(token, email)) {
+                    if (userOpt.isPresent() && jwtUtil.validateToken(decodedToken, email)) {
 
                         AuthzProjection user = userOpt.get();
                         String roleName = (user.getRoleName() != null) ? user.getRoleName() : "USER";

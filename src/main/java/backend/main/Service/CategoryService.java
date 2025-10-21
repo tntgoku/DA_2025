@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -180,5 +182,194 @@ public class CategoryService implements BaseService<Categories, Integer> {
         return new ResponseEntity<>(
                 new ResponseObject(200, "Thành công", 0, optional.get()),
                 HttpStatus.OK);
+    }
+
+    // SEO-friendly methods
+    public ResponseEntity<ResponseObject> getCategoryHierarchy() {
+        try {
+            List<Categories> allCategories = repository.findAll();
+            List<CategoryDTO> hierarchy = buildCategoryHierarchy(allCategories);
+            
+            return new ResponseEntity<>(
+                    new ResponseObject(200, "Thành công", 0, hierarchy),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error getting category hierarchy: {}", e.getMessage());
+            return new ResponseEntity<>(
+                    new ResponseObject(500, "Lỗi khi lấy cây danh mục: " + e.getMessage(), 1, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<ResponseObject> getBreadcrumbBySlug(String slug) {
+        try {
+            Optional<Categories> categoryOpt = repository.findBySlug(slug);
+            if (!categoryOpt.isPresent()) {
+                return new ResponseEntity<>(
+                        new ResponseObject(404, "Không tìm thấy danh mục với slug: " + slug, 0, null),
+                        HttpStatus.NOT_FOUND);
+            }
+
+            List<CategoryDTO> breadcrumb = buildBreadcrumb(categoryOpt.get());
+            
+            return new ResponseEntity<>(
+                    new ResponseObject(200, "Thành công", 0, breadcrumb),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error getting breadcrumb: {}", e.getMessage());
+            return new ResponseEntity<>(
+                    new ResponseObject(500, "Lỗi khi lấy breadcrumb: " + e.getMessage(), 1, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<ResponseObject> getCategoriesByParent(Integer parentId) {
+        try {
+            List<Categories> categories = repository.findByParent(parentId);
+            List<CategoryDTO> dtos = categories.stream()
+                    .map(this::convertToDTO)
+                    .collect(java.util.stream.Collectors.toList());
+            
+            return new ResponseEntity<>(
+                    new ResponseObject(200, "Thành công", 0, dtos),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error getting categories by parent: {}", e.getMessage());
+            return new ResponseEntity<>(
+                    new ResponseObject(500, "Lỗi khi lấy danh mục con: " + e.getMessage(), 1, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<ResponseObject> getCategoryBySeoUrl(String parentSlug, String childSlug) {
+        try {
+            // Tìm parent category
+            Optional<Categories> parentOpt = repository.findBySlug(parentSlug);
+            if (!parentOpt.isPresent()) {
+                return new ResponseEntity<>(
+                        new ResponseObject(404, "Không tìm thấy danh mục cha với slug: " + parentSlug, 0, null),
+                        HttpStatus.NOT_FOUND);
+            }
+
+            // Tìm child category
+            Optional<Categories> childOpt = repository.findBySlugAndParent(childSlug, parentOpt.get().getId());
+            if (!childOpt.isPresent()) {
+                return new ResponseEntity<>(
+                        new ResponseObject(404, "Không tìm thấy danh mục con với slug: " + childSlug, 0, null),
+                        HttpStatus.NOT_FOUND);
+            }
+
+            CategoryDTO result = convertToDTO(childOpt.get());
+            result.setParentCategory(convertToDTO(parentOpt.get()));
+            
+            return new ResponseEntity<>(
+                    new ResponseObject(200, "Thành công", 0, result),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error getting category by SEO URL: {}", e.getMessage());
+            return new ResponseEntity<>(
+                    new ResponseObject(500, "Lỗi khi lấy danh mục theo SEO URL: " + e.getMessage(), 1, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<ResponseObject> getCategoryByParentSlug(String parentSlug) {
+        try {
+            Optional<Categories> parentOpt = repository.findBySlug(parentSlug);
+            if (!parentOpt.isPresent()) {
+                return new ResponseEntity<>(
+                        new ResponseObject(404, "Không tìm thấy danh mục với slug: " + parentSlug, 0, null),
+                        HttpStatus.NOT_FOUND);
+            }
+
+            CategoryDTO result = convertToDTO(parentOpt.get());
+            
+            return new ResponseEntity<>(
+                    new ResponseObject(200, "Thành công", 0, result),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error getting category by parent slug: {}", e.getMessage());
+            return new ResponseEntity<>(
+                    new ResponseObject(500, "Lỗi khi lấy danh mục theo parent slug: " + e.getMessage(), 1, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<ResponseObject> searchCategories(String keyword, Integer parentId, Boolean isActive, int page, int size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            List<Categories> categories = repository.searchCategories(keyword, parentId, isActive, pageable);
+            List<CategoryDTO> dtos = categories.stream()
+                    .map(this::convertToDTO)
+                    .collect(java.util.stream.Collectors.toList());
+            
+            return new ResponseEntity<>(
+                    new ResponseObject(200, "Thành công", 0, dtos),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error searching categories: {}", e.getMessage());
+            return new ResponseEntity<>(
+                    new ResponseObject(500, "Lỗi khi tìm kiếm danh mục: " + e.getMessage(), 1, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Helper methods
+    private List<CategoryDTO> buildCategoryHierarchy(List<Categories> allCategories) {
+        Map<Integer, CategoryDTO> categoryMap = new HashMap<>();
+        List<CategoryDTO> rootCategories = new ArrayList<>();
+
+        // Convert all categories to DTOs
+        for (Categories category : allCategories) {
+            CategoryDTO dto = convertToDTO(category);
+            categoryMap.put(category.getId(), dto);
+        }
+
+        // Build hierarchy
+        for (Categories category : allCategories) {
+            CategoryDTO dto = categoryMap.get(category.getId());
+            if (category.getParent() == null) {
+                rootCategories.add(dto);
+            } else {
+                CategoryDTO parent = categoryMap.get(category.getParent());
+                if (parent != null) {
+                    parent.getChildren().add(dto);
+                }
+            }
+        }
+
+        return rootCategories;
+    }
+
+    private List<CategoryDTO> buildBreadcrumb(Categories category) {
+        List<CategoryDTO> breadcrumb = new ArrayList<>();
+        Categories current = category;
+
+        while (current != null) {
+            breadcrumb.add(0, convertToDTO(current)); // Add to beginning
+            if (current.getParent() != null) {
+                Optional<Categories> parentOpt = repository.findById(current.getParent());
+                current = parentOpt.orElse(null);
+            } else {
+                current = null;
+            }
+        }
+
+        return breadcrumb;
+    }
+
+    private CategoryDTO convertToDTO(Categories category) {
+        CategoryDTO dto = new CategoryDTO();
+        dto.setId(category.getId());
+        dto.setName(category.getName());
+        dto.setSlug(category.getSlug());
+        dto.setDescription(category.getDescription());
+        dto.setImageUrl(category.getImageUrl());
+        dto.setDisplayOrder(category.getDisplayOrder());
+        dto.setParentId(category.getParent());
+        dto.setIsActive(category.getIsActive());
+        dto.setCreatedAt(category.getCreatedAt());
+        dto.setUpdatedAt(category.getUpdatedAt());
+        return dto;
     }
 }

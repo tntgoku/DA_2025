@@ -24,7 +24,6 @@ import backend.main.Config.LoggerE;
 import backend.main.DTO.OrderDTO;
 import backend.main.DTO.OrderItemDTO;
 import backend.main.Model.ResponseObject;
-import backend.main.Model.Order.Order;
 import backend.main.Model.Promotion.Voucher;
 import backend.main.Repository.VoucherRepository;
 import backend.main.Request.OrderItemRequest;
@@ -40,7 +39,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/order")
 public class OrderController {
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(OrderController.class);
+    private static final org.slf4j.Logger logger =LoggerE.getLogger();
     @Autowired
     private OrderService orderService;
     @Autowired
@@ -161,10 +160,10 @@ public class OrderController {
             // return new ResponseEntity<>(new ResponseObject(200, "Order updated successfully", 0,order), HttpStatus.OK);
         } catch (NumberFormatException e) {
             logger.error("Invalid order ID: {}", id);
-            return new ResponseEntity<>(new ResponseObject(400, "Invalid order ID", 1, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseObject(400, "Không tồn tại ID đơn hàng", 1, null), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             logger.error("Error updating order: {}", e.getMessage());
-            return new ResponseEntity<>(new ResponseObject(500, "Internal server error", 1, null),
+            return new ResponseEntity<>(new ResponseObject(500, "Lỗi máy chủ", 1, e.getMessage()),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -175,7 +174,7 @@ public class OrderController {
             @RequestBody java.util.Map<String, String> request) {
         Integer orderId = Integer.parseInt(id);
         String status = request.get("status");
-        logger.info("Update Order Status orderId: {}, status: {}", orderId, status);
+        logger.info("Cập nhật trạng thái đơn hàng orderId: {}, status: {}", orderId, status);
         return orderService.updateOrderStatus(orderId, status);
     }
 
@@ -210,7 +209,7 @@ public class OrderController {
         newOrderDTO.setTrackingNumber(order.getTrackingNumber());
         newOrderDTO.setNotes(order.getNotes());
         newOrderDTO.setCreatedAt(java.time.LocalDateTime.now());
-        newOrderDTO.setListiem(convertOrderItemDTO(order.getItems()));
+        newOrderDTO.setItems(convertOrderItemDTO(order.getItems()));
         newOrderDTO.setVoucherId(order.getVoucherId());
         newOrderDTO.setVoucherDiscount(order.getVoucherDiscount());
         newOrderDTO.setShippingAddress(order.getShippingAddress());

@@ -70,7 +70,7 @@ public class OrderDTO {
             String paymentMethod, BigDecimal subtotalAmount, BigDecimal discountAmount, BigDecimal shippingFee,
             BigDecimal taxAmount, BigDecimal totalAmount, BigDecimal amountPaid, Integer voucherId,
             BigDecimal voucherDiscount, String shippingAddress, String shippingMethod, String trackingNumber,
-            String notes, Integer createdBy, List<OrderItemDTO> listiem) {
+            String notes, Integer createdBy, List<OrderItemDTO> items) {
         this.id = id;
         this.orderCode = orderCode;
         this.customer = customer;
@@ -281,11 +281,11 @@ public class OrderDTO {
         this.createdBy = createdBy;
     }
 
-    public List<OrderItemDTO> getListiem() {
+    public List<OrderItemDTO> getItems() {
         return this.items;
     }
 
-    public void setListiem(List<OrderItemDTO> items) {
+    public void setItems(List<OrderItemDTO> items) {
         this.items = items;
     }
 
@@ -405,7 +405,7 @@ public class OrderDTO {
     }
 
     public OrderDTO listiem(List<OrderItemDTO> listiem) {
-        setListiem(listiem);
+        setItems(items);
         return this;
     }
 
@@ -471,7 +471,7 @@ public class OrderDTO {
                 ", trackingNumber='" + getTrackingNumber() + "'" +
                 ", notes='" + getNotes() + "'" +
                 ", createdBy='" + getCreatedBy() + "'" +
-                ", listiem='" + getListiem() + "'" +
+                ", items='" + getItems() + "'" +
                 "}";
     }
 

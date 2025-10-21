@@ -15,7 +15,6 @@ import backend.main.Model.InventoryItem;
 import backend.main.Model.InventoryHistory;
 import backend.main.Model.ResponseObject;
 import backend.main.Repository.InventoryReponsitory;
-import backend.main.Repository.InventoryHistoryRepository;
 import backend.main.Repository.VariantReponsitory;
 import backend.main.Request.InventoryRequest;
 import backend.main.DTO.InventoryDTO;
@@ -25,8 +24,6 @@ public class InventoryService implements BaseService<InventoryItem, Integer> {
     @Autowired
     private InventoryReponsitory reponsitory;
 
-    @Autowired
-    private InventoryHistoryRepository historyRepository;
 
     @Autowired
     private VariantReponsitory variantRepository;
@@ -282,11 +279,11 @@ public class InventoryService implements BaseService<InventoryItem, Integer> {
             InventoryItem updated = reponsitory.save(existing);
 
             // Log stock change if different
-            if (!Objects.equals(oldStock, request.getStock())) {
-                createStockHistory(existing, InventoryHistory.ActionType.ADJUSTMENT,
-                        request.getStock() - oldStock, oldStock, request.getStock(),
-                        "Cập nhật thông tin", "Cập nhật từ form");
-            }
+            // if (!Objects.equals(oldStock, request.getStock())) {
+            //     createStockHistory(existing, InventoryHistory.ActionType.ADJUSTMENT,
+            //             request.getStock() - oldStock, oldStock, request.getStock(),
+            //             "Cập nhật thông tin", "Cập nhật từ form");
+            // }
 
             logger.info("✅ Updated inventory item: ID={}", updated.getId());
             return new ResponseEntity<>(
@@ -328,8 +325,8 @@ public class InventoryService implements BaseService<InventoryItem, Integer> {
             reponsitory.save(item);
 
             // Create history record
-            createStockHistory(item, InventoryHistory.ActionType.ADJUSTMENT,
-                    newStock - oldStock, oldStock, newStock, reason, notes);
+            // createStockHistory(item, InventoryHistory.ActionType.ADJUSTMENT,
+            //         newStock - oldStock, oldStock, newStock, reason, notes);
 
             logger.info("✅ Updated stock for inventory ID={}: {} -> {}", id, oldStock, newStock);
             return new ResponseEntity<>(
@@ -372,8 +369,8 @@ public class InventoryService implements BaseService<InventoryItem, Integer> {
             reponsitory.save(item);
 
             // Create history record
-            createStockHistory(item, InventoryHistory.ActionType.IMPORT,
-                    importQuantity, oldStock, newStock, reason, notes);
+            // createStockHistory(item, InventoryHistory.ActionType.IMPORT,
+            //         importQuantity, oldStock, newStock, reason, notes);
 
             logger.info("✅ Imported stock for inventory ID={}: +{} ({} -> {})", id, importQuantity, oldStock, newStock);
             return new ResponseEntity<>(
@@ -422,8 +419,8 @@ public class InventoryService implements BaseService<InventoryItem, Integer> {
             reponsitory.save(item);
 
             // Create history record
-            createStockHistory(item, InventoryHistory.ActionType.EXPORT,
-                    -exportQuantity, oldStock, newStock, reason, notes);
+            // createStockHistory(item, InventoryHistory.ActionType.EXPORT,
+            //         -exportQuantity, oldStock, newStock, reason, notes);
 
             logger.info("✅ Exported stock for inventory ID={}: -{} ({} -> {})", id, exportQuantity, oldStock, newStock);
             return new ResponseEntity<>(
@@ -513,25 +510,6 @@ public class InventoryService implements BaseService<InventoryItem, Integer> {
     public ResponseEntity<ResponseObject> getInventoryStats() {
         return getInventoryReport(new HashMap<>());
     }
-
-    // Get inventory history
-    public ResponseEntity<ResponseObject> getInventoryHistory(Integer id) {
-        try {
-            List<InventoryHistory> history = historyRepository.findByInventoryItemIdOrderByPerformedAtDesc(id);
-
-            logger.info("✅ Retrieved {} history records for inventory ID={}", history.size(), id);
-
-            return new ResponseEntity<>(
-                    new ResponseObject(200, "Lịch sử tồn kho", 0, history),
-                    HttpStatus.OK);
-        } catch (Exception e) {
-            logger.error("❌ Error getting inventory history: {}", e.getMessage());
-            return new ResponseEntity<>(
-                    new ResponseObject(500, "Lỗi khi lấy lịch sử: " + e.getMessage(), 1, null),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     // Search inventory
     public ResponseEntity<ResponseObject> searchInventory(String query, String status, String stockStatus,
             Integer minStock, Integer maxStock) {
@@ -648,26 +626,6 @@ public class InventoryService implements BaseService<InventoryItem, Integer> {
             return new ResponseEntity<>(
                     new ResponseObject(500, "Lỗi khi tìm kiếm: " + e.getMessage(), 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    // Helper method to create stock history
-    private void createStockHistory(InventoryItem item, InventoryHistory.ActionType actionType,
-            Integer quantityChange, Integer quantityBefore, Integer quantityAfter,
-            String reason, String notes) {
-        try {
-            InventoryHistory history = new InventoryHistory(item, actionType, quantityChange, quantityBefore,
-                    quantityAfter);
-            history.setReason(reason);
-            history.setNotes(notes);
-            history.setPerformedBy("system"); // TODO: Get from security context
-            history.setPerformedAt(LocalDateTime.now());
-
-            historyRepository.save(history);
-            logger.info("✅ Created stock history: {} {} for inventory ID={}",
-                    actionType.getDescription(), quantityChange, item.getId());
-        } catch (Exception e) {
-            logger.error("❌ Error creating stock history: {}", e.getMessage());
         }
     }
 }

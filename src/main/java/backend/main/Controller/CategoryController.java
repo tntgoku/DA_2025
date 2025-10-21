@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import backend.main.Config.LoggerE;
 import backend.main.Model.Categories;
 import backend.main.Model.ResponseObject;
 import backend.main.Request.CateRequest;
@@ -82,4 +82,41 @@ public class CategoryController {
 
         return service.deletes(ids);
     }
+
+    @GetMapping("/hierarchy")
+    public ResponseEntity<ResponseObject> getCategoryHierarchy() {
+        return service.getCategoryHierarchy();
+    }
+
+    @GetMapping("/breadcrumb/{slug}")
+    public ResponseEntity<ResponseObject> getBreadcrumbBySlug(@PathVariable String slug) {
+        return service.getBreadcrumbBySlug(slug);
+    }
+
+    @GetMapping("/parent/{parentId}")
+    public ResponseEntity<ResponseObject> getCategoriesByParent(@PathVariable Integer parentId) {
+        return service.getCategoriesByParent(parentId);
+    }
+
+    @GetMapping("/seo-url/{parentSlug}/{childSlug}")
+    public ResponseEntity<ResponseObject> getCategoryBySeoUrl(
+            @PathVariable String parentSlug, 
+            @PathVariable String childSlug) {
+        return service.getCategoryBySeoUrl(parentSlug, childSlug);
+    }
+
+    @GetMapping("/seo-url/{parentSlug}")
+    public ResponseEntity<ResponseObject> getCategoryByParentSlug(@PathVariable String parentSlug) {
+        return service.getCategoryByParentSlug(parentSlug);
+    }
+
+    // @GetMapping("/search")
+    // public ResponseEntity<ResponseObject> searchCategories(
+    //         @RequestParam(required = false) String keyword,
+    //         @RequestParam(required = false) Integer parentId,
+    //         @RequestParam(required = false) Boolean isActive,
+    //         @RequestParam(defaultValue = "0") int page,
+    //         @RequestParam(defaultValue = "10") int size) {
+    //     return service.searchCategories(keyword, parentId, isActive, page, size);
+    // }
 }

@@ -37,9 +37,15 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<ResponseObject> resgisterAccount(@RequestBody RegisterRequest data) {
-        // TODO: process POST request
-        logger.info(data.toString());
-        return authzService.checkRegister(data);
+        try {
+            logger.info("Register request received: {}", data.toString());
+            return authzService.checkRegister(data);
+        } catch (Exception e) {
+            logger.error("Error in register endpoint: ", e);
+            return ResponseEntity.badRequest().body(
+                new ResponseObject(400, "Lỗi xử lý đăng ký", 1, e.getMessage())
+            );
+        }
     }
 
     @PostMapping("/profile")

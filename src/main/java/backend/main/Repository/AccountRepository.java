@@ -13,4 +13,8 @@ public interface AccountRepository extends BaseRepository<Account, Integer> {
     @Query("SELECT a FROM Account a WHERE a.username = :username AND a.passwordHash = :passwordHash")
     public Optional<Account> login(@Param("username") String username,
             @Param("passwordHash") String passwordHash);
+
+            public Optional<Account> findByUsername(String username);
+            public Optional<Account> findByPasswordHash(String passwordHash);
+            public Optional<Account> findByIsActive(Boolean isActive);
 }

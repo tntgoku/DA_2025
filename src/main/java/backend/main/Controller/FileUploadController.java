@@ -70,7 +70,7 @@ public class FileUploadController {
             logger.error("Không tìm thấy ảnh với ID: {} - {}", imageId, e.getMessage());
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            // Xử lý lỗi khác (ví dụ: lỗi IO)
+            // Xử lý lỗi 
             logger.error("Lỗi khi lấy ảnh với ID {}: {}", imageId, e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
@@ -90,7 +90,7 @@ public class FileUploadController {
                     case "gif" -> org.springframework.http.MediaType.IMAGE_GIF;
                     case "webp" -> org.springframework.http.MediaType.parseMediaType("image/webp");
                     case "bmp" -> org.springframework.http.MediaType.parseMediaType("image/bmp");
-                    default -> org.springframework.http.MediaType.IMAGE_JPEG; // Default fallback
+                    default -> org.springframework.http.MediaType.IMAGE_JPEG; 
                 };
             }
         } catch (Exception e) {

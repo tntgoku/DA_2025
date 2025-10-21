@@ -84,17 +84,6 @@ public class InventoryController {
         return service.getInventoryStats();
     }
 
-    // ========== HISTORY AND TRACKING ==========
-
-    @GetMapping("/{id}/history")
-    public ResponseEntity<ResponseObject> getInventoryHistory(@PathVariable Integer id) {
-        return service.getInventoryHistory(id);
-    }
-
-    @GetMapping("/history")
-    public ResponseEntity<ResponseObject> getAllInventoryHistory(@RequestParam(required = false) Map<String, String> filters) {
-        return service.getAllInventoryHistory(filters);
-    }
 
     // ========== SEARCH AND FILTER ==========
 
@@ -117,44 +106,4 @@ public class InventoryController {
         return service.findByProductId(productId);
     }
 
-    // ========== BULK OPERATIONS ==========
-
-    @PostMapping("/bulk-import")
-    public ResponseEntity<ResponseObject> bulkImportStock(@RequestBody List<Map<String, Object>> importData) {
-        return service.bulkImportStock(importData);
-    }
-
-    @PostMapping("/bulk-export")
-    public ResponseEntity<ResponseObject> bulkExportStock(@RequestBody List<Map<String, Object>> exportData) {
-        return service.bulkExportStock(exportData);
-    }
-
-    @PostMapping("/bulk-update")
-    public ResponseEntity<ResponseObject> bulkUpdateInventory(@RequestBody List<InventoryRequest> requests) {
-        return service.bulkUpdateInventory(requests);
-    }
-
-    // ========== VALIDATION AND CHECKS ==========
-
-    @GetMapping("/{id}/validate")
-    public ResponseEntity<ResponseObject> validateInventory(@PathVariable Integer id) {
-        return service.validateInventory(id);
-    }
-
-    @PostMapping("/validate-stock")
-    public ResponseEntity<ResponseObject> validateStockOperation(@RequestBody Map<String, Object> operationData) {
-        return service.validateStockOperation(operationData);
-    }
-
-    // ========== EXPORT AND IMPORT ==========
-
-    @GetMapping("/export")
-    public ResponseEntity<ResponseObject> exportInventoryData(@RequestParam(required = false) String format) {
-        return service.exportInventoryData(format);
-    }
-
-    @PostMapping("/import")
-    public ResponseEntity<ResponseObject> importInventoryData(@RequestBody Map<String, Object> importData) {
-        return service.importInventoryData(importData);
-    }
 }

@@ -4,9 +4,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Logger;
+import java.util.UUID;
 
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +22,7 @@ import backend.main.Repository.UserRepository;
 import backend.main.Request.RegisterRequest;
 import backend.main.Request.ForgotPasswordRequest;
 import backend.main.Request.ResetPasswordRequest;
+import backend.main.Service.EmailService;
 import java.util.*;
 
 @Service
@@ -33,18 +33,21 @@ public class AuthzService {
     private final AccountRepository accountRepository;
     private final OrderService orderService;
     private final JwtUtil jwtUtil;
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuthzService.class);
+    private final EmailService emailService;
+    private static final org.slf4j.Logger logger = LoggerE.getLogger();
 
     public AuthzService(JwtUtil jwtUtil, PasswordEncoder password, UserRepository userRepository,
-            AccountRepository accountRepository, OrderService orderService) {
+            AccountRepository accountRepository, OrderService orderService, EmailService emailService) {
         this.passwordEncoder = password;
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
         this.accountRepository = accountRepository;
         this.orderService = orderService;
+        this.emailService = emailService;
     }
 
     public ResponseEntity<ResponseObject> checklogin(String user, String password) {
+        logger.info("Bắt đầu kiểm tra đăng nhập cho: {}", user);
         Optional<AuthzProjection> userOptional = userRepository.findByEmailWithAccountAndRole(user);
         if (userOptional.isEmpty()) {
             logger.info("Tài khoản {} không tồn tại", user);
@@ -72,45 +75,79 @@ public class AuthzService {
                 HttpStatus.OK);
     }
 
+    // @Transactional
     public ResponseEntity<ResponseObject> checkRegister(RegisterRequest request) {
+        logger.info("Bắt đầu kiểm tra đăng ký cho: {}", request.toString());
+        logger.info("Email: {}, Phone: {}", request.getEmail(), request.getPhone());
         Optional<AuthzProjection> userOptional = userRepository.findByEmailOrPhoneWithAccountAndRole(request.getEmail(),
                 request.getPhone());
-
+        
         if (userOptional.isPresent()) {
             AuthzProjection user = userOptional.get();
+            logger.info("Tìm thấy tài khoản đã tồn tại: {}", user.toString());
 
             if (request.getEmail().equalsIgnoreCase(user.getEmail())) {
+                logger.info("Email này đã tồn tại: {}", request.getEmail());
                 return ResponseEntity.ok(
                         new ResponseObject(200, "Thất bại", 1, "Email này đã tồn tại"));
             }
 
             if (request.getPhone().equals(user.getPhone())) {
+                logger.info("Số điện thoại này đã tồn tại: {}", request.getPhone());
                 return ResponseEntity.ok(
                         new ResponseObject(200, "Thất bại", 1, "Số điện thoại này đã tồn tại"));
             }
         }
+        
+        logger.info("Tài khoản chưa tồn tại, có thể đăng ký mới {}" , request.toString());
+        Optional<Account> accountOptional = accountRepository.findByUsername(request.getEmail());
+        Optional<User> userOptionalEmail = userRepository.findByEmail(request.getEmail());
+        Optional<User> userOptionalPhone = userRepository.findByPhone(request.getPhone());
+        if(accountOptional.isPresent() || userOptionalEmail.isPresent() || userOptionalPhone.isPresent()){
+            logger.info("Tài khoản đã tồn tại: {}", accountOptional.get().toString() + " " + userOptionalEmail.get().toString() + " " + userOptionalPhone.get().toString());
+            return ResponseEntity.ok(new ResponseObject(200, "Thành công", 0, "Tài khoản đã tồn tại"));
+        }
         Account account = new Account();
         account.setUsername(request.getEmail());
         account.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-        // Role_id NameRule(Description)
-        // 1 Admin Quản trị viên tối cao
-        // 2 Staff Nhân viên bán hàng/kho hàng
-        // 3 Customer Khách hàng thông thường
-        account.setRole(3); // 3 = user thường
-        Account newacc = accountRepository.save(account);
-
-        // Lưu user (liên kết với account vừa tạo)
+        account.setRole(3);
+        account.setIsActive(true);
+        account.setCreatedAt(LocalDateTime.now());
+        account.setUpdatedAt(LocalDateTime.now());
+        accountRepository.save(account);
         User user = new User();
         user.setFullName(request.getName());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setGender("");
-        user.setAccount(newacc.getId());
-        User newus = userRepository.save(user);
+        user.setAccount(account.getId());
+        userRepository.save(user);
+        return ResponseEntity.ok(new ResponseObject(200, "Thành công", 0, "Tài khoản đã được tạo"));
+        // Account account = new Account();
+        // account.setUsername(request.getEmail());
+        // account.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        // // Role_id NameRule(Description)
+        // // 1 Admin Quản trị viên tối cao
+        // // 2 Staff Nhân viên bán hàng/kho hàng
+        // // 3 Customer Khách hàng thông thường
+        // account.setRole(3); // 3 = user thường
+        // Account newacc = accountRepository.save(account);
 
-        Optional<AuthzProjection> userOptional1 = userRepository.findByEmailWithAccountAndRole(newus.getEmail());
-        return ResponseEntity.ok(
-                new ResponseObject(200, "Thành công", 1, userOptional1.get().getFullName()));
+        // // Lưu user (liên kết với account vừa tạo)
+        // User user = new User();
+        // user.setFullName(request.getName());
+        // user.setEmail(request.getEmail());
+        // user.setPhone(request.getPhone());
+        // user.setGender("");
+        // user.setAccount(newacc.getId());
+        // User newus = userRepository.save(user);
+
+        // Optional<AuthzProjection> userOptional1 = userRepository.findByEmailWithAccountAndRole(newus.getEmail());
+        // return ResponseEntity.ok(
+        //         new ResponseObject(200, "Thành công", 1, userOptional1.get().getFullName()));
+        
+    
+    
     }
 
     public ResponseEntity<ResponseObject> checkProfile(String email) {
@@ -151,13 +188,33 @@ public class AuthzService {
             );
         }
 
-        // Trong thực tế, bạn sẽ gửi email reset password ở đây
-        // Hiện tại chỉ log thông tin
-        logger.info("Yêu cầu reset password cho email: {}", request.getEmail());
-        
-        return ResponseEntity.ok(
-            new ResponseObject(200, "Email reset password đã được gửi", 0, "Vui lòng kiểm tra email để reset mật khẩu")
-        );
+        try {
+            AuthzProjection user = userOptional.get();
+            
+            // Tạo reset token (trong thực tế nên tạo token có thời hạn)
+            String resetToken = UUID.randomUUID().toString();
+            
+            // Lưu token vào database hoặc cache (tạm thời log)
+            logger.info("Reset token cho user {}: {}", user.getEmail(), resetToken);
+            
+            // Gửi email reset password
+            emailService.sendForgotPasswordEmail(
+                user.getEmail(), 
+                resetToken, 
+                user.getFullName() != null ? user.getFullName() : user.getEmail()
+            );
+            
+            logger.info("Email reset password đã được gửi cho: {}", request.getEmail());
+            
+            return ResponseEntity.ok(
+                new ResponseObject(200, "Email reset password đã được gửi", 0, "Vui lòng kiểm tra email để reset mật khẩu")
+            );
+        } catch (Exception e) {
+            logger.error("Lỗi khi gửi email reset password: {}", e.getMessage());
+            return ResponseEntity.ok(
+                new ResponseObject(500, "Có lỗi xảy ra khi gửi email", 1, "Vui lòng thử lại sau")
+            );
+        }
     }
 
     public ResponseEntity<ResponseObject> resetPassword(ResetPasswordRequest request) {

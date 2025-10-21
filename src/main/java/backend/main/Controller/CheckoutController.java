@@ -95,6 +95,8 @@ public class CheckoutController {
             return new ResponseEntity<>(new ResponseObject(400, e.getMessage(), 0,e.getMessage()), HttpStatus.BAD_REQUEST);
         }
         total = total.add(body.getShippingFee());
+        logger.info("Voucher: {}",body.getVoucher());
+        if(body.getVoucher() != null){
         Voucher voucher = voucherRepository.findById(Integer.parseInt(body.getVoucher())).orElse(null);
         if (voucher != null) {
             BigDecimal discountAmount = voucher.getValue();
@@ -103,6 +105,7 @@ public class CheckoutController {
             total = total.subtract(newTotal);
             logger.info("Total after discount: {}" , total);
             // body.setTotalPrice(total.longValue());
+        }
         }
         if ("vnpay".equals(method)) {
             if (total.compareTo(BigDecimal.valueOf(5000)) < 0) {
