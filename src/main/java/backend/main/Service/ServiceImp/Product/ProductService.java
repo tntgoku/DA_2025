@@ -58,7 +58,7 @@ public class ProductService implements BaseService<Products, Integer> {
     private ProductImageService productImageService;
     @Autowired
     private InventoryService inventoryService;
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProductService.class);   
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProductService.class);
 
     public ResponseEntity<ResponseObject> findAll() {
         List<Products> products = repository.findAll();
@@ -203,7 +203,7 @@ public class ProductService implements BaseService<Products, Integer> {
             logger.info("Sản phẩm không có biến thể nào");
         }
 
-        // 🔒 Kiểm tra tránh NullPointerException
+        // Kiểm tra tránh NullPointerException
         if (saved != null && saved.getId() != null) {
             logger.info("Save Successfully : Id: " + saved.getId() + " Name: " + saved.getName());
             if (entity.getVariants() != null && !entity.getVariants().isEmpty()) {
@@ -246,7 +246,7 @@ public class ProductService implements BaseService<Products, Integer> {
         }
 
         // Trường hợp lưu thất bại
-        logger.error("Save Failed: {}" , (saved != null ? saved.getName() : "null"));
+        logger.error("Save Failed: {}", (saved != null ? saved.getName() : "null"));
         return new ResponseEntity<>(
                 new ResponseObject(500, "Tạo mới thất bại", 1, null),
                 HttpStatus.INTERNAL_SERVER_ERROR);
@@ -268,12 +268,12 @@ public class ProductService implements BaseService<Products, Integer> {
                 variantService.delete(variant.getId());
             });
             repository.deleteById(id);
-            logger.info("Delete Successfully ID: {}" , id);
+            logger.info("Delete Successfully ID: {}", id);
             return new ResponseEntity<>(
                     new ResponseObject(200, "Xóa thành công", 0, null),
                     HttpStatus.OK);
         } catch (Exception e) {
-            logger.error("Delete Exception: {}" , e.getMessage());
+            logger.error("Delete Exception: {}", e.getMessage());
             return new ResponseEntity<>(
                     new ResponseObject(500, "Xóa thất bại: " + e.getMessage(), 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
@@ -290,7 +290,7 @@ public class ProductService implements BaseService<Products, Integer> {
 
         Optional<Products> optional = repository.findById(entity.getId());
         if (!optional.isPresent()) {
-            logger.info("Không tìm thấy sản phẩm với ID: {}" , entity.getId());
+            logger.info("Không tìm thấy sản phẩm với ID: {}", entity.getId());
             return createNew(entity);
         }
 
@@ -380,32 +380,34 @@ public class ProductService implements BaseService<Products, Integer> {
                     HttpStatus.OK);
 
         } catch (Exception e) {
-            logger.error("Update Exception: {}" , e.getMessage());
+            logger.error("Update Exception: {}", e.getMessage());
             return new ResponseEntity<>(
                     new ResponseObject(500, "Cập nhật thất bại: " + e.getMessage(), 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     public ResponseEntity<ResponseObject> deletes(List<Integer> list) {
         try {
             for (Integer id : list) {
                 if (repository.existsById(id)) { // kiểm tra tồn tại trước khi xóa
                     repository.deleteById(id);
-                    logger.info("Delete Successfully ID: {}" , id);
+                    logger.info("Delete Successfully ID: {}", id);
                 } else {
-                    logger.warn("ID not found: {}" , id);
+                    logger.warn("ID not found: {}", id);
                 }
             }
             return new ResponseEntity<>(
                     new ResponseObject(200, "Xóa thành công", 0, null),
                     HttpStatus.OK);
         } catch (Exception e) {
-            logger.error("Delete Exception: {}" , e.getMessage());
+            logger.error("Delete Exception: {}", e.getMessage());
             return new ResponseEntity<>(
                     new ResponseObject(500, "Xóa thất bại: " + e.getMessage(), 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     private ProductDTO convertProductDTO(Products product) {
         ProductDTO dto = new ProductDTO();
         dto.setId(product.getId());
@@ -439,6 +441,7 @@ public class ProductService implements BaseService<Products, Integer> {
         dto.setVariants(variantDTOs);
         return dto;
     }
+
     public List<ProductSpecificationDTO> getSpecsByProduct(int productId) {
         List<Object[]> results = repository.getProductSpecifications(productId);
         List<ProductSpecificationDTO> list = new ArrayList<>();

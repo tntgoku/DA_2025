@@ -5,6 +5,5 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean
 public interface BaseRepository<T, ID> extends JpaRepository<T, ID> {
-    // Có thể thêm các phương thức chung cho tất cả entity nếu cần
 
 }

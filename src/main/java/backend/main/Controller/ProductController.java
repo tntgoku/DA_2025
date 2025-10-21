@@ -76,7 +76,7 @@ public class ProductController {
         // ResponseEntity<ResponseObject> response =
         // categoryService.getById(data.getCategoryId());
         logger.info("------------CREATE PRODUCT------------");
-        logger.info("Post Client: {}" , pr.toString());
+        logger.info("Post Client: {}", pr.toString());
         if (pr.getVariants() == null || pr.getVariants().isEmpty())
             logger.info("Nulll");
         return service.createNew(a);
@@ -96,11 +96,11 @@ public class ProductController {
             @RequestBody ProductJson data) {
         Products a = convertRequest(ConvertJsonProduct(data));
         a.setId(id);
-        logger.info("Dulieu ve Speciificatoin,{}" , a.getSpecifications());
+        logger.info("Dulieu ve Speciificatoin,{}", a.getSpecifications());
         List<ProductSpecificationDTO> listnew = new Gson().fromJson(a.getSpecifications(),
                 new TypeToken<List<ProductSpecificationDTO>>() {
                 }.getType());
-        logger.info("Dulieu ve Speciificatoin,{}" , listnew.size());
+        logger.info("Dulieu ve Speciificatoin,{}", listnew.size());
         Map<String, Object> map = new HashMap<>();
         if (a.getSpecifications() != null && !a.getSpecifications().isBlank()) {
             ResponseEntity<ResponseObject> updateResponse = service.update(a);
@@ -109,12 +109,12 @@ public class ProductController {
                 if (responseBody.getData() != null) {
                     @SuppressWarnings("unchecked")
                     Map<String, Object> responseMap = (Map<String, Object>) responseBody.getData();
-                map = responseMap;
-                map.put("Listnew", listnew);
-                ProductDTO result = (ProductDTO) map.get("Object");
-                if (result != null) {
-                    result.setSpecifications(listnew);
-                }
+                    map = responseMap;
+                    map.put("Listnew", listnew);
+                    ProductDTO result = (ProductDTO) map.get("Object");
+                    if (result != null) {
+                        result.setSpecifications(listnew);
+                    }
                 }
             }
         }
@@ -172,20 +172,12 @@ public class ProductController {
             // Nếu slug không tồn tại, tạo slug từ tên
             String newSlug = Engine.makeSlug(data.getName());
             tes.setSlug(newSlug);
-            logger.debug(makeslug, "Make Slug With Name: {}" , newSlug);
+            logger.debug(makeslug, "Make Slug With Name: {}", newSlug);
         } else {
             // Nếu slug đã tồn tại và hợp lệ
             // Giữ nguyên slug hiện có (tes.getSlug())
             tes.setSlug(makeslug); // Hoặc tes.setSlug(data.getSlug());
-            logger.debug(makeslug, "Slug already exists, no change made.");
-        }
-
-        // Kiểm tra độ dài an toàn sau khi đã chắc chắn tes.getSlug() không null
-        String finalSlug = tes.getSlug();
-        if (finalSlug != null) {
-            logger.debug(finalSlug, "Final Slug: {} , Length: {}" , finalSlug, finalSlug.length());
-        } else {
-            logger.warn("Final Slug is still null/empty!"); // Trường hợp lỗi nếu data.getName() trả về null
+            logger.debug(makeslug, "Slug đã tồn tại, không thay đổi.");
         }
         List<VariantRequest> variantRequests = new ArrayList<>();
         data.getVariants().forEach(items -> {
@@ -206,23 +198,25 @@ public class ProductController {
                     test.setList_price(storage.getList_price());
                     test.setStorage(storage.getStorage());
                     test.setStock(storage.getStock());
-                    logger.info("Color: {} , Storage: {} , Price: {} , List_Price: {} , Stock: {}" , items.getColor(), storage.getStorage(), storage.getPrice(), storage.getList_price(), storage.getStock());
+                    logger.info("Color: {} , Storage: {} , Price: {} , List_Price: {} , Stock: {}", items.getColor(),
+                            storage.getStorage(), storage.getPrice(), storage.getList_price(), storage.getStock());
                     variantRequests.add(test);
-                    logger.info("Da them Storage vao voi Id la {}" , storage.getVariantId());
+                    logger.info("Da them Storage vao voi Id la {}", storage.getVariantId());
                 });
             } else {
                 VariantRequest test = new VariantRequest();
                 test.setColor(items.getColor());
                 test.setColorCode(items.getIdColor());
                 variantRequests.add(test);
-                logger.info("Color moi :{}" , items.getColor());
+                logger.info("Color moi :{}", items.getColor());
             }
         });
         tes.setVariants(variantRequests);
         tes.setSpecifications(ConvertListSpecification(data.getSpecifications(), data));
-        logger.info("Length List Variant this: {}" , variantRequests.size());
-        logger.info("Length List Specfications this: {}" , (data.getSpecifications() != null ? data.getSpecifications().size() : -1));
-        logger.info("Size List Specfications this: {}" , tes.getSpecifications().size());
+        logger.info("Length List Variant this: {}", variantRequests.size());
+        logger.info("Length List Specfications this: {}",
+                (data.getSpecifications() != null ? data.getSpecifications().size() : -1));
+        logger.info("Size List Specfications this: {}", tes.getSpecifications().size());
         return tes;
     }
 
@@ -236,35 +230,35 @@ public class ProductController {
             ResponseObject cateResponseBody = cateResp.getBody();
             if (cateResponseBody.getData() != null && cateResponseBody.getData() instanceof Categories) {
                 Categories cate = (Categories) cateResponseBody.getData();
-
                 if (cate != null) {
-                // Nếu category có parent (tức là là danh mục con)
-                if (cate.getParent() != null) {
-                    // Lấy danh mục cha
-                    ResponseEntity<ResponseObject> parentResp = categoryService.getById(cate.getParent());
-                    if (parentResp != null && parentResp.getBody() != null) {
-                        ResponseObject parentResponseBody = parentResp.getBody();
-                        if (parentResponseBody.getData() != null && parentResponseBody.getData() instanceof Categories) {
-                            Categories parentCate = (Categories) parentResponseBody.getData();
-                            a.setCategory(parentCate); // gán ID danh mục cha
-                            logger.info("Category con => gán về cha có ID = {}" , parentCate.getId());
+                    // Nếu category có parent (tức là là danh mục con)
+                    if (cate.getParent() != null) {
+                        // Lấy danh mục cha
+                        ResponseEntity<ResponseObject> parentResp = categoryService.getById(cate.getParent());
+                        if (parentResp != null && parentResp.getBody() != null) {
+                            ResponseObject parentResponseBody = parentResp.getBody();
+                            if (parentResponseBody.getData() != null
+                                    && parentResponseBody.getData() instanceof Categories) {
+                                Categories parentCate = (Categories) parentResponseBody.getData();
+                                a.setCategory(parentCate); // gán ID danh mục cha
+                                logger.info("Category con => gán về cha có ID = {}", parentCate.getId());
+                            } else {
+                                logger.warn("Không tìm thấy danh mục cha cho categoryId={}", cate.getId());
+                                a.setCategory(cate); // fallback
+                            }
                         } else {
-                            logger.warn("Không tìm thấy danh mục cha cho categoryId={}" , cate.getId());
+                            logger.warn("Không tìm thấy danh mục cha cho categoryId={}", cate.getId());
                             a.setCategory(cate); // fallback
                         }
                     } else {
-                        logger.warn("Không tìm thấy danh mục cha cho categoryId={}" , cate.getId());
-                        a.setCategory(cate); // fallback
+                        // Là danh mục cha
+                        a.setCategory(cate);
+                        logger.info("Danh mục cha => gán chính nó (ID={})", cate.getId());
                     }
-                } else {
-                    // Là danh mục cha
-                    a.setCategory(cate);
-                    logger.info("Danh mục cha => gán chính nó (ID={})" , cate.getId());
-                }
                 }
             }
         } else {
-            logger.warn("Không tìm thấy category với id={}" , request.getCategoryId());
+            logger.warn("Không tìm thấy category với id={}", request.getCategoryId());
         }
 
         a.setName(request.getName());
@@ -286,7 +280,7 @@ public class ProductController {
             String json = mapper.writeValueAsString(request.getSpecifications());
             a.setSpecifications(json);
         } catch (Exception e) {
-            logger.error("Lỗi chuyển sang Json của ProductRequest: {}" , e.getMessage());
+            logger.error("Lỗi chuyển sang Json của ProductRequest: {}", e.getMessage());
         }
         List<ProductVariant> list = new ArrayList<>();
         request.getVariants().forEach(item -> {

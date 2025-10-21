@@ -36,16 +36,11 @@ public class FileUploadController {
     public ResponseEntity<byte[]> getImageById(@PathVariable String imageId) {
 
         try {
-            // Bước 1: Lấy dữ liệu ảnh (mảng byte) từ Service
             byte[] imageData = productImageService.getJpgImage(imageId);
-            // Bước 2: Xác định MediaType dựa trên extension của file
             org.springframework.http.MediaType mediaType = determineMediaType(imageId);
-            // Bước 3: Trả về ResponseEntity
             return ResponseEntity
                     .ok()
-                    // Thiết lập Content-Type Header dựa trên loại file thực tế
                     .contentType(mediaType)
-                    // Gửi mảng byte dữ liệu ảnh đi
                     .body(imageData);
 
         } catch (ImageNotFoundException e) {
@@ -58,21 +53,16 @@ public class FileUploadController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
+
     @GetMapping(value = "imgSrc/{imageId}")
     public ResponseEntity<byte[]> getImageByIdImage(@PathVariable String imageId) {
 
         try {
-            // Bước 1: Lấy dữ liệu ảnh (mảng byte) từ Service
             byte[] imageData = productImageService.getImageByIdImage(Integer.parseInt(imageId));
-            // Bước 2: Xác định MediaType dựa trên extension của file
             org.springframework.http.MediaType mediaType = determineMediaType(imageId);
-            // Bước 3: Trả về ResponseEntity
             return ResponseEntity
                     .ok()
-                    // Thiết lập Content-Type Header dựa trên loại file thực tế
                     .contentType(mediaType)
-                    // Gửi mảng byte dữ liệu ảnh đi
                     .body(imageData);
 
         } catch (ImageNotFoundException e) {
@@ -85,12 +75,7 @@ public class FileUploadController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
-    /**
-     * Xác định MediaType dựa trên extension của file
-     * @param imageId ID của ảnh
-     * @return MediaType tương ứng
-     */
+
     private org.springframework.http.MediaType determineMediaType(String imageId) {
         try {
             // Lấy thông tin ảnh từ database để xác định extension
@@ -98,7 +83,7 @@ public class FileUploadController {
             if (imageOpt.isPresent()) {
                 String imageUrl = imageOpt.get().getImageUrl();
                 String extension = imageUrl.substring(imageUrl.lastIndexOf(".") + 1).toLowerCase();
-                
+
                 return switch (extension) {
                     case "jpg", "jpeg" -> org.springframework.http.MediaType.IMAGE_JPEG;
                     case "png" -> org.springframework.http.MediaType.IMAGE_PNG;
@@ -111,8 +96,7 @@ public class FileUploadController {
         } catch (Exception e) {
             logger.warn("Không thể xác định MediaType cho ảnh ID {}: {}", imageId, e.getMessage());
         }
-        
-        // Fallback về JPEG nếu không xác định được
+
         return org.springframework.http.MediaType.IMAGE_JPEG;
     }
 
@@ -128,7 +112,6 @@ public class FileUploadController {
                         HttpStatus.BAD_REQUEST);
             }
 
-            // Tạo tên file theo variant ID
             String originalFilename = file.getOriginalFilename();
             if (originalFilename == null || originalFilename.isEmpty()) {
                 return new ResponseEntity<>(
@@ -139,21 +122,16 @@ public class FileUploadController {
 
             String filename;
             if (variantId != null && !variantId.isEmpty()) {
-                // Đặt tên theo variant ID: variant_{variantId}_{timestamp}.ext
                 filename = "variant_" + variantId + "_" + System.currentTimeMillis() + fileExtension;
             } else if (productId != null && !productId.isEmpty()) {
-                // Đặt tên theo product ID: product_{productId}_{timestamp}.ext
                 filename = "product_" + productId + "_" + System.currentTimeMillis() + fileExtension;
             } else {
-                // Tên file mặc định với UUID
                 filename = UUID.randomUUID().toString() + fileExtension;
             }
 
-            // Lưu file vào thư mục uploads
             Path targetLocation = uploadPath.resolve(filename);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-            // Tạo URL để truy cập ảnh
             String imageUrl = "/uploads/" + filename;
 
             Map<String, Object> responseData = new HashMap<>();
@@ -186,7 +164,7 @@ public class FileUploadController {
                 if (!file.isEmpty()) {
                     String originalFilename = file.getOriginalFilename();
                     if (originalFilename == null || originalFilename.isEmpty()) {
-                        continue; // Skip invalid files
+                        continue;
                     }
                     String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
 
@@ -235,7 +213,6 @@ public class FileUploadController {
             @RequestPart("files") List<MultipartFile> files,
             @RequestPart("metadata") String metadataJson) {
         try {
-            // Parse JSON metadata
             ObjectMapper mapper = new ObjectMapper();
             List<ProductImageRequest> metadata = mapper.readValue(metadataJson,
                     new TypeReference<List<ProductImageRequest>>() {
@@ -249,7 +226,6 @@ public class FileUploadController {
                 MultipartFile file = files.get(i);
                 ProductImageRequest meta = metadata.size() > i ? metadata.get(i) : new ProductImageRequest();
                 Map<String, Object> imageData = new HashMap<>();
-                // Build file name and save
                 String originalFilename = file.getOriginalFilename();
                 if (originalFilename == null || originalFilename.isEmpty()) {
                     continue; // Skip invalid files
@@ -258,7 +234,6 @@ public class FileUploadController {
                 Path targetLocation = uploadPath.resolve(filename);
                 Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
                 String imageUrl = "/uploads/" + filename;
-                // Build response object
                 imageData.put("productId", productId);
                 imageData.put("variantId", meta.getVariantId());
                 imageData.put("altImg", meta.getAltImg());

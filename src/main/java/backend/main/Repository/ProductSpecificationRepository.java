@@ -13,7 +13,6 @@ import backend.main.Model.ProductSpecification;
 @Repository
 public interface ProductSpecificationRepository extends BaseRepository<ProductSpecification, Integer> {
 
-    // Sử dụng @Query thay vì method naming để tránh lỗi
     @Query("SELECT ps FROM ProductSpecification ps WHERE ps.product_id = :productId")
     List<ProductSpecification> findByProductId(@Param("productId") Integer productId);
 
@@ -26,7 +25,6 @@ public interface ProductSpecificationRepository extends BaseRepository<ProductSp
             @Param("productId") Integer productId,
             @Param("specId") Integer specId);
 
-    // Hoặc nếu muốn dùng native query
     @Modifying
     @Query(value = "DELETE FROM ProductSpecification WHERE product_id = :productId", nativeQuery = true)
     void deleteByProductIdNative(@Param("productId") Integer productId);
