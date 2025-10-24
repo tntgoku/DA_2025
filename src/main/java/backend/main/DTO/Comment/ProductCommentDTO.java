@@ -26,10 +26,8 @@ public class ProductCommentDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
-    // For nested comments (replies)
     private java.util.List<ProductCommentDTO> replies;
     
-    // Helper methods
     public boolean isReply() {
         return parentCommentId != null;
     }

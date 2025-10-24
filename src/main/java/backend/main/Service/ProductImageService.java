@@ -59,8 +59,10 @@ public class ProductImageService {
 
     public Optional<ProductImage> getImageById(Integer id) {
         return productImageRepository.findById(id);
+        }
+    public List<ProductImage> getImagesByProductIdAndVariantId(Integer id,Integer variantId) {
+        return productImageRepository.findByProductIdAndVariantId(id, variantId);
     }
-
     public void deleteImage(Integer id) {
         productImageRepository.deleteById(id);
     }
@@ -130,4 +132,49 @@ public class ProductImageService {
         throw new ImageNotFoundException("Image not found with ID: " + imageId);
 }
 
+    public byte[] getImageByIdAndVariantId(String imageId,String variantId) throws ImageNotFoundException {
+        List<ProductImage> images = productImageRepository.findByProductIdAndVariantId(Integer.parseInt(imageId), Integer.parseInt(variantId));
+        if(images != null && !images.isEmpty()){
+            String imageUrl = images.get(0).getImageUrl();
+            String filename = imageUrl.replace("/uploads/", ""); 
+            Path fullPath = this.uploadPath.resolve(filename).normalize();
+            try {
+                return Files.readAllBytes(fullPath);
+            } catch (IOException e) {
+                logger.error("Error reading image: {} " , e.getMessage());
+                throw new ImageNotFoundException("Error reading image: " + e.getMessage());
+            }
+        }        for (ProductImage image : images) {
+            try {
+            if (image.getProductId().equals(Integer.parseInt(imageId))) {
+                String imageUrl = image.getImageUrl();
+                logger.info("Image URL: {} " , imageUrl);
+                String filename = imageUrl.replace("/uploads/", ""); 
+                Path fullPath = this.uploadPath.resolve(filename).normalize();
+                String extension = imageUrl.substring(imageUrl.lastIndexOf(".") + 1).toLowerCase();
+                if (extension.equals("jpg") || extension.equals("jpeg")) {
+                        return Files.readAllBytes(fullPath);
+                }
+                if (extension.equals("png")) {
+                    return Files.readAllBytes(fullPath);
+                }
+                if (extension.equals("gif")) {
+                    return Files.readAllBytes(fullPath);
+                }
+                if (extension.equals("webp")) {
+                    return Files.readAllBytes(fullPath);
+                }
+                if (extension.equals("bmp")) {
+                    return Files.readAllBytes(fullPath);
+                }
+                logger.error("Image not found with ID: {} " , image.getImageUrl());
+                throw new ImageNotFoundException("Image not found with ID: " + imageId);
+            }
+            } catch (IOException e) {
+                logger.error("Error reading image: {} " , e.getMessage());
+                throw new ImageNotFoundException("Error reading image: " + e.getMessage());
+            }
+        }
+        throw new ImageNotFoundException("Image not found with ID: " + imageId);
+    }
 }

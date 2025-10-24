@@ -25,4 +25,5 @@ public class VariantDTO {
     private Integer warrantly;
     private Integer stock;
     private String status;
+    private String images;
 }

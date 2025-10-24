@@ -1,16 +1,35 @@
 package backend.main.Request;
 
-public class CateRequest {
-    private Integer id; // dùng cho update, create thì có thể null
-    private String name; // tên danh mục
-    private Integer displayOrder; // thứ tự hiển thị
-    private Integer parentId; // id của parent, null nếu là root
-    private Boolean active; // trạng thái active/inactive
-    private String slug;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
-    // getter và setter
+public class CateRequest {
+    private Integer id;
+    private String name;
+    private Integer displayOrder;
+    private Integer parentId;
+    private Boolean isActive;
+    private String slug;
+    private LocalDateTime updatedAt;
+    private LocalDateTime createdAt;
+
+    public CateRequest() {
+    }
+
+    public CateRequest(Integer id, String name, Integer displayOrder, Integer parentId, Boolean isActive, String slug,
+            LocalDateTime updatedAt, LocalDateTime createdAt) {
+        this.id = id;
+        this.name = name;
+        this.displayOrder = displayOrder;
+        this.parentId = parentId;
+        this.isActive = isActive;
+        this.slug = slug;
+        this.updatedAt = updatedAt;
+        this.createdAt = createdAt;
+    }
+
     public Integer getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(Integer id) {
@@ -18,7 +37,7 @@ public class CateRequest {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -26,7 +45,7 @@ public class CateRequest {
     }
 
     public Integer getDisplayOrder() {
-        return displayOrder;
+        return this.displayOrder;
     }
 
     public void setDisplayOrder(Integer displayOrder) {
@@ -34,33 +53,121 @@ public class CateRequest {
     }
 
     public Integer getParentId() {
-        return parentId;
+        return this.parentId;
     }
 
     public void setParentId(Integer parentId) {
         this.parentId = parentId;
     }
 
-    public Boolean getActive() {
-        return active;
+    public Boolean isIsActive() {
+        return this.isActive;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public Boolean getIsActive() {
+        return this.isActive;
     }
 
-    @Override
-    public String toString() {
-        return "CateRequest [id=" + id + ", name=" + name + ", displayOrder=" + displayOrder + ", parentId=" + parentId
-                + ", active=" + active + "]";
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 
     public String getSlug() {
-        return slug;
+        return this.slug;
     }
 
     public void setSlug(String slug) {
         this.slug = slug;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return this.updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public CateRequest id(Integer id) {
+        setId(id);
+        return this;
+    }
+
+    public CateRequest name(String name) {
+        setName(name);
+        return this;
+    }
+
+    public CateRequest displayOrder(Integer displayOrder) {
+        setDisplayOrder(displayOrder);
+        return this;
+    }
+
+    public CateRequest parentId(Integer parentId) {
+        setParentId(parentId);
+        return this;
+    }
+
+    public CateRequest isActive(Boolean isActive) {
+        setIsActive(isActive);
+        return this;
+    }
+
+    public CateRequest slug(String slug) {
+        setSlug(slug);
+        return this;
+    }
+
+    public CateRequest updatedAt(LocalDateTime updatedAt) {
+        setUpdatedAt(updatedAt);
+        return this;
+    }
+
+    public CateRequest createdAt(LocalDateTime createdAt) {
+        setCreatedAt(createdAt);
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof CateRequest)) {
+            return false;
+        }
+        CateRequest cateRequest = (CateRequest) o;
+        return Objects.equals(id, cateRequest.id) && Objects.equals(name, cateRequest.name)
+                && Objects.equals(displayOrder, cateRequest.displayOrder)
+                && Objects.equals(parentId, cateRequest.parentId) && Objects.equals(isActive, cateRequest.isActive)
+                && Objects.equals(slug, cateRequest.slug) && Objects.equals(updatedAt, cateRequest.updatedAt)
+                && Objects.equals(createdAt, cateRequest.createdAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, displayOrder, parentId, isActive, slug, updatedAt, createdAt);
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                " id='" + getId() + "'" +
+                ", name='" + getName() + "'" +
+                ", displayOrder='" + getDisplayOrder() + "'" +
+                ", parentId='" + getParentId() + "'" +
+                ", isActive='" + isIsActive() + "'" +
+                ", slug='" + getSlug() + "'" +
+                ", updatedAt='" + getUpdatedAt() + "'" +
+                ", createdAt='" + getCreatedAt() + "'" +
+                "}";
     }
 
 }

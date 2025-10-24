@@ -1,6 +1,5 @@
 package backend.main.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,30 +33,30 @@ public class PromotionService implements BaseService<Discount, Integer> {
         return new ResponseEntity<>(new ResponseObject(200,
                 null, 0, discountRepository.getDiscountInventoryNative()), HttpStatus.OK);
     }
+
     @Transactional()
     public boolean checkDiscountForProduct(Integer productId) {
         return discountRepository.getDiscountInventoryNative()
-            .stream() // Chuyển sang Stream
-            .anyMatch(discount -> 
+                .stream() // Chuyển sang Stream
+                .anyMatch(discount ->
                 // So sánh các giá trị Integer bằng .equals() để tránh lỗi null
-                discount.getProductId() != null && discount.getProductId().equals(productId)
-            );
+                discount.getProductId() != null && discount.getProductId().equals(productId));
     }
 
     public PromotionDTO calculateDiscountForProduct(Integer productId) {
-            List<PromotionDTO> discounts = discountRepository.getDiscountInventoryNative();
-            PromotionDTO reuslt = null;
-            boolean flag = false;
-            for(PromotionDTO discount : discounts) {
-                if(discount.getProductId() != null && discount.getProductId().equals(productId)) {
-                    flag = true;
-                    reuslt = discount;
-                    break;
-                }
+        List<PromotionDTO> discounts = discountRepository.getDiscountInventoryNative();
+        PromotionDTO reuslt = null;
+        boolean flag = false;
+        for (PromotionDTO discount : discounts) {
+            if (discount.getProductId() != null && discount.getProductId().equals(productId)) {
+                flag = true;
+                reuslt = discount;
+                break;
             }
-            return reuslt;
+        }
+        return reuslt;
     }
-    
+
     public ResponseEntity<ResponseObject> findAllPromotion() {
         return new ResponseEntity<>(new ResponseObject(200,
                 null, 0, discountRepository.findAll()), HttpStatus.OK);
@@ -65,25 +64,23 @@ public class PromotionService implements BaseService<Discount, Integer> {
 
     @Override
     public ResponseEntity<ResponseObject> createNew(Discount entity) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public ResponseEntity<ResponseObject> delete(Integer id) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public ResponseEntity<ResponseObject> update(Discount entity) {
-        // TODO Auto-generated method stub
         return null;
     }
+
     public ResponseEntity<ResponseObject> findDiscountForVoucher() {
         List<VourcherDTO> vouchers = voucherRepository.findAll().stream()
-            .map(this::convertVourcherDTO)
-            .collect(Collectors.toList());
+                .map(this::convertVourcherDTO)
+                .collect(Collectors.toList());
         return new ResponseEntity<>(new ResponseObject(200,
                 null, 0, vouchers), HttpStatus.OK);
     }
@@ -95,15 +92,22 @@ public class PromotionService implements BaseService<Discount, Integer> {
         }
         return new ResponseEntity<>(new ResponseObject(200, null, 0, convertVourcherDTO(voucher)), HttpStatus.OK);
     }
-    public ResponseEntity<ResponseObject> checkVoucher(String code) {
-      List<Voucher> vouchers = voucherRepository.findByCode(code);
-      if (vouchers.isEmpty()) {
-        return new ResponseEntity<>(new ResponseObject(404, "Voucher not found", 1, null), HttpStatus.NOT_FOUND);
-      }
 
-      return new ResponseEntity<>(new ResponseObject(200, null, 0, convertVourcherDTO(vouchers.get(0))), HttpStatus.OK);
+    public ResponseEntity<ResponseObject> checkVoucher(String code) {
+        List<Voucher> vouchers = voucherRepository.findByCode(code);
+        if (vouchers.isEmpty()) {
+            return new ResponseEntity<>(new ResponseObject(404, "Voucher not found", 1, null), HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(new ResponseObject(200, null, 0, convertVourcherDTO(vouchers.get(0))),
+                HttpStatus.OK);
     }
+
     private VourcherDTO convertVourcherDTO(Voucher voucher) {
-        return new VourcherDTO(voucher.getId(), voucher.getCode(), voucher.getName(), voucher.getDescription(), voucher.getDiscountType(), voucher.getValue(), voucher.getMaxDiscount(), voucher.getMinOrderValue(), voucher.getTotalUses(), voucher.getMaxUses(), voucher.getMaxUsesPerUser(), voucher.getStartDate(), voucher.getEndDate(), voucher.getIsActive(), voucher.getPriority(), voucher.getCreatedAt(), voucher.getUpdatedAt());
+        return new VourcherDTO(voucher.getId(), voucher.getCode(), voucher.getName(), voucher.getDescription(),
+                voucher.getDiscountType(), voucher.getValue(), voucher.getMaxDiscount(), voucher.getMinOrderValue(),
+                voucher.getTotalUses(), voucher.getMaxUses(), voucher.getMaxUsesPerUser(), voucher.getStartDate(),
+                voucher.getEndDate(), voucher.getIsActive(), voucher.getPriority(), voucher.getCreatedAt(),
+                voucher.getUpdatedAt());
     }
 }

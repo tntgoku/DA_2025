@@ -1,6 +1,7 @@
 package backend.main.Controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +24,6 @@ import backend.main.Service.SpecificationService;
 import backend.main.Service.VariantService;
 import backend.main.Service.ServiceImp.Product.ProductService;
 
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +48,7 @@ public class ProductController {
     // private SpecificationRepository specicifcationRepository;
     // private UnitController unitController;
     private final SpecificationService specificationService;
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProductController.class);
+    private static final org.slf4j.Logger logger = LoggerE.getLogger();
 
     // @Autowired
     // private CategoryRepository categoryRepository;
@@ -85,6 +85,13 @@ public class ProductController {
         // HttpStatus.OK);
     }
 
+    @GetMapping("/search")
+    public  ResponseEntity<ResponseObject> SearchProductByName(@RequestParam(required = true) String name){
+        if(name == null || name.isEmpty()){
+            return new ResponseEntity<>(new ResponseObject(400, "Tên sản phẩm không hợp lệ", 0, null), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(new ResponseObject(200, "Oke", 1, null), HttpStatus.OK);
+    }
     @GetMapping("/{id}")
     public ResponseEntity<ResponseObject> findProductsByID(@PathVariable String id) {
 
@@ -245,11 +252,11 @@ public class ProductController {
                                 logger.info("Category con => gán về cha có ID = {}", parentCate.getId());
                             } else {
                                 logger.warn("Không tìm thấy danh mục cha cho categoryId={}", cate.getId());
-                                a.setCategory(cate); // fallback
+                                a.setCategory(cate);
                             }
                         } else {
                             logger.warn("Không tìm thấy danh mục cha cho categoryId={}", cate.getId());
-                            a.setCategory(cate); // fallback
+                            a.setCategory(cate);
                         }
                     } else {
                         // Là danh mục cha

@@ -1,9 +1,5 @@
 package backend.main.DTO.PromotionDTO;
 
-import java.util.List;
-
-import backend.main.DTO.Product.ProductDTO;
-
 public class CampaignDTO {
     private Long campaignId;
     private String campaignName;
@@ -19,9 +15,11 @@ public class CampaignDTO {
     private java.math.BigDecimal minOrderValue;
     private String targetType;
     private Boolean isIncluded;
+
     // List<ProductDTO> products;
     public CampaignDTO() {
     }
+
     @Override
     public String toString() {
         return "CampaignDTO [campaignId=" + campaignId + ", campaignName=" + campaignName + ", campaignDescription="
@@ -31,7 +29,11 @@ public class CampaignDTO {
                 + ", targetType=" + targetType + ", isIncluded=" + isIncluded + "]";
     }
 
-    public CampaignDTO(Long campaignId, String campaignName, String campaignDescription, String campaignType, java.time.LocalDateTime startDate, java.time.LocalDateTime endDate, Boolean isActive, java.time.LocalDateTime createdAt, Integer priority, java.math.BigDecimal value, java.math.BigDecimal maxDiscount, java.math.BigDecimal minOrderValue, String targetType, Boolean isIncluded) {
+    public CampaignDTO(Long campaignId, String campaignName, String campaignDescription, String campaignType,
+            java.time.LocalDateTime startDate, java.time.LocalDateTime endDate, Boolean isActive,
+            java.time.LocalDateTime createdAt, Integer priority, java.math.BigDecimal value,
+            java.math.BigDecimal maxDiscount, java.math.BigDecimal minOrderValue, String targetType,
+            Boolean isIncluded) {
 
         this.campaignId = campaignId;
         this.campaignName = campaignName;
@@ -160,6 +162,5 @@ public class CampaignDTO {
     public void setIsIncluded(Boolean isIncluded) {
         this.isIncluded = isIncluded;
     }
-
 
 }

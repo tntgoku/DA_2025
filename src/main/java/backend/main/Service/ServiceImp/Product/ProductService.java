@@ -63,25 +63,7 @@ public class ProductService implements BaseService<Products, Integer> {
     public ResponseEntity<ResponseObject> findAll() {
         List<Products> products = repository.findAll();
 
-        List<ProductDTO> dtos = products.stream().map(product -> {
-            ProductDTO dto = convertProductDTO(product);
-            // Map variants
-            List<ImageDTO> listimg = new ArrayList<>();
-            repository.listNativeImg().forEach(img -> {
-                if (img.getProductId() == product.getId()) {
-                    ImageDTO item = new ImageDTO();
-                    item.setId(img.getid());
-                    item.setImgSrc(img.getImageUrl());
-                    item.setImgAlt(img.getAltImg());
-                    item.setDisplayOrder(img.getDisplayOrder());
-                    item.setIsPrimary(img.getIsPrimary());
-                    listimg.add(item);
-                }
-            });
-
-            dto.setImages(listimg);
-            return dto;
-        }).collect(Collectors.toList());
+        List<ProductDTO> dtos = convertProductDTOs(products);
         return new ResponseEntity<>(new ResponseObject(200,
                 "Thành công",
                 0,
@@ -122,24 +104,7 @@ public class ProductService implements BaseService<Products, Integer> {
 
     public ResponseEntity<ResponseObject> findAllByCateId(Integer id) {
         List<Products> products = repository.findAllByCateIdOrChild(id);
-        List<ProductDTO> dtos = products.stream().map(product -> {
-            ProductDTO dto = convertProductDTO(product);
-            // Map variants
-            List<ImageDTO> listimg = new ArrayList<>();
-            repository.listNativeImg().forEach(img -> {
-                if (img.getProductId() == product.getId()) {
-                    ImageDTO item = new ImageDTO();
-                    item.setId(img.getid());
-                    item.setImgSrc(img.getImageUrl());
-                    item.setImgAlt(img.getAltImg());
-                    item.setDisplayOrder(img.getDisplayOrder());
-                    item.setIsPrimary(img.getIsPrimary());
-                    listimg.add(item);
-                }
-            });
-            dto.setImages(listimg);
-            return dto;
-        }).collect(Collectors.toList());
+        List<ProductDTO> dtos = convertProductDTOs(products);
         return new ResponseEntity<>(new ResponseObject(200,
                 "Thành công",
                 0,
@@ -147,6 +112,14 @@ public class ProductService implements BaseService<Products, Integer> {
                 HttpStatus.OK);
     }
 
+    public ResponseEntity<ResponseObject> searchProductByName(String name) {
+        List<Products> products = repository.findAllByNameLike(name);
+        return new ResponseEntity<>(new ResponseObject(200,
+                "Thành công",
+                0,
+                products),
+                HttpStatus.OK);
+    }
     public ResponseEntity<ResponseObject> listimg() {
         return new ResponseEntity<>(new ResponseObject(200,
                 "Thành công",
@@ -406,6 +379,28 @@ public class ProductService implements BaseService<Products, Integer> {
                     new ResponseObject(500, "Xóa thất bại: " + e.getMessage(), 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private List<ProductDTO> convertProductDTOs(List<Products> products) {
+        return products.stream().map(product -> {
+            ProductDTO dto = convertProductDTO(product);
+            // Map variants
+            List<ImageDTO> listimg = new ArrayList<>();
+            repository.listNativeImg().forEach(img -> {
+                if (img.getProductId() == product.getId()) {
+                    ImageDTO item = new ImageDTO();
+                    item.setId(img.getid());
+                    item.setImgSrc(img.getImageUrl());
+                    item.setImgAlt(img.getAltImg());
+                    item.setDisplayOrder(img.getDisplayOrder());
+                    item.setIsPrimary(img.getIsPrimary());
+                    listimg.add(item);
+                }
+            });
+
+            dto.setImages(listimg);
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     private ProductDTO convertProductDTO(Products product) {

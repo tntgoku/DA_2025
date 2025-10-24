@@ -130,8 +130,6 @@ public class UserService implements BaseService<User, Integer> {
             existingUser.setFullName(userDTO.getFullName());
             existingUser.setPhone(userDTO.getPhone());
             existingUser.setEmail(userDTO.getEmail());
-            existingUser.setEmailVerified(userDTO.getEmailVerified());
-            existingUser.setPhoneVerified(userDTO.getPhoneVerified());
             existingUser.setDateOfBirth(userDTO.getDateOfBirth());
             existingUser.setGender(userDTO.getGender());
             existingUser.setAddress(userDTO.getAddress());

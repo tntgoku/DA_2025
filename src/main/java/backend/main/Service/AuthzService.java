@@ -22,7 +22,9 @@ import backend.main.Repository.UserRepository;
 import backend.main.Request.RegisterRequest;
 import backend.main.Request.ForgotPasswordRequest;
 import backend.main.Request.ResetPasswordRequest;
+import backend.main.Request.ResetPasswordWithOtpRequest;
 import backend.main.Service.EmailService;
+import backend.main.Service.OtpService;
 import java.util.*;
 
 @Service
@@ -34,20 +36,23 @@ public class AuthzService {
     private final OrderService orderService;
     private final JwtUtil jwtUtil;
     private final EmailService emailService;
+    private final OtpService otpService;
     private static final org.slf4j.Logger logger = LoggerE.getLogger();
 
     public AuthzService(JwtUtil jwtUtil, PasswordEncoder password, UserRepository userRepository,
-            AccountRepository accountRepository, OrderService orderService, EmailService emailService) {
+            AccountRepository accountRepository, OrderService orderService, EmailService emailService, OtpService otpService) {
         this.passwordEncoder = password;
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
         this.accountRepository = accountRepository;
         this.orderService = orderService;
         this.emailService = emailService;
+        this.otpService = otpService;
     }
 
     public ResponseEntity<ResponseObject> checklogin(String user, String password) {
         logger.info("Bắt đầu kiểm tra đăng nhập cho: {}", user);
+        user=user.trim();
         Optional<AuthzProjection> userOptional = userRepository.findByEmailWithAccountAndRole(user);
         if (userOptional.isEmpty()) {
             logger.info("Tài khoản {} không tồn tại", user);
@@ -166,10 +171,8 @@ public class AuthzService {
         AuthzDTO a = new AuthzDTO();
         a.setIdUser(authzProjection.getIdUser());
         a.setEmail(authzProjection.getEmail());
-        a.setEmailVerified(authzProjection.getEmailVerified());
         a.setFullName(authzProjection.getFullName());
         a.setPhone(authzProjection.getPhone());
-        a.setPhoneVerified(authzProjection.getPhoneVerified());
         a.setPasswordHash(authzProjection.getPasswordHash());
         a.setRoleName(authzProjection.getRoleName());
         @SuppressWarnings("unchecked")
@@ -191,10 +194,8 @@ public class AuthzService {
         try {
             AuthzProjection user = userOptional.get();
             
-            // Tạo reset token (trong thực tế nên tạo token có thời hạn)
             String resetToken = UUID.randomUUID().toString();
             
-            // Lưu token vào database hoặc cache (tạm thời log)
             logger.info("Reset token cho user {}: {}", user.getEmail(), resetToken);
             
             // Gửi email reset password
@@ -218,26 +219,18 @@ public class AuthzService {
     }
 
     public ResponseEntity<ResponseObject> resetPassword(ResetPasswordRequest request) {
-        // Kiểm tra token (trong thực tế sẽ validate token từ email)
         if (request.getToken() == null || request.getToken().isEmpty()) {
             return ResponseEntity.ok(
                 new ResponseObject(400, "Token không hợp lệ", 400, "Token không hợp lệ")
             );
         }
 
-        // Kiểm tra mật khẩu mới và xác nhận
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             return ResponseEntity.ok(
                 new ResponseObject(400, "Mật khẩu xác nhận không khớp", 400, "Mật khẩu xác nhận không khớp")
             );
         }
 
-        // Trong thực tế, bạn sẽ:
-        // 1. Validate token từ email
-        // 2. Tìm user từ token
-        // 3. Cập nhật mật khẩu mới
-        
-        // Hiện tại chỉ log thông tin
         logger.info("Reset password request với token: {}", request.getToken());
         
         return ResponseEntity.ok(
@@ -247,8 +240,6 @@ public class AuthzService {
 
     public ResponseEntity<ResponseObject> logout(String email) {
         try {
-            // TODO: Implement token blacklisting or session invalidation
-            // For now, just log the logout
             logger.info("User logged out: {}", email);
             
             return ResponseEntity.ok(
@@ -335,4 +326,6 @@ public class AuthzService {
             );
         }
     }
+
+
 }

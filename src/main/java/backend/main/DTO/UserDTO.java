@@ -10,8 +10,6 @@ public class UserDTO {
     private String fullName;
     private String phone;
     private String email;
-    private Boolean emailVerified;
-    private Boolean phoneVerified;
     private LocalDate dateOfBirth;
     private String gender;
     private String address;
@@ -31,7 +29,7 @@ public class UserDTO {
     public UserDTO() {}
     
     public UserDTO(Integer id, Integer accountId, String fullName, String phone, String email, 
-                   Boolean emailVerified, Boolean phoneVerified, LocalDate dateOfBirth, 
+                   LocalDate dateOfBirth, 
                    String gender, String address, Integer totalOrders, BigDecimal totalSpent, 
                    String notes, LocalDateTime createdAt, LocalDateTime updatedAt,
                    String username, String roleName, Integer roleId, String status) {
@@ -40,8 +38,6 @@ public class UserDTO {
         this.fullName = fullName;
         this.phone = phone;
         this.email = email;
-        this.emailVerified = emailVerified;
-        this.phoneVerified = phoneVerified;
         this.dateOfBirth = dateOfBirth;
         this.gender = gender;
         this.address = address;
@@ -71,12 +67,6 @@ public class UserDTO {
     
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
-    
-    public Boolean getEmailVerified() { return emailVerified; }
-    public void setEmailVerified(Boolean emailVerified) { this.emailVerified = emailVerified; }
-    
-    public Boolean getPhoneVerified() { return phoneVerified; }
-    public void setPhoneVerified(Boolean phoneVerified) { this.phoneVerified = phoneVerified; }
     
     public LocalDate getDateOfBirth() { return dateOfBirth; }
     public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }

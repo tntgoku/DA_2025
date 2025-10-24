@@ -3,46 +3,38 @@ package backend.main.Request;
 
 public class LoginRequest {
 
-    private String email;
-    private String password;
+    private String username;
+    private String passwordHash;
     private String token;
-
     public LoginRequest() {
-
     }
-
-    public LoginRequest(String email, String password) {
-        this.email = email;
-        this.password = password;
+    public LoginRequest(String username, String passwordHash, String token) {
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.token = token;
     }
-
-    public String getEmail() {
-        return email;
+    public String getUsername() {
+        return username;
     }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUsername(String username) {
+        this.username = username;
     }
-
-    public String getPassword() {
-        return password;
+    public String getPasswordHash() {
+        return passwordHash;
     }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
-
-    @Override
-    public String toString() {
-        return "LoginRequest [email=" + email + ", password=" + password + ", token=" + token + "]";
-    }
-
     public String getToken() {
         return token;
     }
-
     public void setToken(String token) {
         this.token = token;
     }
+    @Override
+    public String toString() {
+        return "LoginRequest [username=" + username + ", passwordHash=" + passwordHash + ", token=" + token + "]";
+    }
 
+   
 }

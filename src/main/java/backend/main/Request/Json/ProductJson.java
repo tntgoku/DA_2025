@@ -17,6 +17,7 @@ public class ProductJson {
     private Boolean isFeatured;
     private Boolean isHot;
     private String featuredImageIndex;
+    private String status;
     private List<ProductSpecificationDTO> specifications;
     private List<ImageJson> images;
     private List<VariantColorJson> variants;
@@ -149,6 +150,14 @@ public class ProductJson {
 
     public void setSpecifications(List<ProductSpecificationDTO> specifications) {
         this.specifications = specifications;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }

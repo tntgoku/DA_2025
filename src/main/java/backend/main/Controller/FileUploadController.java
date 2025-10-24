@@ -2,6 +2,7 @@ package backend.main.Controller;
 
 import backend.main.Config.ImageNotFoundException;
 import backend.main.Model.ResponseObject;
+import backend.main.Model.Product.ProductImage;
 import backend.main.Request.ProductImageRequest;
 import backend.main.Service.ProductImageService;
 import org.slf4j.Logger;
@@ -54,6 +55,30 @@ public class FileUploadController {
         }
     }
 
+
+    @GetMapping(value = "/{imageId}/{variantId}")
+    public ResponseEntity<byte[]> getImageByIdAndVariantId(@PathVariable String imageId,
+    @PathVariable String variantId) {
+
+        try {
+            byte[] imageData = productImageService.getImageByIdAndVariantId(imageId,variantId);
+            org.springframework.http.MediaType mediaType = getImagesByProductIdAndVariantId(imageId,variantId);
+            return ResponseEntity
+                    .ok()
+                    .contentType(mediaType)
+                    .body(imageData);
+
+        } catch (ImageNotFoundException e) {
+            // Xử lý khi không tìm thấy ảnh
+            logger.error("Không tìm thấy ảnh với ID: {} - {} - {}", imageId,variantId, e.getMessage());
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            // Xử lý lỗi khác (ví dụ: lỗi IO)
+            logger.error("Lỗi khi lấy ảnh với ID {}: {}", imageId, e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @GetMapping(value = "imgSrc/{imageId}")
     public ResponseEntity<byte[]> getImageByIdImage(@PathVariable String imageId) {
 
@@ -78,7 +103,6 @@ public class FileUploadController {
 
     private org.springframework.http.MediaType determineMediaType(String imageId) {
         try {
-            // Lấy thông tin ảnh từ database để xác định extension
             var imageOpt = productImageService.getImageById(Integer.parseInt(imageId));
             if (imageOpt.isPresent()) {
                 String imageUrl = imageOpt.get().getImageUrl();
@@ -99,6 +123,30 @@ public class FileUploadController {
 
         return org.springframework.http.MediaType.IMAGE_JPEG;
     }
+
+    private org.springframework.http.MediaType getImagesByProductIdAndVariantId(String imageId,String variantId) {
+        try {
+            List<ProductImage> images = productImageService.getImagesByProductIdAndVariantId(Integer.parseInt(imageId), Integer.parseInt(variantId));
+            if (images != null && !images.isEmpty()) {
+                String imageUrl = images.get(0).getImageUrl();
+                String extension = imageUrl.substring(imageUrl.lastIndexOf(".") + 1).toLowerCase();
+
+                return switch (extension) {
+                    case "jpg", "jpeg" -> org.springframework.http.MediaType.IMAGE_JPEG;
+                    case "png" -> org.springframework.http.MediaType.IMAGE_PNG;
+                    case "gif" -> org.springframework.http.MediaType.IMAGE_GIF;
+                    case "webp" -> org.springframework.http.MediaType.parseMediaType("image/webp");
+                    case "bmp" -> org.springframework.http.MediaType.parseMediaType("image/bmp");
+                    default -> org.springframework.http.MediaType.IMAGE_JPEG; 
+                };
+            }
+        } catch (Exception e) {
+            logger.warn("Không thể xác định MediaType cho ảnh ID {}: {}", imageId, e.getMessage());
+        }
+
+        return org.springframework.http.MediaType.IMAGE_JPEG;
+    }
+
 
     @PostMapping("/image")
     public ResponseEntity<ResponseObject> uploadImage(

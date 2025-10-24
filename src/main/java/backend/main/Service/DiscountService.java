@@ -1,12 +1,10 @@
 package backend.main.Service;
 
 import backend.main.Model.Promotion.Discount;
-import backend.main.Model.Promotion.Voucher;
 import backend.main.Model.ResponseObject;
 import backend.main.Repository.DiscountRepository;
 // import backend.main.DTO.PromotionDTO.DiscountCampaignDTO;
 import backend.main.DTO.PromotionDTO.DiscountCampaignProjection;
-import backend.main.DTO.PromotionDTO.VourcherDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -87,9 +85,9 @@ public class DiscountService implements BaseService<Discount, Integer> {
      */
     public boolean isActive(Discount discount) {
         LocalDateTime now = LocalDateTime.now();
-        return discount.getIsActive() && 
-               discount.getStartDate().isBefore(now) && 
-               discount.getEndDate().isAfter(now);
+        return discount.getIsActive() &&
+                discount.getStartDate().isBefore(now) &&
+                discount.getEndDate().isAfter(now);
     }
 
     /**
@@ -103,20 +101,24 @@ public class DiscountService implements BaseService<Discount, Integer> {
     @Override
     public ResponseEntity<ResponseObject> createNew(Discount entity) {
         try {
-            Discount save= discountRepository.save(entity);
-            return new ResponseEntity<>(new ResponseObject(200, "Discount created successfully", 0, save), HttpStatus.OK);
+            Discount save = discountRepository.save(entity);
+            return new ResponseEntity<>(new ResponseObject(200, "Discount created successfully", 0, save),
+                    HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(new ResponseObject(400, "Error creating discount: " + e.getMessage(), 0, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseObject(400, "Error creating discount: " + e.getMessage(), 0, null),
+                    HttpStatus.BAD_REQUEST);
         }
     }
 
     @Override
     public ResponseEntity<ResponseObject> update(Discount entity) {
         try {
-            Discount update= discountRepository.save(entity);   
-            return new ResponseEntity<>(new ResponseObject(200, "Discount updated successfully", 0, update), HttpStatus.OK);
+            Discount update = discountRepository.save(entity);
+            return new ResponseEntity<>(new ResponseObject(200, "Discount updated successfully", 0, update),
+                    HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(new ResponseObject(400, "Error updating discount: " + e.getMessage(), 0, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseObject(400, "Error updating discount: " + e.getMessage(), 0, null),
+                    HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -124,9 +126,11 @@ public class DiscountService implements BaseService<Discount, Integer> {
     public ResponseEntity<ResponseObject> delete(Integer id) {
         try {
             discountRepository.deleteById(id);
-            return new ResponseEntity<>(new ResponseObject(200, "Discount deleted successfully", 0, null), HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseObject(200, "Discount deleted successfully", 0, null),
+                    HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(new ResponseObject(400, "Error deleting discount: " + e.getMessage(), 0, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseObject(400, "Error deleting discount: " + e.getMessage(), 0, null),
+                    HttpStatus.BAD_REQUEST);
         }
     }
 

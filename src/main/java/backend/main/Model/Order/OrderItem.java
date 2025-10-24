@@ -3,7 +3,6 @@ package backend.main.Model.Order;
 import jakarta.persistence.*;
 
 import backend.main.Model.Product.ProductVariant;
-import backend.main.Model.InventoryItem;
 import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.Setter;

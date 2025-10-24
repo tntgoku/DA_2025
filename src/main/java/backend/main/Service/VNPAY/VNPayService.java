@@ -95,8 +95,14 @@ private static final org.slf4j.Logger logger = LoggerFactory.getLogger(VNPayServ
             String fieldName = null;
             String fieldValue = null;
             try {
-                fieldName = URLEncoder.encode((String) params.nextElement(), StandardCharsets.US_ASCII.toString());
-                fieldValue = URLEncoder.encode(request.getParameter(fieldName), StandardCharsets.US_ASCII.toString());
+                fieldName = (String) params.nextElement();
+                if (fieldName != null) {
+                    fieldValue = request.getParameter(fieldName);
+                    if (fieldValue != null) {
+                        fieldName = URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString());
+                        fieldValue = URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString());
+                    }
+                }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }

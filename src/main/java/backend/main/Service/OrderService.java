@@ -1,10 +1,10 @@
 package backend.main.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,14 +32,16 @@ import backend.main.Model.Product.ProductVariant;
 import backend.main.Model.Promotion.Voucher;
 import backend.main.Model.InventoryItem;
 import backend.main.Repository.InventoryReponsitory;
-import backend.main.Repository.UserRepository;
+import backend.main.Repository.OrderITemRepository;
 import backend.main.Repository.VoucherRepository;
 import backend.main.Request.OrderItemRequest;
 import backend.main.Request.Checkout.CheckoutRequest;
 import backend.main.Request.Json.ItemProductJson;
+import backend.main.Service.VNPAY.VNPayConfig;
+import backend.main.Service.VNPAY.VNPayService;
+import jakarta.servlet.http.HttpServletRequest;
 import backend.main.Repository.OrderRepository;
-import backend.main.Repository.OrderITemRepository;
-import backend.main.Model.User.User;
+// import backend.main.Repository.OrderITemRepository;
 
 @Service
 public class OrderService implements BaseService<Order, Integer> {
@@ -47,14 +49,19 @@ public class OrderService implements BaseService<Order, Integer> {
     private OrderRepository repository;
     @Autowired
     private InventoryReponsitory inventoryReponsitory;
-    @Autowired
-    private UserRepository userRepository;
+    // @Autowired
+    // private UserRepository userRepository;
     @Autowired
     private VoucherRepository voucherRepository;
     @Autowired
     private OrderITemRepository orderItemRepository;
     @Autowired
     private PromotionService promotionService;
+
+    @Autowired
+    private VNPayService vnPayService;
+    @Autowired
+    private VNPayConfig vnPayConfig;
     @Autowired
     private VariantService variantService;
     @Autowired
@@ -109,6 +116,44 @@ public class OrderService implements BaseService<Order, Integer> {
     public ResponseEntity<ResponseObject> createNewDTO(OrderDTO orderDTO) {
         Order order = convertOrder(orderDTO);
         return createNew(order);
+    }
+
+    public ResponseEntity<ResponseObject> findRecentOrders(LocalDateTime sevenDaysAgo) {
+        List<Order> recentOrders = repository.findRecentOrders(sevenDaysAgo);
+        if (recentOrders == null || recentOrders.isEmpty()) {
+            logger.info("Không có đơn hàng nào được tạo sau {}", sevenDaysAgo);
+            return new ResponseEntity<>(new ResponseObject(204,
+                    "Không tìm thấy đơn hàng gần đây", 0, null),
+                    HttpStatus.NO_CONTENT);
+        }
+        List<OrderDTO> dto = recentOrders.stream().map(item -> {
+            return convertOrderDTO(item);
+        }).collect(Collectors.toList());
+        // tính tổng doanh thu của mỗi ngày này
+        BigDecimal dailyTotal = recentOrders.stream()
+                .map(Order::getTotalAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        logger.debug("Tổng doanh thu trong khoảng thời gian: {}", dailyTotal);
+        // Số lượng đơn hàng
+        int orderCount = recentOrders.size();
+        // Số lượng các sản phẩm đã bán trong khoảng thời gian
+        int totalProductsSold = recentOrders.stream()
+                .flatMap(order -> order.getOrderItems().stream())
+                .mapToInt(OrderItem::getQuantity)
+                .sum();
+        logger.debug("Số lượng đơn hàng: {}", orderCount);
+        logger.debug("Tổng số sản phẩm đã bán: {}", totalProductsSold);
+        logger.debug("Doanh thu hàng ngày: {}", dailyTotal);
+
+        logger.debug("Recent orders found: {}", dto);
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("orders", dto);
+        result.put("dailyTotal", dailyTotal);
+        result.put("orderCount", orderCount);
+        result.put("totalProductsSold", totalProductsSold);
+        return new ResponseEntity<>(new ResponseObject(200,
+                "Thành công", 0, result),
+                HttpStatus.OK);
     }
 
     @Transactional // Chỉ đọc, không cần thay đổi data
@@ -170,32 +215,6 @@ public class OrderService implements BaseService<Order, Integer> {
         return total;
     }
 
-    // Create new order from OrderRequest
-    @Transactional
-    public ResponseEntity<ResponseObject> createNewFromRequest(backend.main.Request.OrderRequest orderRequest) {
-        try {
-            Order order = convertFromOrderRequest(orderRequest);
-            order.setCreatedAt(java.time.LocalDateTime.now());
-            order.setUpdatedAt(java.time.LocalDateTime.now());
-
-            if (order.getOrderCode() == null || order.getOrderCode().isEmpty()) {
-                order.setOrderCode("ORD" + System.currentTimeMillis());
-            }
-
-            Order saved = repository.save(order);
-            logger.info("✅ Created new order: ID={}, Code={}", saved.getId(), saved.getOrderCode());
-
-            return new ResponseEntity<>(
-                    new ResponseObject(201, "Tạo đơn hàng thành công", 0, saved),
-                    HttpStatus.CREATED);
-        } catch (Exception e) {
-            logger.error("❌ Error creating order: {}", e.getMessage());
-            return new ResponseEntity<>(
-                    new ResponseObject(500, "Lỗi khi tạo đơn hàng: " + e.getMessage(), 1, null),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     // Update order from OrderRequest
     @Transactional
     public ResponseEntity<ResponseObject> updateFromRequest(backend.main.Request.OrderRequest orderRequest) {
@@ -209,29 +228,28 @@ public class OrderService implements BaseService<Order, Integer> {
 
             Order existing = optional.get();
             String oldStatus = existing.getOrderStatus(); // Lưu trạng thái cũ
-            
+
             updateOrderFromRequest(existing, orderRequest);
             existing.setUpdatedAt(java.time.LocalDateTime.now());
             Order updated = repository.save(existing);
-            
+
             // Gửi email thông báo nếu trạng thái thay đổi
             if (orderRequest.getOrderStatus() != null && !orderRequest.getOrderStatus().equals(oldStatus)) {
                 try {
                     emailService.sendOrderStatusUpdateEmail(
-                        updated.getCustomerEmail(),
-                        updated.getCustomerName(),
-                        updated.getOrderCode(),
-                        oldStatus,
-                        updated.getOrderStatus(),
-                        updated.getNotes()
-                    );
+                            updated.getCustomerEmail(),
+                            updated.getCustomerName(),
+                            updated.getOrderCode(),
+                            oldStatus,
+                            updated.getOrderStatus(),
+                            updated.getNotes());
                     logger.info("Email cập nhật trạng thái đơn hàng đã được gửi cho: {}", updated.getCustomerEmail());
                 } catch (Exception e) {
                     logger.error("Lỗi khi gửi email cập nhật trạng thái đơn hàng: {}", e.getMessage());
                     // Không throw exception để không ảnh hưởng đến việc cập nhật đơn hàng
                 }
             }
-            
+
             logger.info("✅ Updated order: ID={}, Code={}", updated.getId(), updated.getOrderCode());
             return new ResponseEntity<>(
                     new ResponseObject(200, "Cập nhật đơn hàng thành công", 0, updated),
@@ -242,50 +260,6 @@ public class OrderService implements BaseService<Order, Integer> {
                     new ResponseObject(500, "Lỗi khi cập nhật đơn hàng: " + e.getMessage(), 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private Order convertFromOrderRequest(backend.main.Request.OrderRequest orderRequest) {
-        Order order = new Order();
-        if (orderRequest.getId() != null) {
-            order.setId(orderRequest.getId());
-        }
-
-        order.setOrderCode(orderRequest.getOrderCode());
-        order.setOrderStatus(orderRequest.getOrderStatus());
-        order.setCustomerName(orderRequest.getCustomerName());
-        order.setCustomerPhone(orderRequest.getCustomerPhone());
-        order.setCustomerEmail(orderRequest.getCustomerEmail());
-        order.setCustomerAddress(orderRequest.getCustomerAddress());
-        order.setPaymentMethod(orderRequest.getPaymentMethod());
-
-        order.setSubtotalAmount(orderRequest.getSubtotalAmount());
-        order.setDiscountAmount(orderRequest.getDiscountAmount());
-        order.setShippingFee(orderRequest.getShippingFee());
-        order.setTaxAmount(orderRequest.getTaxAmount());
-        order.setTotalAmount(orderRequest.getTotalAmount());
-        order.setAmountPaid(orderRequest.getAmountPaid());
-        order.setVoucherDiscount(orderRequest.getVoucherDiscount());
-        order.setShippingAddress(orderRequest.getShippingAddress());
-        order.setShippingMethod(orderRequest.getShippingMethod());
-        order.setTrackingNumber(orderRequest.getTrackingNumber());
-        order.setNotes(orderRequest.getNotes());
-
-        if (orderRequest.getVoucherId() != null) {
-            try {
-                order.setVoucher(voucherRepository.findById(orderRequest.getVoucherId()).orElse(null));
-            } catch (Exception e) {
-                order.setVoucher(null);
-            }
-        }
-
-        // Set created/updated dates
-        if (orderRequest.getCreatedAt() != null) {
-            order.setCreatedAt(orderRequest.getCreatedAt());
-        } else {
-            order.setCreatedAt(java.time.LocalDateTime.now()); // Default value if not set by DB
-        }
-        order.setUpdatedAt(java.time.LocalDateTime.now());
-        return order;
     }
 
     // Update existing order from OrderRequest
@@ -396,6 +370,7 @@ public class OrderService implements BaseService<Order, Integer> {
         logger.info("✅ Finished updating items. Total items to be persisted: {}", updatedItems.size());
     } // Update existing order item from request
 
+    @SuppressWarnings("unused")
     private void updateOrderItemFromRequest(OrderItem existing, backend.main.Request.OrderItemRequest request) {
         BigDecimal listPrice = existing.getVariant().getListPrice();
         BigDecimal salePrice = existing.getVariant().getSalePrice();
@@ -516,7 +491,7 @@ public class OrderService implements BaseService<Order, Integer> {
     }
 
     @Transactional
-    public ResponseEntity<ResponseObject> checkout(CheckoutRequest request) {
+    public ResponseEntity<ResponseObject> checkout(CheckoutRequest request, HttpServletRequest httpServletRequest) {
         List<ItemProductJson> cart = request != null && request.getItems() != null && !request.getItems().isEmpty()
                 ? request.getItems()
                 : (request != null ? request.getItems() : null);
@@ -529,8 +504,8 @@ public class OrderService implements BaseService<Order, Integer> {
         Order order = new Order();
         order.setOrderCode("OD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
         Integer customerId = request.getId();
-        if(customerId != null){
-        logger.info("Customer ID: {}", customerId);
+        if (customerId != null) {
+            logger.info("Customer ID: {}", customerId);
         }
         order.setCustomer(customerId);
         order.setCustomerName(request.getFullname());
@@ -541,6 +516,7 @@ public class OrderService implements BaseService<Order, Integer> {
         String shippingAddress = request.getProvince();
         if (request.getDistrict() != null && !request.getDistrict().isEmpty()) {
             shippingAddress += ", " + request.getDistrict();
+            shippingAddress += request.getAddress();
         }
         order.setShippingAddress(shippingAddress);
         order.setNotes(request.getNote());
@@ -630,9 +606,18 @@ public class OrderService implements BaseService<Order, Integer> {
         order.setVoucherDiscount(request.getVoucherDiscount() != null ? request.getVoucherDiscount() : BigDecimal.ZERO);
         order.setTotalAmount(request.getTotalPrice() != null ? request.getTotalPrice() : BigDecimal.ZERO);
         order.setSubtotalAmount(subtotal);
+
         if (request.getVoucher() != null && !request.getVoucher().isEmpty()) {
             Voucher findv = voucherRepository.findById(Integer.parseInt(request.getVoucher())).orElse(null);
             order.setVoucher(findv);
+        }
+        HashMap<String, Object> reponse = new HashMap<>();
+        if (order.getPaymentMethod().equals("vnpay")) {
+            String url = vnPayService.createOrder(httpServletRequest, order.getTotalAmount().longValue(),
+                    "Thanh toan don hang:" + order.getOrderCode(), VNPayConfig.vnp_Returnurl);
+            reponse.put("paymentUrl", url);
+        } else {
+            reponse.put("paymentUrl", null);
         }
 
         Order saved = repository.save(order);
@@ -641,7 +626,8 @@ public class OrderService implements BaseService<Order, Integer> {
             try {
                 OrderItem savedItem = orderItemRepository.save(item);
                 if (savedItem != null) {
-                    logger.info("Đặt hàng thành công: ID: {}, Code: {}, subtotal: {}", saved.getId(),
+                    logger.info("Đặt hàng thành công: ID: {}, Code: {}, subtotal: {}",
+                            saved.getId(),
                             saved.getOrderCode(), subtotal);
                 }
             } catch (Exception e) {
@@ -649,26 +635,25 @@ public class OrderService implements BaseService<Order, Integer> {
             }
 
         }
-        // saved.getOrderCode(),subtotal);
         if (saved != null) {
             // Gửi email xác nhận đơn hàng
             try {
                 String orderItemsHtml = buildOrderItemsHtml(items);
                 emailService.sendOrderConfirmationEmail(
-                    saved.getCustomerEmail(),
-                    saved.getCustomerName(),
-                    saved.getOrderCode(),
-                    saved.getTotalAmount().toString(),
-                    orderItemsHtml
-                );
+                        saved.getCustomerEmail(),
+                        saved.getCustomerName(),
+                        saved.getOrderCode(),
+                        saved.getTotalAmount().toString(),
+                        orderItemsHtml);
                 logger.info("Email xác nhận đơn hàng đã được gửi cho: {}", saved.getCustomerEmail());
             } catch (Exception e) {
                 logger.error("Lỗi khi gửi email xác nhận đơn hàng: {}", e.getMessage());
                 // Không throw exception để không ảnh hưởng đến việc tạo đơn hàng
             }
-            
+            reponse.put("order", order);
+            reponse.put("orderSave", saved);
             return new ResponseEntity<>(
-                    new ResponseObject(200, "Đặt hàng thành công", 0, saved),
+                    new ResponseObject(200, "Đặt hàng thành công", 0, reponse),
                     HttpStatus.OK);
         } else {
             return new ResponseEntity<>(
@@ -695,7 +680,7 @@ public class OrderService implements BaseService<Order, Integer> {
     private String buildOrderItemsHtml(List<OrderItem> items) {
         StringBuilder html = new StringBuilder();
         html.append("<ul style='list-style: none; padding: 0;'>");
-        
+
         for (OrderItem item : items) {
             html.append("<li style='border-bottom: 1px solid #eee; padding: 10px 0;'>");
             html.append("<div style='display: flex; justify-content: space-between;'>");
@@ -705,13 +690,19 @@ public class OrderService implements BaseService<Order, Integer> {
             html.append("<small>SKU: ").append(item.getSku()).append("</small>");
             html.append("</div>");
             html.append("<div style='text-align: right;'>");
-            html.append("<div>").append(item.getQuantity()).append(" x ").append(item.getUnitSalePrice()).append(" VNĐ</div>");
+            if (item.getUnitSalePrice().doubleValue() > 0) {
+                html.append("<div>").append(item.getQuantity()).append(" x ").append(item.getUnitSalePrice())
+                        .append(" VNĐ</div>");
+            } else {
+                html.append("<div>").append(item.getQuantity()).append(" x ").append(item.getVariant().getListPrice())
+                        .append(" VNĐ</div>");
+            }
             html.append("<strong>").append(item.getTotalPrice()).append(" VNĐ</strong>");
             html.append("</div>");
             html.append("</div>");
             html.append("</li>");
         }
-        
+
         html.append("</ul>");
         return html.toString();
     }
@@ -767,7 +758,7 @@ public class OrderService implements BaseService<Order, Integer> {
             item.setUnitCostPrice(item.getVariant().getCostPrice());
             item.setQuantity(item.getQuantity());
             item.setTotalPrice(
-                item.getUnitSalePrice().multiply(java.math.BigDecimal.valueOf(item.getQuantity())));
+                    item.getUnitSalePrice().multiply(java.math.BigDecimal.valueOf(item.getQuantity())));
         });
         return order;
     }
@@ -791,7 +782,7 @@ public class OrderService implements BaseService<Order, Integer> {
         }
     }
 
-    private OrderDTO convertOrderDTO(Order a) {
+    public OrderDTO convertOrderDTO(Order a) {
         OrderDTO dto = new OrderDTO();
         dto.setId(a.getId());
         dto.setOrderCode(a.getOrderCode());
@@ -907,6 +898,43 @@ public class OrderService implements BaseService<Order, Integer> {
             logger.error("Error updating order status: {}", e.getMessage());
             return new ResponseEntity<>(new ResponseObject(500, "Lỗi khi cập nhật trạng thái đơn hàng",
                     1, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    public void restoreInventory(Order order) {
+        try {
+            logger.info("Restoring inventory for cancelled order: {}", order.getOrderCode());
+
+            for (OrderItem item : order.getOrderItems()) {
+                try {
+                    // Tìm inventory item
+                    Optional<InventoryItem> invOpt = inventoryReponsitory
+                            .findByProductVariant_Id(item.getVariant().getId());
+                    if (invOpt.isPresent()) {
+                        InventoryItem inv = invOpt.get();
+
+                        // Hoàn trả số lượng tồn kho
+                        int currentStock = inv.getStock() != null ? inv.getStock() : 0;
+                        int restoredStock = currentStock + item.getQuantity();
+                        inv.setStock(restoredStock);
+
+                        inventoryReponsitory.save(inv);
+
+                        logger.info("Restored {} units for variant {} (SKU: {}). New stock: {}",
+                                item.getQuantity(), item.getVariant().getId(),
+                                item.getVariant().getSku(), restoredStock);
+                    } else {
+                        logger.warn("Inventory item not found for variant: {}", item.getVariant().getId());
+                    }
+                } catch (Exception e) {
+                    logger.error("Error restoring inventory for item {}: {}", item.getId(), e.getMessage());
+                }
+            }
+
+            logger.info("Inventory restoration completed for order: {}", order.getOrderCode());
+        } catch (Exception e) {
+            logger.error("Error restoring inventory for order {}: {}", order.getOrderCode(), e.getMessage(), e);
         }
     }
 }

@@ -24,6 +24,8 @@ public interface ProductRepository extends JpaRepository<Products, Integer> {
     @Query("SELECT pi.id as id, p.name as name, p.productType as productType, pi.isPrimary as isPrimary, pi.productId as productId,pi.variantId as variantId, pi.imageUrl as imageUrl,pi.altImg as altImg, pi.displayOrder as displayOrder  FROM Products p LEFT JOIN  ProductImage pi on p.id = pi.productId  ")
     List<ImageProjection> listNativeImg();
 
+    @Query("SELECT p FROM Products p WHERE lower(p.name) LIKE lower(concat('%', :name, '%'))")
+    List<Products> findAllByNameLike(@Param("name") String name);
     @Query("""
                 SELECT
                     pi.id AS id,

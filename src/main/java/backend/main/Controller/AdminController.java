@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api")
 public class AdminController {
 
+    // Cái này không dùng đếnđến
     @Autowired
     private JdbcTemplate jdbcTemplate;
 

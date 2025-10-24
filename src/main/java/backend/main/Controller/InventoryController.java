@@ -6,7 +6,6 @@ import backend.main.Model.ResponseObject;
 import backend.main.Service.InventoryService;
 import backend.main.Request.InventoryRequest;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -18,7 +17,6 @@ public class InventoryController {
         this.service = service;
     }
 
-    // ========== BASIC CRUD OPERATIONS ==========
 
     @GetMapping()
     public ResponseEntity<ResponseObject> getAllInventory() {
@@ -45,7 +43,6 @@ public class InventoryController {
         return service.delete(id);
     }
 
-    // ========== STOCK MANAGEMENT ==========
 
     @PatchMapping("/{id}/stock")
     public ResponseEntity<ResponseObject> updateStock(@PathVariable Integer id, @RequestBody Map<String, Object> stockData) {
@@ -62,7 +59,6 @@ public class InventoryController {
         return service.exportStock(id, exportData);
     }
 
-    // ========== REPORTS AND ANALYTICS ==========
 
     @GetMapping("/report")
     public ResponseEntity<ResponseObject> getInventoryReport(@RequestParam(required = false) Map<String, String> filters) {
@@ -84,8 +80,6 @@ public class InventoryController {
         return service.getInventoryStats();
     }
 
-
-    // ========== SEARCH AND FILTER ==========
 
     @GetMapping("/search")
     public ResponseEntity<ResponseObject> searchInventory(@RequestParam(required = false) String query,

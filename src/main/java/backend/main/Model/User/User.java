@@ -44,13 +44,6 @@ public class User extends BaseEntity {
 
     @Column(unique = true, length = 100)
     private String email;
-
-    @Column(name = "email_verified")
-    private Boolean emailVerified = false;
-
-    @Column(name = "phone_verified")
-    private Boolean phoneVerified = false;
-
     @Column(name = "date_of_birth")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;

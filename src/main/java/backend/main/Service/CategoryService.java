@@ -28,12 +28,21 @@ public class CategoryService implements BaseService<Categories, Integer> {
     public ResponseEntity<ResponseObject> findAll() {
         List<CategoryDTO> listroots = new ArrayList<>();
         List<Categories> roots = repository.findAll();
+        listroots = convCategoryDTOs(roots);
+        return new ResponseEntity<>(new ResponseObject(200,
+                "Thành công", 0, listroots),
+                HttpStatus.OK);
+    }
+
+    public List<CategoryDTO> convCategoryDTOs(List<Categories> roots) {
+        List<CategoryDTO> listroots = new ArrayList<>();
         roots.forEach(item -> {
             CategoryDTO dto = new CategoryDTO();
             dto.setId(item.getId());
             dto.setName(item.getName());
             dto.setDisplayOrder(item.getDisplayOrder());
             dto.setSlug(item.getSlug());
+            dto.setIsActive(item.getIsActive());
             if (item.getParent() == null) {
                 listroots.add(dto);
             }
@@ -54,9 +63,8 @@ public class CategoryService implements BaseService<Categories, Integer> {
                 });
             }
         });
-        return new ResponseEntity<>(new ResponseObject(200,
-                "Thành công", 0, listroots),
-                HttpStatus.OK);
+
+        return listroots;
     }
 
     public ResponseEntity<ResponseObject> getById(Integer id) {
@@ -68,6 +76,19 @@ public class CategoryService implements BaseService<Categories, Integer> {
         }
         return new ResponseEntity<>(new ResponseObject(200,
                 "Thành công", 0, optional.get()),
+                HttpStatus.OK);
+    }
+
+    public ResponseEntity<ResponseObject> getByParentId(Integer parentId) {
+        List<Categories> categories = repository.findByParent(parentId);
+        if (categories == null && categories.isEmpty()) {
+            return new ResponseEntity<>(
+                    new ResponseObject(404, "Không tìm thấy danh mục con với Parent ID: " + parentId, 1, null),
+                    HttpStatus.NOT_FOUND);
+
+        }
+        return new ResponseEntity<>(
+                new ResponseObject(200, "Thành công", 0, categories),
                 HttpStatus.OK);
     }
 
@@ -87,12 +108,12 @@ public class CategoryService implements BaseService<Categories, Integer> {
         Categories saved = repository.save(entity);
         if (saved != null && saved.getId() != null) {
 
-            logger.info("Save Successfully : Id: {}, Name: {}" , saved.getId(), saved.getName());
+            logger.info("Save Successfully : Id: {}, Name: {}", saved.getId(), saved.getName());
             return new ResponseEntity<>(
                     new ResponseObject(201, "Tạo mới thành công", 0, saved),
                     HttpStatus.CREATED);
         } else {
-            logger.info("Save Failed : Name: {}" , saved.getName());
+            logger.info("Save Failed : Name: {}", saved.getName());
             return new ResponseEntity<>(
                     new ResponseObject(500, "Tạo mới thất bại", 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
@@ -111,14 +132,33 @@ public class CategoryService implements BaseService<Categories, Integer> {
 
         try {
             repository.deleteById(id);
-            logger.info("Delete Successfully ID: {}" , id);
+            logger.info("Delete Successfully ID: {}", id);
+
             return new ResponseEntity<>(
-                    new ResponseObject(200, "Xóa thành công", 0, null),
+                    new ResponseObject(200, "Xóa danh mục thành công!", 0, null),
                     HttpStatus.OK);
-        } catch (Exception e) {
-            logger.warn("Delete Exception: {}" , e.getMessage());
+
+        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
+            // lỗi vi phạm ràng buộc khóa ngoại
+            logger.warn("Delete constraint violation for category ID {}: {}", id, ex.getMessage());
+
             return new ResponseEntity<>(
-                    new ResponseObject(500, "Xóa thất bại: " + e.getMessage(), 1, null),
+                    new ResponseObject(
+                            409,
+                            "Không thể xóa danh mục này vì đang được sử dụng trong dịch vụ hoặc sản phẩm khác.",
+                            1,
+                            null),
+                    HttpStatus.CONFLICT);
+
+        } catch (Exception ex) {
+            // lỗi khác không xác định
+            logger.error("Delete Exception for category ID {}: {}", id, ex.getMessage());
+            return new ResponseEntity<>(
+                    new ResponseObject(
+                            500,
+                            "Đã xảy ra lỗi trong quá trình xóa danh mục: " + ex.getMessage(),
+                            1,
+                            null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -139,12 +179,12 @@ public class CategoryService implements BaseService<Categories, Integer> {
         }
         try {
             Categories updated = repository.save(entity);
-            logger.info("Update Successfully: {}" , updated.toString());
+            logger.info("Update Successfully: {}", updated.toString());
             return new ResponseEntity<>(
                     new ResponseObject(200, "Cập nhật thành công", 0, updated),
                     HttpStatus.OK);
         } catch (Exception e) {
-            logger.warn("Update Exception: {}" , e.getMessage());
+            logger.warn("Update Exception: {}", e.getMessage());
             return new ResponseEntity<>(
                     new ResponseObject(500, "Cập nhật thất bại: " + e.getMessage(), 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
@@ -156,16 +196,16 @@ public class CategoryService implements BaseService<Categories, Integer> {
             for (Integer id : ids) {
                 if (repository.existsById(id)) { // kiểm tra tồn tại trước khi xóa
                     repository.deleteById(id);
-                    logger.info("Delete Successfully ID: {}" , id);
+                    logger.info("Delete Successfully ID: {}", id);
                 } else {
-                    logger.warn("ID not found: {}" , id);
+                    logger.warn("ID not found: {}", id);
                 }
             }
             return new ResponseEntity<>(
                     new ResponseObject(200, "Xóa thành công", 0, null),
                     HttpStatus.OK);
         } catch (Exception e) {
-            logger.warn("Delete Exception: {}" , e.getMessage());
+            logger.warn("Delete Exception: {}", e.getMessage());
             return new ResponseEntity<>(
                     new ResponseObject(500, "Xóa thất bại: " + e.getMessage(), 1, null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
@@ -189,7 +229,7 @@ public class CategoryService implements BaseService<Categories, Integer> {
         try {
             List<Categories> allCategories = repository.findAll();
             List<CategoryDTO> hierarchy = buildCategoryHierarchy(allCategories);
-            
+
             return new ResponseEntity<>(
                     new ResponseObject(200, "Thành công", 0, hierarchy),
                     HttpStatus.OK);
@@ -211,7 +251,7 @@ public class CategoryService implements BaseService<Categories, Integer> {
             }
 
             List<CategoryDTO> breadcrumb = buildBreadcrumb(categoryOpt.get());
-            
+
             return new ResponseEntity<>(
                     new ResponseObject(200, "Thành công", 0, breadcrumb),
                     HttpStatus.OK);
@@ -229,7 +269,7 @@ public class CategoryService implements BaseService<Categories, Integer> {
             List<CategoryDTO> dtos = categories.stream()
                     .map(this::convertToDTO)
                     .collect(java.util.stream.Collectors.toList());
-            
+
             return new ResponseEntity<>(
                     new ResponseObject(200, "Thành công", 0, dtos),
                     HttpStatus.OK);
@@ -261,7 +301,7 @@ public class CategoryService implements BaseService<Categories, Integer> {
 
             CategoryDTO result = convertToDTO(childOpt.get());
             result.setParentCategory(convertToDTO(parentOpt.get()));
-            
+
             return new ResponseEntity<>(
                     new ResponseObject(200, "Thành công", 0, result),
                     HttpStatus.OK);
@@ -283,7 +323,7 @@ public class CategoryService implements BaseService<Categories, Integer> {
             }
 
             CategoryDTO result = convertToDTO(parentOpt.get());
-            
+
             return new ResponseEntity<>(
                     new ResponseObject(200, "Thành công", 0, result),
                     HttpStatus.OK);
@@ -295,14 +335,15 @@ public class CategoryService implements BaseService<Categories, Integer> {
         }
     }
 
-    public ResponseEntity<ResponseObject> searchCategories(String keyword, Integer parentId, Boolean isActive, int page, int size) {
+    public ResponseEntity<ResponseObject> searchCategories(String keyword, Integer parentId, Boolean isActive, int page,
+            int size) {
         try {
             Pageable pageable = PageRequest.of(page, size);
             List<Categories> categories = repository.searchCategories(keyword, parentId, isActive, pageable);
             List<CategoryDTO> dtos = categories.stream()
                     .map(this::convertToDTO)
                     .collect(java.util.stream.Collectors.toList());
-            
+
             return new ResponseEntity<>(
                     new ResponseObject(200, "Thành công", 0, dtos),
                     HttpStatus.OK);
@@ -314,18 +355,90 @@ public class CategoryService implements BaseService<Categories, Integer> {
         }
     }
 
-    // Helper methods
+    // Thống kê danh mục
+    public ResponseEntity<ResponseObject> getCategoryStats(Integer categoryId) {
+        try {
+            Optional<Categories> categoryOpt = repository.findById(categoryId);
+            if (!categoryOpt.isPresent()) {
+                return new ResponseEntity<>(
+                        new ResponseObject(404, "Không tìm thấy danh mục với ID: " + categoryId, 0, null),
+                        HttpStatus.NOT_FOUND);
+            }
+
+            // TODO: Implement category stats logic
+            // - Count products in category
+            // - Count child categories
+            // - Count total products in tree
+            // - Get last product added date
+
+            return new ResponseEntity<>(
+                    new ResponseObject(200, "Thành công", 0, "Stats data"),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error getting category stats: {}", e.getMessage());
+            return new ResponseEntity<>(
+                    new ResponseObject(500, "Lỗi khi lấy thống kê danh mục: " + e.getMessage(), 1, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Cập nhật thứ tự hiển thị
+    public ResponseEntity<ResponseObject> updateDisplayOrder(List<Integer> categoryIds) {
+        try {
+            for (int i = 0; i < categoryIds.size(); i++) {
+                Optional<Categories> categoryOpt = repository.findById(categoryIds.get(i));
+                if (categoryOpt.isPresent()) {
+                    Categories category = categoryOpt.get();
+                    category.setDisplayOrder(i + 1);
+                    repository.save(category);
+                }
+            }
+
+            return new ResponseEntity<>(
+                    new ResponseObject(200, "Cập nhật thứ tự thành công", 0, null),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error updating display order: {}", e.getMessage());
+            return new ResponseEntity<>(
+                    new ResponseObject(500, "Lỗi khi cập nhật thứ tự: " + e.getMessage(), 1, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Kích hoạt/vô hiệu hóa danh mục
+    public ResponseEntity<ResponseObject> toggleCategoryStatus(Integer categoryId) {
+        try {
+            Optional<Categories> categoryOpt = repository.findById(categoryId);
+            if (!categoryOpt.isPresent()) {
+                return new ResponseEntity<>(
+                        new ResponseObject(404, "Không tìm thấy danh mục với ID: " + categoryId, 0, null),
+                        HttpStatus.NOT_FOUND);
+            }
+
+            Categories category = categoryOpt.get();
+            category.setIsActive(!category.getIsActive());
+            repository.save(category);
+
+            return new ResponseEntity<>(
+                    new ResponseObject(200, "Cập nhật trạng thái thành công", 0, category),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error toggling category status: {}", e.getMessage());
+            return new ResponseEntity<>(
+                    new ResponseObject(500, "Lỗi khi cập nhật trạng thái: " + e.getMessage(), 1, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     private List<CategoryDTO> buildCategoryHierarchy(List<Categories> allCategories) {
         Map<Integer, CategoryDTO> categoryMap = new HashMap<>();
         List<CategoryDTO> rootCategories = new ArrayList<>();
 
-        // Convert all categories to DTOs
         for (Categories category : allCategories) {
             CategoryDTO dto = convertToDTO(category);
             categoryMap.put(category.getId(), dto);
         }
 
-        // Build hierarchy
         for (Categories category : allCategories) {
             CategoryDTO dto = categoryMap.get(category.getId());
             if (category.getParent() == null) {

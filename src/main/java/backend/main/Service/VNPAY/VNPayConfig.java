@@ -29,7 +29,7 @@ public class VNPayConfig {
      * Returnurl
      * example : http://localhost:8080/payment
      */
-    public static String vnp_Returnurl = "http://localhost:5173/payment";
+    public static String vnp_Returnurl = "http://localhost:5173/vnpay-callback";
     public static String vnp_TmnCode = "2PUWN1QH";
     public static String vnp_HashSecret = "OR50VOPBQPWO10IA7H3R1G7TLSZBXD2F";
     public static String vnp_apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transactio";
@@ -72,17 +72,23 @@ public class VNPayConfig {
 
     // Util for VNPAY
     public static String hashAllFields(Map fields) {
+        if (fields == null || fields.isEmpty()) {
+            return "";
+        }
+        
         List fieldNames = new ArrayList(fields.keySet());
         Collections.sort(fieldNames);
         StringBuilder sb = new StringBuilder();
         Iterator itr = fieldNames.iterator();
         while (itr.hasNext()) {
             String fieldName = (String) itr.next();
-            String fieldValue = (String) fields.get(fieldName);
-            if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                sb.append(fieldName);
-                sb.append("=");
-                sb.append(fieldValue);
+            if (fieldName != null) {
+                String fieldValue = (String) fields.get(fieldName);
+                if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                    sb.append(fieldName);
+                    sb.append("=");
+                    sb.append(fieldValue);
+                }
             }
             if (itr.hasNext()) {
                 sb.append("&");

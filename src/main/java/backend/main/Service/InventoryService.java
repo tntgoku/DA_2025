@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import backend.main.Model.InventoryItem;
-import backend.main.Model.InventoryHistory;
+// import backend.main.Model.InventoryHistory;
 import backend.main.Model.ResponseObject;
 import backend.main.Repository.InventoryReponsitory;
 import backend.main.Repository.VariantReponsitory;

@@ -5,13 +5,9 @@ public interface AuthzProjection {
 
     String getFullName();
 
-    Boolean getEmailVerified();
-
     String getEmail();
 
     String getPhone();
-
-    Boolean getPhoneVerified();
 
     String getPasswordHash();
 

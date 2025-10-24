@@ -17,21 +17,21 @@ public interface UserRepository extends BaseRepository<User, Integer> {
         Optional<User> findByEmail(String email);
         Optional<User> findByPhone(String phone);
 
-        @Query("SELECT u.id as idUser, u.fullName as fullName, u.emailVerified as emailVerified, u.email as email, u.phone as phone, u.phoneVerified as phoneVerified, ac.passwordHash as passwordHash, r.roleName as roleName "
+        @Query("SELECT u.id as idUser, u.fullName as fullName, u.email as email, u.phone as phone, ac.passwordHash as passwordHash, r.roleName as roleName "
                         + "FROM User u JOIN Account ac ON u.account = ac.id "
                         + "JOIN Role r ON ac.role = r.id "
-                        + "WHERE u.email = :email")
+                        + "WHERE u.email = :email and ac.username = :email")
         Optional<AuthzProjection> findByEmailWithAccountAndRole(@Param("email") String email);
 
-        @Query("SELECT u.id as idUser, u.fullName as fullName, u.emailVerified as emailVerified, u.email as email, u.phone as phone, u.phoneVerified as phoneVerified, ac.passwordHash as passwordHash, r.roleName as roleName "
+        @Query("SELECT u.id as idUser, u.fullName as fullName, u.email as email, u.phone as phone, ac.passwordHash as passwordHash, r.roleName as roleName "
                         + "FROM User u JOIN Account ac ON u.account = ac.id "
                         + "JOIN Role r ON ac.role = r.id "
                         + "WHERE u.email = :email")
         Optional<AuthzProjection> findByPhoneWithAccountAndRole(@Param("email") String email);
 
         @Query("""
-                            SELECT u.id as idUser, u.fullName as fullName, u.emailVerified as emailVerified,
-                                   u.email as email, u.phone as phone, u.phoneVerified as phoneVerified,
+                            SELECT u.id as idUser, u.fullName as fullName, u.email as email,
+                                   u.phone as phone,
                                    ac.passwordHash as passwordHash, r.roleName as roleName
                             FROM User u
                             JOIN Account ac ON u.account = ac.id
@@ -54,8 +54,8 @@ public interface UserRepository extends BaseRepository<User, Integer> {
 
         // Lấy tất cả User với thông tin Account và Role
         @Query("SELECT u.id as idUser, u.account as accountId, u.fullName as fullName, " +
-               "u.phone as phone, u.email as email, u.emailVerified as emailVerified, " +
-               "u.phoneVerified as phoneVerified, u.dateOfBirth as dateOfBirth, " +
+               "u.phone as phone, u.email as email, " +
+               "u.dateOfBirth as dateOfBirth, " +
                "u.gender as gender, u.address as address, u.totalOrders as totalOrders, " +
                "u.totalSpent as totalSpent, u.notes as notes, u.createdAt as createdAt, " +
                "u.updatedAt as updatedAt, ac.username as username, r.roleName as roleName, " +
@@ -67,8 +67,8 @@ public interface UserRepository extends BaseRepository<User, Integer> {
 
         // Tìm kiếm User với thông tin Account và Role
         @Query("SELECT u.id as idUser, u.account as accountId, u.fullName as fullName, " +
-               "u.phone as phone, u.email as email, u.emailVerified as emailVerified, " +
-               "u.phoneVerified as phoneVerified, u.dateOfBirth as dateOfBirth, " +
+               "u.phone as phone, u.email as email, " +
+               "u.dateOfBirth as dateOfBirth, " +
                "u.gender as gender, u.address as address, u.totalOrders as totalOrders, " +
                "u.totalSpent as totalSpent, u.notes as notes, u.createdAt as createdAt, " +
                "u.updatedAt as updatedAt, ac.username as username, r.roleName as roleName, " +
@@ -83,8 +83,8 @@ public interface UserRepository extends BaseRepository<User, Integer> {
 
         // Lấy User theo ID với thông tin Account và Role
         @Query("SELECT u.id as idUser, u.account as accountId, u.fullName as fullName, " +
-               "u.phone as phone, u.email as email, u.emailVerified as emailVerified, " +
-               "u.phoneVerified as phoneVerified, u.dateOfBirth as dateOfBirth, " +
+               "u.phone as phone, u.email as email, " +
+               "u.dateOfBirth as dateOfBirth, " +
                "u.gender as gender, u.address as address, u.totalOrders as totalOrders, " +
                "u.totalSpent as totalSpent, u.notes as notes, u.createdAt as createdAt, " +
                "u.updatedAt as updatedAt, ac.username as username, r.roleName as roleName, " +

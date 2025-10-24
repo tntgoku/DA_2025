@@ -10,8 +10,6 @@ public interface UserWithAccountProjection {
     String getFullName();
     String getPhone();
     String getEmail();
-    Boolean getEmailVerified();
-    Boolean getPhoneVerified();
     LocalDate getDateOfBirth();
     String getGender();
     String getAddress();

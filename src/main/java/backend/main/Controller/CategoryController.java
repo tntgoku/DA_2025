@@ -1,8 +1,8 @@
 package backend.main.Controller;
 
-
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,38 +41,39 @@ public class CategoryController {
     public ResponseEntity<ResponseObject> getCategoryBySlug(@PathVariable String id) {
         return service.getBySlug(id);
     }
-    
+
     @PostMapping
     public ResponseEntity<ResponseObject> createCategory(@RequestBody CateRequest data) {
-        Categories a = new Categories();
         logger.info("Post Client: " + data);
+        Categories a = new Categories();
         a.setName(data.getName());
-        a.setIsActive(data.getActive());
+        a.setIsActive(data.getIsActive());
         a.setParent(data.getParentId());
-        a.setDisplayOrder(data.getDisplayOrder());
-        logger.info("Convenrt Object Client Post: {}" , a);
+        logger.info("Parentid: {}", data.getParentId());
+        a.setSlug(data.getSlug());
         return service.createNew(a);
-        // return new ResponseEntity<>(new ResponseObject(200, "data", 0, data),
-        // HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponseObject> updateCategory(@PathVariable String id,
             @RequestBody CateRequest data) {
 
-        Categories a = new Categories();
-        logger.info("Post Client: {}" , data);
+        Categories a = (Categories) service.getById(data.getId()).getBody().getData();
+        logger.info("Post Client: {}", data);
         a.setName(data.getName());
-        a.setIsActive(data.getActive());
+        a.setIsActive(data.getIsActive());
         a.setParent(data.getParentId());
-        a.setDisplayOrder(data.getDisplayOrder());
+        // a.setDisplayOrder(data.getDisplayOrder());
         a.setId(Integer.parseInt(id));
         a.setSlug(data.getSlug());
         return service.update(a);
+        // return new ResponseEntity<>(new ResponseObject(200, "data", 0, data),
+        // HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseObject> deleteCategory(@PathVariable Integer id) {
+        logger.debug("Deleting category with id: {}", id == null ? "null" : id);
         return service.delete(id);
     }
 
@@ -100,7 +101,7 @@ public class CategoryController {
 
     @GetMapping("/seo-url/{parentSlug}/{childSlug}")
     public ResponseEntity<ResponseObject> getCategoryBySeoUrl(
-            @PathVariable String parentSlug, 
+            @PathVariable String parentSlug,
             @PathVariable String childSlug) {
         return service.getCategoryBySeoUrl(parentSlug, childSlug);
     }
@@ -110,13 +111,14 @@ public class CategoryController {
         return service.getCategoryByParentSlug(parentSlug);
     }
 
-    // @GetMapping("/search")
-    // public ResponseEntity<ResponseObject> searchCategories(
-    //         @RequestParam(required = false) String keyword,
-    //         @RequestParam(required = false) Integer parentId,
-    //         @RequestParam(required = false) Boolean isActive,
-    //         @RequestParam(defaultValue = "0") int page,
-    //         @RequestParam(defaultValue = "10") int size) {
-    //     return service.searchCategories(keyword, parentId, isActive, page, size);
-    // }
+    @GetMapping("/search")
+    public ResponseEntity<ResponseObject> searchCategories(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Integer parentId,
+            @RequestParam(required = false) Boolean isActive,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return service.searchCategories(keyword, parentId, isActive, page, size);
+    }
+
 }

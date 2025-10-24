@@ -22,15 +22,18 @@ public class VariantController {
     @GetMapping()
     public ResponseEntity<ResponseObject> getproductallVariant() {
         return variantService.findAllVariant();
-    }   @GetMapping("/updatecolorcode/{variantId}")
+    }
+
+    @GetMapping("/updatecolorcode/{variantId}")
     public ResponseEntity<ResponseObject> updatecolorcode(@PathVariable String variantId) {
         return variantService.findVariantByProductId(Engine.convertString(variantId));
     }
 
+    @SuppressWarnings("null")
     @GetMapping("/{variantId}")
     public ResponseEntity<ResponseObject> getproductallVariant(@PathVariable String variantId) {
-        ProductVariant optional = (ProductVariant) variantService
-                .findVariantById(Engine.convertString(variantId)).getBody().getData();
+        ProductVariant optional = (ProductVariant) variantService.findVariantById(Engine.convertString(variantId))
+                .getBody().getData();
         return new ResponseEntity<>(new ResponseObject(200, "Oke",
                 0,
                 variantService.convertObject(optional)),

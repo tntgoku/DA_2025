@@ -19,6 +19,7 @@ D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Controll
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Controller\FileUploadController.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Controller\InventoryController.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Controller\OrderController.java
+D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Controller\PaymentController.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Controller\ProductController.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Controller\PromotionController.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Controller\SpecificationController.java
@@ -28,6 +29,9 @@ D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Controll
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Controller\VoucherController.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\DTO\AuthzDTO.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\DTO\AuthzProjection.java
+D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\DTO\Category\CategoryBreadcrumbDTO.java
+D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\DTO\Category\CategoryStatsDTO.java
+D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\DTO\Category\CategoryTreeDTO.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\DTO\CategoryDTO.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\DTO\ChatMessage.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\DTO\Comment\ProductCommentDTO.java
@@ -37,6 +41,7 @@ D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\DTO\Inve
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\DTO\MessageType.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\DTO\OrderDTO.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\DTO\OrderItemDTO.java
+D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\DTO\OrderProductSummaryDTO.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\DTO\Product\ImageProjection.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\DTO\Product\ProductDTO.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\DTO\Product\VariantDTO.java
@@ -58,10 +63,10 @@ D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Model\Ac
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Model\BaseEntity.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Model\Categories.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Model\Comment\ProductComment.java
-D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Model\InventoryHistory.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Model\InventoryItem.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Model\Order\Order.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Model\Order\OrderItem.java
+D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Model\OtpCode.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Model\Product\ProductCondition.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Model\Product\ProductImage.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Model\Product\Products.java
@@ -90,6 +95,7 @@ D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Reposito
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Repository\InventoryReponsitory.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Repository\OrderITemRepository.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Repository\OrderRepository.java
+D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Repository\OtpCodeRepository.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Repository\ProductImageRepository.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Repository\ProductRepository.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Repository\ProductSpecificationRepository.java
@@ -105,6 +111,7 @@ D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Request\
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Request\Checkout\CheckoutRequest.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Request\Checkout\CheckoutRequestItem.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Request\CommentRequest.java
+D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Request\ForgotPasswordOtpRequest.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Request\ForgotPasswordRequest.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Request\InventoryRequest.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Request\Json\BulkItemRequest.java
@@ -122,8 +129,10 @@ D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Request\
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Request\ProductRequest.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Request\RegisterRequest.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Request\ResetPasswordRequest.java
+D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Request\ResetPasswordWithOtpRequest.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Request\SpecificationRequest.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Request\VariantRequest.java
+D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Request\VerifyOtpRequest.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Request\VoucherRequest.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Service\AccountService.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Service\AuthzService.java
@@ -134,7 +143,9 @@ D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Service\
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Service\DiscountService.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Service\EmailService.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Service\InventoryService.java
+D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Service\MomoService.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Service\OrderService.java
+D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Service\OtpService.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Service\ProductImageService.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Service\PromotionService.java
 D:\Java\DA_2025\Full_DA\UI_DA\DA_2025BE\main\src\main\java\backend\main\Service\ServiceImp\Product\ProductService.java

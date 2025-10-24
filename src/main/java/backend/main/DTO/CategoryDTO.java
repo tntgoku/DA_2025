@@ -17,12 +17,11 @@ public class CategoryDTO {
     private Integer parentId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    
-    // Hierarchy relationships
+
     private List<CategoryDTO> children = new ArrayList<>();
     private List<CategoryDTO> parents = new ArrayList<>();
     private CategoryDTO parentCategory;
-    
+
     // SEO-friendly URL generation
     public String getSeoUrl() {
         if (parentCategory != null) {
@@ -30,7 +29,7 @@ public class CategoryDTO {
         }
         return "/" + this.slug;
     }
-    
+
     public String getFullPath() {
         StringBuilder path = new StringBuilder();
         if (parentCategory != null) {

@@ -24,18 +24,13 @@ public class DiscountController {
     @Autowired
     private DiscountService discountService;
 
-    /**
-     * Lấy tất cả discounts
-     */
     @GetMapping
     public ResponseEntity<List<Discount>> getAllDiscounts() {
         List<Discount> discounts = discountService.findAll();
         return ResponseEntity.ok(discounts);
     }
 
-    /**
-     * Lấy discount theo ID
-     */
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getDiscountById(@PathVariable Integer id) {
         java.util.Optional<Discount> discount = discountService.findById(id);
@@ -46,9 +41,7 @@ public class DiscountController {
         }
     }
 
-    /**
-     * Tạo discount mới
-     */
+
     @PostMapping
     public ResponseEntity<?> createDiscount(@RequestBody Discount discount) {
         try {
@@ -62,9 +55,6 @@ public class DiscountController {
         }
     }
 
-    /**
-     * Cập nhật discount
-     */
     @PutMapping("/{id}")
     public ResponseEntity<?> updateDiscount(@PathVariable Integer id, @RequestBody Discount discount) {
         try {
@@ -79,9 +69,7 @@ public class DiscountController {
         }
     }
 
-    /**
-     * Xóa discount
-     */
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteDiscount(@PathVariable Integer id) {
         try {
@@ -95,23 +83,13 @@ public class DiscountController {
         }
     }
 
-    /**
-     * Lấy discount theo mã
-     */
- 
 
-    /**
-     * Lấy các discount đang hoạt động
-     */
     @GetMapping("/active")
     public ResponseEntity<List<Discount>> getActiveDiscounts() {
         List<Discount> activeDiscounts = discountService.findActiveDiscounts();
         return ResponseEntity.ok(activeDiscounts);
     }
 
-    /**
-     * Lấy tất cả discount campaigns với thông tin chi tiết
-     */
     @GetMapping("/campaigns")
     public ResponseEntity<ResponseObject> getAllDiscountCampaigns() {
         List<DiscountCampaignProjection> campaigns = discountService.findAllDiscountCampaigns();

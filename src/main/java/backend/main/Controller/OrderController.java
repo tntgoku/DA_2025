@@ -1,13 +1,12 @@
 package backend.main.Controller;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,20 +31,18 @@ import backend.main.Request.Checkout.CheckoutIncomingRequest;
 import backend.main.Request.Checkout.CheckoutRequest;
 import backend.main.Request.Json.ItemProductJson;
 import backend.main.Service.OrderService;
-import backend.main.Service.VNPAY.VNPayConfig;
-import backend.main.Service.VNPAY.VNPayService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/order")
 public class OrderController {
-    private static final org.slf4j.Logger logger =LoggerE.getLogger();
+    private static final org.slf4j.Logger logger = LoggerE.getLogger();
     @Autowired
     private OrderService orderService;
     @Autowired
     private VoucherRepository voucherRepository;
-    @Autowired
-    private VNPayService vnPayService;
+
     @GetMapping
     public ResponseEntity<ResponseObject> getMethodName() {
         return orderService.findAll();
@@ -57,10 +54,22 @@ public class OrderController {
         return orderService.findObjectByID(idorder);
     }
 
+    @GetMapping("/recent")
+    public ResponseEntity<ResponseObject> getRecentOrders(HttpServletRequest request) {
+        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+        return orderService.findRecentOrders(sevenDaysAgo);
+    }
+
+    @GetMapping("/recentmonths")
+    public ResponseEntity<ResponseObject> getRecentOrdersInMonths() {
+        LocalDateTime threeMonthsAgo = LocalDateTime.now().minusMonths(3);
+        return orderService.findRecentOrders(threeMonthsAgo);
+    }
+
     // Tạo đơn mới
     @PostMapping
-    public ResponseEntity<ResponseObject> createNewOrder(@RequestBody  CheckoutIncomingRequest orderDTO,
-    HttpServletRequest httpReq) {
+    public ResponseEntity<ResponseObject> createNewOrder(@RequestBody CheckoutIncomingRequest orderDTO,
+            HttpServletRequest httpReq) {
         if (orderDTO == null) {
             return new ResponseEntity<>(new ResponseObject(400, "Dữ liệu không hợp lệ", 0, null),
                     HttpStatus.BAD_REQUEST);
@@ -85,7 +94,7 @@ public class OrderController {
         body.setVoucherDiscount(orderDTO.getVoucherDiscount());
         body.setVoucher(orderDTO.getVoucher() == null ? null : String.valueOf(orderDTO.getVoucher()));
         body.setTotalPrice(orderDTO.getTotalPrice());
-        logger.info("Data {}",orderDTO.getTotalPrice());
+        logger.info("Data {}", orderDTO.getTotalPrice());
         List<ItemProductJson> cart = new ArrayList<>();
         cart = orderDTO.getItems();
         if (orderDTO.getItems() != null) {
@@ -103,40 +112,26 @@ public class OrderController {
             return new ResponseEntity<>(new ResponseObject(400, "Giỏ hàng trống", 0, null), HttpStatus.BAD_REQUEST);
         }
 
-        String method = body.getPaymentMethod() == null ? "cod" : body.getPaymentMethod().toLowerCase();
         BigDecimal total = BigDecimal.ZERO;
         try {
             total = orderService.calculateOrderTotal(cart);
-            logger.info("Total:  in trycatch {}" , total);
+            logger.info("Total:  in trycatch {}", total);
         } catch (Exception e) {
-            return new ResponseEntity<>(new ResponseObject(400, e.getMessage(), 0,e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseObject(400, e.getMessage(), 0, e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
         }
         total = total.add(body.getShippingFee());
-        if(body.getVoucher()!=null){
+        if (body.getVoucher() != null) {
             Voucher voucher = voucherRepository.findById(Integer.parseInt(body.getVoucher())).orElse(null);
-        if (voucher != null) {
-            BigDecimal discountAmount = voucher.getValue();
-            BigDecimal newTotal = total.multiply(discountAmount).divide(BigDecimal.valueOf(100));
-                logger.info("New Total after discount: {}" , newTotal);
+            if (voucher != null) {
+                BigDecimal discountAmount = voucher.getValue();
+                BigDecimal newTotal = total.multiply(discountAmount).divide(BigDecimal.valueOf(100));
+                body.setDiscountAmount(newTotal);
+                logger.info("New Total after discount: {}", newTotal);
                 total = total.subtract(newTotal);
-                logger.info("Total after discount: {}" , total);
-                // body.setTotalPrice(total.longValue());
+                logger.info("Total after discount: {}", total);
+                body.setTotalPrice(total);
             }
-        }
-        if ("vnpay".equals(method)) {
-            if (total.compareTo(BigDecimal.valueOf(5000)) < 0) {
-                // Nếu dưới 5.000 VND: không tạo link VNPAY, trả thông báo hoặc tự động chuyển
-                // COD
-                return new ResponseEntity<>(
-                        new ResponseObject(400, "Số tiền tối thiểu cho VNPAY là 5.000 VND", 0, null),
-                        HttpStatus.BAD_REQUEST);
-            }
-            logger.info("Total: {}" , total);
-            String url = vnPayService.createOrder(httpReq, total.longValue(), "Thanh toan don hang",
-                    VNPayConfig.vnp_Returnurl);
-            Map<String, Object> resp = new HashMap<>();
-            resp.put("paymentUrl", url);
-            return ResponseEntity.ok(new ResponseObject(200, "Tạo link thanh toán thành công", 0, resp));
         }
         // normalize items for service
         if (body.getItems() == null || body.getItems().isEmpty()) {
@@ -147,8 +142,9 @@ public class OrderController {
         }
         logger.info("Creating new order: {}", body.toString());
 
-        return orderService.checkout(body);
-        // return new ResponseEntity<>(new ResponseObject(200, "Order created successfully", 0, orderDTO), HttpStatus.OK);
+        return orderService.checkout(body, httpReq);
+        // return new ResponseEntity<>(new ResponseObject(200, "Order created
+        // successfully", 0, orderDTO), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
@@ -157,10 +153,12 @@ public class OrderController {
         try {
             order.setId(Integer.parseInt(id));
             return orderService.updateFromRequest(order);
-            // return new ResponseEntity<>(new ResponseObject(200, "Order updated successfully", 0,order), HttpStatus.OK);
+            // return new ResponseEntity<>(new ResponseObject(200, "Order updated
+            // successfully", 0,order), HttpStatus.OK);
         } catch (NumberFormatException e) {
             logger.error("Invalid order ID: {}", id);
-            return new ResponseEntity<>(new ResponseObject(400, "Không tồn tại ID đơn hàng", 1, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseObject(400, "Không tồn tại ID đơn hàng", 1, null),
+                    HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             logger.error("Error updating order: {}", e.getMessage());
             return new ResponseEntity<>(new ResponseObject(500, "Lỗi máy chủ", 1, e.getMessage()),

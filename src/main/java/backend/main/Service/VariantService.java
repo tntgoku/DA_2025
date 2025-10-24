@@ -8,10 +8,12 @@ import org.springframework.stereotype.Service;
 
 import backend.main.Model.InventoryItem;
 import backend.main.Model.ResponseObject;
+import backend.main.Model.Product.ProductImage;
 import backend.main.Model.Product.ProductVariant;
 import backend.main.Model.Product.Products;
 import backend.main.Repository.DiscountRepository;
 import backend.main.Repository.InventoryReponsitory;
+import backend.main.Repository.ProductImageRepository;
 import backend.main.Repository.VariantReponsitory;
 import backend.main.Request.VariantRequest;
 import jakarta.transaction.Transactional;
@@ -31,8 +33,10 @@ public class VariantService implements BaseService<ProductVariant, Integer> {
     @Autowired
     public VariantReponsitory reponsitory;
     @Autowired
+    private ProductImageRepository productImageRepository;
+    @Autowired
     private DiscountRepository discountRepository;
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(VariantService.class);
+    private static final org.slf4j.Logger logger = LoggerE.getLogger();
     @Autowired
     private InventoryReponsitory inventoryReponsitory;
 
@@ -266,7 +270,10 @@ public class VariantService implements BaseService<ProductVariant, Integer> {
                     vd.setWarrantly(v.getInventoryItem().getWarrantyMonths());
                     vd.setStatus(v.getInventoryItem().getStatus());
                 });
-
+        List<ProductImage> images = productImageRepository.findByProductIdAndVariantId(v.getProduct().getId(),v.getColorCode() == null ? 0 : Integer.parseInt(v.getColorCode()));
+        if(images != null && !images.isEmpty()){
+            vd.setImages(images.get(0).getImageUrl());
+        }
         return vd;
     }
 }
